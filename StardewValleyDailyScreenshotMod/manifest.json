@@ -1,10 +1,17 @@
 ﻿{
   "Name": "Stardew Valley Daily Screenshot Mod",
-  "Author": "Lauren Stephenson",
+  "Author": "CompSciLauren",
   "Version": "1.0.0",
   "Description": "A Stardew Valley mod that automatically takes a screenshot of your entire farm at the start of each day.",
-  "UniqueID": "LaurenStephenson.StardewValleyDailyScreenshotMod",
+  "UniqueID": "CompSciLauren.StardewValleyDailyScreenshotMod",
   "EntryDll": "StardewValleyDailyScreenshotMod.dll",
   "MinimumApiVersion": "2.10.0",
-  "UpdateKeys": []
+  "UpdateKeys": [ "GitHub:CompSciLauren/stardew-valley-daily-screenshot-mod" ],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.MapImageExporter",
+      "IsRequired": true,
+      "MinimumVersion": "1.0.6"
+    }
+  ]
 }
