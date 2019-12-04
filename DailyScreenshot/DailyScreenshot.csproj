@@ -7,8 +7,8 @@
     <ProjectGuid>{77E16595-24B8-4066-BBEB-3FCE307E06FF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>StardewValleyDailyScreenshotMod</RootNamespace>
-    <AssemblyName>StardewValleyDailyScreenshotMod</AssemblyName>
+    <RootNamespace>DailyScreenshot</RootNamespace>
+    <AssemblyName>DailyScreenshot</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

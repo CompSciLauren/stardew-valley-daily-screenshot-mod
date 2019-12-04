@@ -4,7 +4,7 @@ using StardewValley;
 using System.IO;
 using System.Linq;
 
-namespace StardewValleyDailyScreenshotMod
+namespace DailyScreenshot
 {
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod

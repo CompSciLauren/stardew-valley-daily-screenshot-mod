@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StardewValleyDailyScreenshotMod", "StardewValleyDailyScreenshotMod.csproj", "{77E16595-24B8-4066-BBEB-3FCE307E06FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DailyScreenshot", "DailyScreenshot.csproj", "{77E16595-24B8-4066-BBEB-3FCE307E06FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
