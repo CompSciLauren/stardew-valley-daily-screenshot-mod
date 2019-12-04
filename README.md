@@ -25,3 +25,7 @@ Works with Stardew Valley 1.4 on Linux/Mac/Windows.
   Has not been tested in Stardew Valley versions prior to 1.4.
 - Weather always appears clear in screenshots, even if it is not clear in-game (raining, snowing, etc). Only exception is that on days that do not have clear weather, part of the actual weather can be seen in the upper-left hand corner of the screenshot.
 - No configurations are available in the initial release of this mod. Configurations will be added in the next update.
+
+## License
+
+[![CC0](http://mirrors.creativecommons.org/presskit/buttons/88x31/svg/cc-zero.svg)](https://creativecommons.org/publicdomain/zero/1.0/)<br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/1.0/">Creative Commons Attribution 1.0 International License</a>.
