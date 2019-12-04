@@ -1,4 +1,4 @@
-# Daily Screenshot - 1.0.0
+# Daily Screenshot - 1.0.1
 
 > A Stardew Valley mod that automatically takes a screenshot of your entire farm at the start of each day.
 
@@ -17,14 +17,14 @@ Each screenshot is named with "year-season-day.png" numerical format. So on Year
 
 ## Compatibility
 
-Works with Stardew Valley 1.4 on Linux/Mac/Windows.
+- Works with Stardew Valley 1.4 or later on Linux/Mac/Windows.
+- Works in both singleplayer and multiplayer.
+- No known mod conflicts.
 
 ## Known Issues
 
-- Has not been tested in multiplayer.
-  Has not been tested in Stardew Valley versions prior to 1.4.
-- Weather always appears clear in screenshots, even if it is not clear in-game (raining, snowing, etc). Only exception is that on days that do not have clear weather, part of the actual weather can be seen in the upper-left hand corner of the screenshot.
-- No configurations are available in the initial release of this mod. Configurations will be added in the next update.
+- Screenshots currently show all days as having "clear" weather (even if it is raining, snowing, etc). The only exception is that on days that do not actually have clear weather, part of the actual weather can be seen in the upper-left hand corner of the screenshot.
+- No configuration options are currently available in this mod. Configurations will be added in the next major update (v1.1.0). This will include, among other things, configurations for weather (e.g. choosing to allow rainy weather to appear in screenshots, or disabling all weather besides "clear" weather).
 
 ## License
 
