@@ -12,7 +12,7 @@
 
 The screenshot will be taken automatically once every in-game day, after you've first left your house. Screenshots are added to your StardewValley/Screenshots folder.
 
-The StardewValley/Screenshots folder can be located by going to the in-game menu, at the very bottom of the Options tab.
+The StardewValley/Screenshots folder can be located by going to the in-game menu and scrolling to the very bottom of the Options tab.
 
 Each screenshot is named with "year-season-day.png" numerical format. So on Year 1, Spring, Day 3, the screenshot would be named "01-01-03.png".
 
