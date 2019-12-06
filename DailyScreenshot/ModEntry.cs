@@ -32,6 +32,15 @@ namespace DailyScreenshot
             Helper.Events.Player.Warped += OnNewLocationEntered;
             Helper.Events.GameLoop.DayEnding += SetScreenshotTakenTodayToFalse;
             takeScreenshot = Helper.Reflection.GetMethod(Game1.game1, "takeMapScreenshot");
+            Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
+        }
+
+        /// <summary>Raised after the player returns to the title screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event data.</param>
+        private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
+        {
+            screenshotTakenToday = false;
         }
 
         /// <summary>Raised after the player enters a new location.</summary>
@@ -100,6 +109,7 @@ namespace DailyScreenshot
         /// <param name="screenshotName">The name of the screenshot file.</param>
         private void MoveScreenshotToCorrectFolder(string screenshotName)
         {
+            // gather directory and file paths
             string screenshotNameWithExtension = screenshotName + ".png";
             string appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string stardewValleyScreenshotsDirectory = Path.Combine(appDataDirectory, "StardewValley\\Screenshots");
@@ -109,14 +119,17 @@ namespace DailyScreenshot
             string saveDirectoryAndNewFile = Path.Combine(saveDirectory, screenshotNameWithExtension);
             string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, saveDirectoryAndNewFile);
 
-            // create folder if it doesn't exist
+            // create save directory if it doesn't exist
             if (!System.IO.File.Exists(saveDirectoryFullPath))
             {
                 System.IO.Directory.CreateDirectory(saveDirectoryFullPath);
             }
 
-            // To move a file or folder to a new location:
-            System.IO.File.Move(sourceFile, destinationFile);
+            // move screenshot into correct folder, overwrite file if already exists in folder
+            System.IO.File.Copy(sourceFile, destinationFile, true);
+
+            // delete original screenshot that still exists in StardewValley/Screenshots
+            System.IO.File.Delete(sourceFile);
         }
 
         /// <summary>Raised if the screenshot is changed.</summary>
