@@ -3,6 +3,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DailyScreenshot
 {
@@ -74,9 +75,19 @@ namespace DailyScreenshot
         {
             if (e.NewLocation is Farm && !screenshotTakenToday)
             {
-                Helper.ConsoleCommands.Trigger("export", new[] { stardewValleyLocation, "all" });
-                screenshotTakenToday = true;
+                TakeScreenshot();
             }
+        }
+
+        /// <summary>Takes a screenshot of the entire farm.</summary>
+        private async void TakeScreenshot()
+        {
+            // wait 0.6 seconds so that buildings on map can completely render
+            await Task.Delay(600);
+
+            // take screenshot
+            Helper.ConsoleCommands.Trigger("export", new[] { stardewValleyLocation, "all" });
+            screenshotTakenToday = true;
         }
 
         /// <summary>Raised if the screenshot is changed.</summary>
