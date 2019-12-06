@@ -14,6 +14,7 @@ namespace DailyScreenshot
         private string stardewValleyLocation = "Farm";
         private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
+        IReflectedMethod takeScreenshot = null;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -39,7 +40,10 @@ namespace DailyScreenshot
             screenshotsDirectory = exportDirectory.CreateSubdirectory(directoryName);
             Helper.Events.Player.Warped += OnNewLocationEntered;
             Helper.Events.GameLoop.DayEnding += SetScreenshotTakenTodayToFalse;
+            takeScreenshot = Helper.Reflection.GetMethod(Game1.game1, "takeMapScreenshot");
         }
+
+
 
         /// <summary>Creates a new FileSystemWatcher and set its properties.</summary>
         private void CreateFileSystemWatcher()
@@ -83,10 +87,41 @@ namespace DailyScreenshot
         private async void TakeScreenshot()
         {
             // wait 0.6 seconds so that buildings on map can completely render
-            await Task.Delay(600);
+            await Task.Delay(10000);
+
+            // prepare screenshot name
+            stardewValleyYear = Game1.Date.Year.ToString();
+            stardewValleySeason = Game1.Date.Season.ToString();
+            stardewValleyDayOfMonth = Game1.Date.DayOfMonth.ToString();
+
+            if (int.Parse(stardewValleyYear) < 10)
+            {
+                stardewValleyYear = "0" + stardewValleyYear;
+            }
+            if (int.Parse(stardewValleyDayOfMonth) < 10)
+            {
+                stardewValleyDayOfMonth = "0" + stardewValleyDayOfMonth;
+            }
+
+            switch (Game1.Date.Season)
+            {
+                case "spring":
+                    stardewValleySeason = "01";
+                    break;
+                case "summer":
+                    stardewValleySeason = "02";
+                    break;
+                case "fall":
+                    stardewValleySeason = "03";
+                    break;
+                case "winter":
+                    stardewValleySeason = "04";
+                    break;
+            }
 
             // take screenshot
-            Helper.ConsoleCommands.Trigger("export", new[] { stardewValleyLocation, "all" });
+            string screenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}";
+            takeScreenshot.Invoke<string>(0.25f, screenshotName);
             screenshotTakenToday = true;
         }
 
