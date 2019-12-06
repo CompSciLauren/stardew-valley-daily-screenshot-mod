@@ -1,12 +1,12 @@
 ﻿{
   "Name": "Daily Screenshot",
   "Author": "CompSciLauren",
-  "Version": "1.0.1",
+  "Version": "1.1.0",
   "Description": "Automatically takes a daily screenshot of your entire farm.",
   "UniqueID": "CompSciLauren.DailyScreenshot",
   "EntryDll": "DailyScreenshot.dll",
   "MinimumApiVersion": "2.10.0",
-  "UpdateKeys": [ "GitHub:CompSciLauren/stardew-valley-daily-screenshot-mod" ],
+  "UpdateKeys": [ "Nexus:4779", "ModDrop:677025", "Chucklefish:5907", "CurseForge:353698", "GitHub:CompSciLauren/stardew-valley-daily-screenshot-mod" ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.MapImageExporter",
