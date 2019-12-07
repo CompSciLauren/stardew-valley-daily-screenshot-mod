@@ -110,15 +110,12 @@ namespace DailyScreenshot
         {
             // gather directory and file paths
             string screenshotNameWithExtension = screenshotName + ".png";
-            string appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string stardewValleyScreenshotsDirectory = Path.Combine(appDataDirectory, "StardewValley\\Screenshots");
-            string saveDirectory = Game1.player.farmName + "-Farm-Screenshots";
-            string saveDirectoryFullPath = Path.Combine(stardewValleyScreenshotsDirectory, saveDirectory);
-            string saveDirectoryAndNewFile = Path.Combine(saveDirectory, screenshotNameWithExtension);
+            string stardewValleyScreenshotsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley\\Screenshots");
 
             string sourceFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
-            string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, saveDirectoryAndNewFile);
+            string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, Game1.player.farmName + "-Farm-Screenshots", screenshotNameWithExtension);
 
+            string saveDirectoryFullPath = Path.Combine(stardewValleyScreenshotsDirectory, Game1.player.farmName + "-Farm-Screenshots");
             // create save directory if it doesn't already exist
             if (!System.IO.File.Exists(saveDirectoryFullPath))
             {
