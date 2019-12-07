@@ -10,16 +10,16 @@ namespace DailyScreenshot
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod
     {
+        IReflectedMethod takeScreenshot = null;
         private string stardewValleyLocation = "Farm";
         private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
-        IReflectedMethod takeScreenshot = null;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
+            Helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
         }
 
         /// <summary>Raised after the save file is loaded.</summary>
@@ -27,12 +27,11 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            var farmName = Game1.player.farmName;
-            var directoryName = $"{farmName}-Farm-Screenshots";
-            Helper.Events.Player.Warped += OnNewLocationEntered;
+            Helper.Events.Player.Warped += OnWarped;
             Helper.Events.GameLoop.DayEnding += SetScreenshotTakenTodayToFalse;
-            takeScreenshot = Helper.Reflection.GetMethod(Game1.game1, "takeMapScreenshot");
             Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
+
+            takeScreenshot = Helper.Reflection.GetMethod(Game1.game1, "takeMapScreenshot");
         }
 
         /// <summary>Raised after the player returns to the title screen.</summary>
@@ -46,7 +45,7 @@ namespace DailyScreenshot
         /// <summary>Raised after the player enters a new location.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event data.</param>
-        private void OnNewLocationEntered(object sender, WarpedEventArgs e)
+        private void OnWarped(object sender, WarpedEventArgs e)
         {
             if (e.NewLocation is Farm && !screenshotTakenToday)
             {
@@ -60,25 +59,24 @@ namespace DailyScreenshot
             // wait 0.6 seconds so that buildings on map can completely render
             await Task.Delay(600);
 
-            // prepare screenshot name
-            PrepareScreenshotName();
+            ConvertInGameDateToNumericFormat();
 
             // take screenshot
             string screenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}";
             takeScreenshot.Invoke<string>(0.25f, screenshotName);
             screenshotTakenToday = true;
 
-            // move screenshot to correct folder
             MoveScreenshotToCorrectFolder(screenshotName);
         }
 
-        /// <summary>Fix the screenshot name to be in the proper format.</summary>
-        private void PrepareScreenshotName()
+        /// <summary>Fixes the screenshot name to be in the proper format.</summary>
+        private void ConvertInGameDateToNumericFormat()
         {
             stardewValleyYear = Game1.Date.Year.ToString();
             stardewValleySeason = Game1.Date.Season.ToString();
             stardewValleyDayOfMonth = Game1.Date.DayOfMonth.ToString();
 
+            // fix year and month to be in numeric format
             if (int.Parse(stardewValleyYear) < 10)
             {
                 stardewValleyYear = "0" + stardewValleyYear;
@@ -88,6 +86,7 @@ namespace DailyScreenshot
                 stardewValleyDayOfMonth = "0" + stardewValleyDayOfMonth;
             }
 
+            // fix season to be in numeric format
             switch (Game1.Date.Season)
             {
                 case "spring":
@@ -105,7 +104,7 @@ namespace DailyScreenshot
             }
         }
 
-        /// <summary>Raised if the screenshot is changed.</summary>
+        /// <summary>Moves the screenshot into the StardewValley/Screenshots directory, in a folder for the save file.</summary>
         /// <param name="screenshotName">The name of the screenshot file.</param>
         private void MoveScreenshotToCorrectFolder(string screenshotName)
         {
@@ -113,13 +112,14 @@ namespace DailyScreenshot
             string screenshotNameWithExtension = screenshotName + ".png";
             string appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string stardewValleyScreenshotsDirectory = Path.Combine(appDataDirectory, "StardewValley\\Screenshots");
-            string sourceFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
             string saveDirectory = Game1.player.farmName + "-Farm-Screenshots";
             string saveDirectoryFullPath = Path.Combine(stardewValleyScreenshotsDirectory, saveDirectory);
             string saveDirectoryAndNewFile = Path.Combine(saveDirectory, screenshotNameWithExtension);
+
+            string sourceFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
             string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, saveDirectoryAndNewFile);
 
-            // create save directory if it doesn't exist
+            // create save directory if it doesn't already exist
             if (!System.IO.File.Exists(saveDirectoryFullPath))
             {
                 System.IO.Directory.CreateDirectory(saveDirectoryFullPath);
@@ -130,52 +130,6 @@ namespace DailyScreenshot
 
             // delete original screenshot that still exists in StardewValley/Screenshots
             System.IO.File.Delete(sourceFile);
-        }
-
-        /// <summary>Raised if the screenshot is changed.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event data.</param>
-        private void OnScreenshotChanged(object sender, FileSystemEventArgs e)
-        {
-            var fileName = Path.GetFileNameWithoutExtension(e.FullPath);
-            if (fileName == stardewValleyLocation &&
-                (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Changed))
-            {
-                try
-                {
-                    stardewValleyYear = Game1.Date.Year.ToString();
-                    stardewValleySeason = Game1.Date.Season.ToString();
-                    stardewValleyDayOfMonth = Game1.Date.DayOfMonth.ToString();
-
-                    if (int.Parse(stardewValleyYear) < 10)
-                    {
-                        stardewValleyYear = "0" + stardewValleyYear;
-                    }
-                    if (int.Parse(stardewValleyDayOfMonth) < 10)
-                    {
-                        stardewValleyDayOfMonth = "0" + stardewValleyDayOfMonth;
-                    }
-
-                    switch (Game1.Date.Season)
-                    {
-                        case "spring":
-                            stardewValleySeason = "01";
-                            break;
-                        case "summer":
-                            stardewValleySeason = "02";
-                            break;
-                        case "fall":
-                            stardewValleySeason = "03";
-                            break;
-                        case "winter":
-                            stardewValleySeason = "04";
-                            break;
-                    }
-                }
-                catch (IOException)
-                {
-                }
-            }
         }
 
         /// <summary>Sets screenshotTakenToday variable to false.</summary>
