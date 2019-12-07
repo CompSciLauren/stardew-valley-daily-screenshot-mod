@@ -28,7 +28,7 @@ namespace DailyScreenshot
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             Helper.Events.Player.Warped += OnWarped;
-            Helper.Events.GameLoop.DayEnding += SetScreenshotTakenTodayToFalse;
+            Helper.Events.GameLoop.DayEnding += OnDayEnding;
             Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
 
             takeScreenshot = Helper.Reflection.GetMethod(Game1.game1, "takeMapScreenshot");
@@ -132,7 +132,7 @@ namespace DailyScreenshot
         /// <summary>Sets screenshotTakenToday variable to false.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event data.</param>
-        private void SetScreenshotTakenTodayToFalse(object sender, DayEndingEventArgs e)
+        private void OnDayEnding(object sender, DayEndingEventArgs e)
         {
             screenshotTakenToday = false;
         }
