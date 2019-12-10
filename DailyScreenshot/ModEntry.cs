@@ -11,7 +11,6 @@ namespace DailyScreenshot
     public class ModEntry : Mod
     {
         IReflectedMethod takeScreenshot = null;
-        private string stardewValleyLocation = "Farm";
         private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
         int countdown = 60; // 1 second
@@ -142,18 +141,29 @@ namespace DailyScreenshot
             string sourceFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
             string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, Game1.player.farmName + "-Farm-Screenshots", screenshotNameWithExtension);
 
-            string saveDirectoryFullPath = Path.Combine(stardewValleyScreenshotsDirectory, Game1.player.farmName + "-Farm-Screenshots");
+            string saveFilePath = Game1.player.farmName + "-Farm-Screenshots";
+            string saveDirectoryFullPath = Path.Combine(stardewValleyScreenshotsDirectory, saveFilePath);
+
             // create save directory if it doesn't already exist
             if (!System.IO.File.Exists(saveDirectoryFullPath))
             {
                 System.IO.Directory.CreateDirectory(saveDirectoryFullPath);
             }
 
-            // move screenshot into correct folder, overwrite file if already exists in folder
-            System.IO.File.Copy(sourceFile, destinationFile, true);
+            // delete old version of screenshot if one exists
+            if (File.Exists(destinationFile))
+            {
+                File.Delete(destinationFile);
+            }
 
-            // delete original screenshot that still exists in StardewValley/Screenshots
-            System.IO.File.Delete(sourceFile);
+            try
+            {
+                File.Move(sourceFile, destinationFile);
+            }
+            catch (Exception ex)
+            {
+                this.Monitor.Log($"Error moving file '{screenshotNameWithExtension}' into {saveFilePath} folder. Technical details:\n{ex}", LogLevel.Error);
+            }
         }
 
         /// <summary>Raised after the player returns to the title screen.</summary>
