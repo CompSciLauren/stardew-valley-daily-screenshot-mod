@@ -14,6 +14,7 @@ namespace DailyScreenshot
         private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
         int countdown = 60; // 1 second
+        ulong saveFileCode;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -27,6 +28,7 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
+            saveFileCode = Game1.uniqueIDForThisGame;
             Helper.Events.Player.Warped += OnWarped;
             Helper.Events.GameLoop.DayStarted += OnDayStarted;
             Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
@@ -137,11 +139,11 @@ namespace DailyScreenshot
             // gather directory and file paths
             string screenshotNameWithExtension = screenshotName + ".png";
             string stardewValleyScreenshotsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley\\Screenshots");
+            string saveFilePath = Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode;
 
             string sourceFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
-            string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, Game1.player.farmName + "-Farm-Screenshots", screenshotNameWithExtension);
+            string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, saveFilePath, screenshotNameWithExtension);
 
-            string saveFilePath = Game1.player.farmName + "-Farm-Screenshots";
             string saveDirectoryFullPath = Path.Combine(stardewValleyScreenshotsDirectory, saveFilePath);
 
             // create save directory if it doesn't already exist
