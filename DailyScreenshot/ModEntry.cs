@@ -35,11 +35,9 @@ namespace DailyScreenshot
             takeScreenshot = Helper.Reflection.GetMethod(Game1.game1, "takeMapScreenshot");
         }
 
-        /// <summary>
-        /// Raised after day has started.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <summary>Raised after day has started.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event data.</param>
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
@@ -62,17 +60,14 @@ namespace DailyScreenshot
             }
         }
 
-        /// <summary>
-        /// Raised after game state is updated.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <summary>Raised after game state is updated.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event data.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            // countdown
             countdown--;
 
-            if (countdown <= 0)
+            if (countdown == 0)
             {
                 while (_actions.Count > 0)
                     _actions.Dequeue().Invoke();
@@ -84,7 +79,6 @@ namespace DailyScreenshot
         {
             ConvertInGameDateToNumericFormat();
 
-            // take screenshot
             string screenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}";
             takeScreenshot.Invoke<string>(0.25f, screenshotName);
             screenshotTakenToday = true;
@@ -94,10 +88,8 @@ namespace DailyScreenshot
 
         private Queue<Action> _actions = new Queue<Action>();
 
-        /// <summary>
-        /// Allows ability to enqueue actions to the queue.
-        /// </summary>
-        /// <param name="action"></param>
+        /// <summary>Allows ability to enqueue actions to the queue.</summary>
+        /// <param name="action">The action.</param>
         public void EnqueueAction(Action action)
         {
             if (action == null) return;
@@ -139,7 +131,7 @@ namespace DailyScreenshot
             }
         }
 
-        /// <summary>Moves the screenshot into the StardewValley/Screenshots directory, in a folder for the save file.</summary>
+        /// <summary>Moves screenshot into StardewValley/Screenshots directory, in the save file folder.</summary>
         /// <param name="screenshotName">The name of the screenshot file.</param>
         private void MoveScreenshotToCorrectFolder(string screenshotName)
         {
