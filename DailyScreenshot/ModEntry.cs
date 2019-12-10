@@ -2,8 +2,8 @@
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace DailyScreenshot
 {
@@ -14,6 +14,7 @@ namespace DailyScreenshot
         private string stardewValleyLocation = "Farm";
         private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
+        int countdown = 60; // 1 second
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -28,18 +29,26 @@ namespace DailyScreenshot
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             Helper.Events.Player.Warped += OnWarped;
-            Helper.Events.GameLoop.DayEnding += OnDayEnding;
+            Helper.Events.GameLoop.DayStarted += OnDayStarted;
             Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
 
             takeScreenshot = Helper.Reflection.GetMethod(Game1.game1, "takeMapScreenshot");
         }
 
-        /// <summary>Raised after the player returns to the title screen.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event data.</param>
-        private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
+        /// <summary>
+        /// Raised after day has started.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
+            Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
             screenshotTakenToday = false;
+            countdown = 60;
+
+            EnqueueAction(() => {
+                TakeScreenshot();
+            });
         }
 
         /// <summary>Raised after the player enters a new location.</summary>
@@ -49,16 +58,30 @@ namespace DailyScreenshot
         {
             if (e.NewLocation is Farm && !screenshotTakenToday)
             {
-                TakeScreenshot();
+                Helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
+            }
+        }
+
+        /// <summary>
+        /// Raised after game state is updated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            // countdown
+            countdown--;
+
+            if (countdown <= 0)
+            {
+                while (_actions.Count > 0)
+                    _actions.Dequeue().Invoke();
             }
         }
 
         /// <summary>Takes a screenshot of the entire farm.</summary>
-        private async void TakeScreenshot()
+        private void TakeScreenshot()
         {
-            // wait 0.6 seconds so that buildings on map can completely render
-            await Task.Delay(600);
-
             ConvertInGameDateToNumericFormat();
 
             // take screenshot
@@ -67,6 +90,18 @@ namespace DailyScreenshot
             screenshotTakenToday = true;
 
             MoveScreenshotToCorrectFolder(screenshotName);
+        }
+
+        private Queue<Action> _actions = new Queue<Action>();
+
+        /// <summary>
+        /// Allows ability to enqueue actions to the queue.
+        /// </summary>
+        /// <param name="action"></param>
+        public void EnqueueAction(Action action)
+        {
+            if (action == null) return;
+            _actions.Enqueue(action);
         }
 
         /// <summary>Fixes the screenshot name to be in the proper format.</summary>
@@ -129,12 +164,13 @@ namespace DailyScreenshot
             System.IO.File.Delete(sourceFile);
         }
 
-        /// <summary>Sets screenshotTakenToday variable to false.</summary>
+        /// <summary>Raised after the player returns to the title screen.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event data.</param>
-        private void OnDayEnding(object sender, DayEndingEventArgs e)
+        private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
             screenshotTakenToday = false;
+            countdown = 60;
         }
     }
 }
