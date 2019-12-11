@@ -1,6 +1,25 @@
-# Daily Screenshot v1.0.2
+<h1 align="center">
+    <img src="FeatureImage.png" alt="Feature Image">
+</h1>
+
+# Daily Screenshot v1.0.3
 
 > A Stardew Valley mod that automatically takes a screenshot of your entire farm at the start of each day.
+
+Releases can be found at the following websites:
+
+- [NexusMods](https://www.nexusmods.com/stardewvalley/mods/4779)
+- [Chucklefish](https://community.playstarbound.com/resources/daily-screenshot.5907/)
+- [CurseForge](https://www.curseforge.com/stardewvalley/mods/daily-screenshot)
+- [ModDrop](https://www.moddrop.com/stardew-valley/mods/677025-daily-screenshot)
+
+## Features
+
+- A screenshot is automatically taken of your entire farm every day as soon as you leave your house.
+- Makes it super easy to gather screenshots to create a GIF that shows how your farm changes over time! There are many GIF makers that can be found online, such as ezgif GIF maker.
+- Stores screenshots in the StardewValley/Screenshots folder, with each save file getting its own "FarmName-Screenshots" folder, so you can easily access the screenshots in-game under the "Options" tab in the menu and screenshots from multiple save files will not get mixed up.
+- Keeps the screenshots in the correct order to make creating the GIF easier. This is achieved by naming each screenshot with a "year-season-day.png" numerical format. For example, on Year 1, Spring, Day 3, the screenshot would be named "01-01-03.png". 
+- Custom configuration options coming near the end of December 2019!
 
 ## Install
 
@@ -8,23 +27,15 @@
 3. Download this mod and unzip it into Stardew Valley/Mods.
 4. Run the game using SMAPI.
 
-## How to use
-
-The screenshot will be taken automatically once every in-game day, after you've first left your house. Screenshots are added to your StardewValley/Screenshots folder.
-
-The StardewValley/Screenshots folder can be located by going to the in-game menu and scrolling to the very bottom of the Options tab.
-
-Each screenshot is named with "year-season-day.png" numerical format. So on Year 1, Spring, Day 3, the screenshot would be named "01-01-03.png".
-
 ## Compatibility
 
 - Works with Stardew Valley 1.4 or later on Linux/Mac/Windows.
 - Works in both singleplayer and multiplayer.
 - No known mod conflicts.
 
-## Known Issues
+## Config
 
-- No configuration options are currently available in this mod. Configurations will be added in the next update (v1.1.0). This will include, among other things, configurations for weather (e.g. choosing to allow rainy weather to appear in screenshots, or disabling all weather besides "clear" weather).
+Coming soon!
 
 ## License
 
