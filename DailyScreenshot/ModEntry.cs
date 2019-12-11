@@ -138,7 +138,7 @@ namespace DailyScreenshot
         {
             // gather directory and file paths
             string screenshotNameWithExtension = screenshotName + ".png";
-            string stardewValleyScreenshotsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley\\Screenshots");
+            string stardewValleyScreenshotsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley", "Screenshots");
             string saveFilePath = Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode;
 
             string sourceFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
