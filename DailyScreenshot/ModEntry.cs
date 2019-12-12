@@ -13,7 +13,7 @@ namespace DailyScreenshot
         IReflectedMethod takeScreenshot = null;
         private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
-        int countdown = 60; // 1 second
+        int countdownInSeconds = 60;
         ulong saveFileCode;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
@@ -43,7 +43,7 @@ namespace DailyScreenshot
         {
             Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
             screenshotTakenToday = false;
-            countdown = 60;
+            countdownInSeconds = 60;
 
             EnqueueAction(() => {
                 TakeScreenshot();
@@ -66,9 +66,9 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            countdown--;
+            countdownInSeconds--;
 
-            if (countdown == 0)
+            if (countdownInSeconds == 0)
             {
                 while (_actions.Count > 0)
                     _actions.Dequeue().Invoke();
@@ -138,7 +138,7 @@ namespace DailyScreenshot
         {
             // gather directory and file paths
             string screenshotNameWithExtension = screenshotName + ".png";
-            string stardewValleyScreenshotsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley\\Screenshots");
+            string stardewValleyScreenshotsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley", "Screenshots");
             string saveFilePath = Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode;
 
             string sourceFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
@@ -147,9 +147,9 @@ namespace DailyScreenshot
             string saveDirectoryFullPath = Path.Combine(stardewValleyScreenshotsDirectory, saveFilePath);
 
             // create save directory if it doesn't already exist
-            if (!System.IO.File.Exists(saveDirectoryFullPath))
+            if (!File.Exists(saveDirectoryFullPath))
             {
-                System.IO.Directory.CreateDirectory(saveDirectoryFullPath);
+                Directory.CreateDirectory(saveDirectoryFullPath);
             }
 
             // delete old version of screenshot if one exists
@@ -164,7 +164,7 @@ namespace DailyScreenshot
             }
             catch (Exception ex)
             {
-                this.Monitor.Log($"Error moving file '{screenshotNameWithExtension}' into {saveFilePath} folder. Technical details:\n{ex}", LogLevel.Error);
+                Monitor.Log($"Error moving file '{screenshotNameWithExtension}' into {saveFilePath} folder. Technical details:\n{ex}", LogLevel.Error);
             }
         }
 
@@ -174,7 +174,7 @@ namespace DailyScreenshot
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
             screenshotTakenToday = false;
-            countdown = 60;
+            countdownInSeconds = 60;
         }
     }
 }
