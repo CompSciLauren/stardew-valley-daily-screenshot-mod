@@ -10,6 +10,9 @@ namespace DailyScreenshot
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod
     {
+        /// <summary>The mod configuration from the player.</summary>
+        private ModConfig Config;
+
         IReflectedMethod takeScreenshot = null;
         private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
@@ -20,6 +23,7 @@ namespace DailyScreenshot
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            Config = Helper.ReadConfig<ModConfig>();
             Helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
         }
 
@@ -55,7 +59,7 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnWarped(object sender, WarpedEventArgs e)
         {
-            if (e.NewLocation is Farm && !screenshotTakenToday)
+            if (e.NewLocation is Farm && !screenshotTakenToday && Game1.timeOfDay >= Config.TimeScreenshotGetsTaken)
             {
                 Helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             }
