@@ -136,14 +136,22 @@ namespace DailyScreenshot
         /// <param name="screenshotName">The name of the screenshot file.</param>
         private void MoveScreenshotToCorrectFolder(string screenshotName)
         {
-            // gather directory and file paths
-            string screenshotNameWithExtension = screenshotName + ".png";
-            string stardewValleyScreenshotsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley", "Screenshots");
-            string saveFilePath = Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode;
+            // special folder path
+            int num11 = Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28;
+            var path = Environment.GetFolderPath((Environment.SpecialFolder)num11);
 
+            // path is combined with StardewValley and then Screenshots
+            string stardewValleyScreenshotsDirectory = Path.Combine(path, "StardewValley", "Screenshots");
+
+            // path for farm folder and screenshots
+            string saveFilePath = Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode;
+            string screenshotNameWithExtension = screenshotName + ".png";
+
+            // path for original screenshot location and new screenshot location
             string sourceFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
             string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, saveFilePath, screenshotNameWithExtension);
 
+            // path for farm folder
             string saveDirectoryFullPath = Path.Combine(stardewValleyScreenshotsDirectory, saveFilePath);
 
             // create save directory if it doesn't already exist
