@@ -1,9 +1,9 @@
 ﻿class ModConfig
 {
-    public int TimeScreenshotGetsTaken { get; set; }
+    public int TimeScreenshotGetsTakenAfter { get; set; }
 
     public ModConfig()
     {
-        TimeScreenshotGetsTaken = 600; // 6:00 AM
+        TimeScreenshotGetsTakenAfter = 600; // 6:00 AM
     }
 }

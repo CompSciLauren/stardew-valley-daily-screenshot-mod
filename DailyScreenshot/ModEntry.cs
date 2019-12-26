@@ -59,7 +59,7 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnWarped(object sender, WarpedEventArgs e)
         {
-            if (e.NewLocation is Farm && !screenshotTakenToday && Game1.timeOfDay >= Config.TimeScreenshotGetsTaken)
+            if (e.NewLocation is Farm && !screenshotTakenToday && Game1.timeOfDay >= Config.TimeScreenshotGetsTakenAfter)
             {
                 Helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             }
