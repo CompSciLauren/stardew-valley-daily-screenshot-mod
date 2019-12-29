@@ -1,4 +1,7 @@
-﻿using StardewModdingAPI;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using Netcode;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
@@ -38,6 +41,22 @@ namespace DailyScreenshot
             Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
 
             takeScreenshot = Helper.Reflection.GetMethod(Game1.game1, "takeMapScreenshot");
+
+            Helper.Events.Input.ButtonPressed += OnButtonPressed;
+        }
+
+        /// <summary>Raised after a button is pressed.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event data.</param>
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+        {
+            if (e.Button.TryGetKeyboard(out Keys _))
+            {
+                if (e.Button == Config.TakeScreenshotKey)
+                {
+                    TakeScreenshotViaKeypress();
+                }
+            }
         }
 
         /// <summary>Raised after day has started.</summary>
@@ -89,6 +108,21 @@ namespace DailyScreenshot
             screenshotTakenToday = true;
 
             MoveScreenshotToCorrectFolder(screenshotName);
+
+            string mapScreenshot = Game1.game1.takeMapScreenshot(0.25f, screenshotName);
+            Game1.addHUDMessage(new HUDMessage(mapScreenshot, 6));
+            Game1.playSound("cameraNoise");
+        }
+
+        /// <summary>Takes a screenshot of the entire map, activated via keypress.</summary>
+        private void TakeScreenshotViaKeypress()
+        {
+            string screenshotName = SaveGame.FilterFileName((string)(NetFieldBase<string, NetString>)Game1.player.name) + "_" + DateTime.UtcNow.Month + "-" + DateTime.UtcNow.Day.ToString() + "-" + DateTime.UtcNow.Year.ToString() + "_" + (int)DateTime.UtcNow.TimeOfDay.TotalMilliseconds;
+            takeScreenshot.Invoke<string>(Config.TakeScreenshotKeyZoomLevel, screenshotName);
+
+            string mapScreenshot = Game1.game1.takeMapScreenshot(Config.TakeScreenshotKeyZoomLevel, screenshotName);
+            Game1.addHUDMessage(new HUDMessage(mapScreenshot, 6));
+            Game1.playSound("cameraNoise");
         }
 
         private Queue<Action> _actions = new Queue<Action>();
