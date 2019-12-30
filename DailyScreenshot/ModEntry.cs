@@ -116,16 +116,15 @@ namespace DailyScreenshot
         private void TakeScreenshotViaKeypress()
         {
             string screenshotName = SaveGame.FilterFileName((string)(NetFieldBase<string, NetString>)Game1.player.name) + "_" + DateTime.UtcNow.Month + "-" + DateTime.UtcNow.Day.ToString() + "-" + DateTime.UtcNow.Year.ToString() + "_" + (int)DateTime.UtcNow.TimeOfDay.TotalMilliseconds;
-            takeScreenshot.Invoke<string>(Config.TakeScreenshotKeyZoomLevel, screenshotName);
+
+            string mapScreenshot = Game1.game1.takeMapScreenshot(Config.TakeScreenshotKeyZoomLevel, screenshotName);
+            Game1.addHUDMessage(new HUDMessage(mapScreenshot, 6));
+            Game1.playSound("cameraNoise");
 
             if (Config.FolderDestinationForKeypressScreenshots != "default")
             {
                 MoveKeypressScreenshotToCorrectFolder(screenshotName);
             }
-
-            string mapScreenshot = Game1.game1.takeMapScreenshot(Config.TakeScreenshotKeyZoomLevel, screenshotName);
-            Game1.addHUDMessage(new HUDMessage(mapScreenshot, 6));
-            Game1.playSound("cameraNoise");
         }
 
         private Queue<Action> _actions = new Queue<Action>();
@@ -235,15 +234,15 @@ namespace DailyScreenshot
             string defaultStardewValleyScreenshotsDirectory = Path.Combine(path, "StardewValley", "Screenshots");
             string stardewValleyScreenshotsDirectory = defaultStardewValleyScreenshotsDirectory;
 
-            if (Config.FolderDestinationForDailyScreenshots != "default")
+            if (Config.FolderDestinationForKeypressScreenshots != "default")
             {
-                stardewValleyScreenshotsDirectory = Config.FolderDestinationForDailyScreenshots;
+                stardewValleyScreenshotsDirectory = Config.FolderDestinationForKeypressScreenshots;
             }
 
             string screenshotNameWithExtension = screenshotName + ".png";
 
             // path for original screenshot location and new screenshot location
-            string sourceFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
+            string sourceFile = Path.Combine(defaultStardewValleyScreenshotsDirectory, screenshotNameWithExtension);
             string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
 
             // create save directory if it doesn't already exist
