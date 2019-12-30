@@ -120,6 +120,11 @@ namespace DailyScreenshot
             string screenshotName = SaveGame.FilterFileName((string)(NetFieldBase<string, NetString>)Game1.player.name) + "_" + DateTime.UtcNow.Month + "-" + DateTime.UtcNow.Day.ToString() + "-" + DateTime.UtcNow.Year.ToString() + "_" + (int)DateTime.UtcNow.TimeOfDay.TotalMilliseconds;
             takeScreenshot.Invoke<string>(Config.TakeScreenshotKeyZoomLevel, screenshotName);
 
+            if (Config.FolderDestinationForKeypressScreenshots != "default")
+            {
+                MoveKeypressScreenshotToCorrectFolder(screenshotName);
+            }
+
             string mapScreenshot = Game1.game1.takeMapScreenshot(Config.TakeScreenshotKeyZoomLevel, screenshotName);
             Game1.addHUDMessage(new HUDMessage(mapScreenshot, 6));
             Game1.playSound("cameraNoise");
@@ -179,14 +184,20 @@ namespace DailyScreenshot
             var path = Environment.GetFolderPath((Environment.SpecialFolder)num11);
 
             // path is combined with StardewValley and then Screenshots
-            string stardewValleyScreenshotsDirectory = Path.Combine(path, "StardewValley", "Screenshots");
+            string defaultStardewValleyScreenshotsDirectory = Path.Combine(path, "StardewValley", "Screenshots");
+            string stardewValleyScreenshotsDirectory = defaultStardewValleyScreenshotsDirectory;
+
+            if (Config.FolderDestinationForDailyScreenshots != "default")
+            {
+                stardewValleyScreenshotsDirectory = Config.FolderDestinationForDailyScreenshots;
+            }
 
             // path for farm folder and screenshots
             string saveFilePath = Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode;
             string screenshotNameWithExtension = screenshotName + ".png";
 
             // path for original screenshot location and new screenshot location
-            string sourceFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
+            string sourceFile = Path.Combine(defaultStardewValleyScreenshotsDirectory, screenshotNameWithExtension);
             string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, saveFilePath, screenshotNameWithExtension);
 
             // path for farm folder
@@ -211,6 +222,51 @@ namespace DailyScreenshot
             catch (Exception ex)
             {
                 Monitor.Log($"Error moving file '{screenshotNameWithExtension}' into {saveFilePath} folder. Technical details:\n{ex}", LogLevel.Error);
+            }
+        }
+
+        /// <summary>Moves keypress screenshot into StardewValley/Screenshots directory.</summary>
+        /// <param name="screenshotName">The name of the screenshot file.</param>
+        private void MoveKeypressScreenshotToCorrectFolder(string screenshotName)
+        {
+            // special folder path
+            int num11 = Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28;
+            var path = Environment.GetFolderPath((Environment.SpecialFolder)num11);
+
+            // path is combined with StardewValley and then Screenshots
+            string defaultStardewValleyScreenshotsDirectory = Path.Combine(path, "StardewValley", "Screenshots");
+            string stardewValleyScreenshotsDirectory = defaultStardewValleyScreenshotsDirectory;
+
+            if (Config.FolderDestinationForKeypressScreenshots != "default")
+            {
+                stardewValleyScreenshotsDirectory = Config.FolderDestinationForKeypressScreenshots;
+            }
+
+            string screenshotNameWithExtension = screenshotName + ".png";
+
+            // path for original screenshot location and new screenshot location
+            string sourceFile = Path.Combine(defaultStardewValleyScreenshotsDirectory, screenshotNameWithExtension);
+            string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
+
+            // create save directory if it doesn't already exist
+            if (!File.Exists(stardewValleyScreenshotsDirectory))
+            {
+                Directory.CreateDirectory(stardewValleyScreenshotsDirectory);
+            }
+
+            // delete old version of screenshot if one exists
+            if (File.Exists(destinationFile))
+            {
+                File.Delete(destinationFile);
+            }
+
+            try
+            {
+                File.Move(sourceFile, destinationFile);
+            }
+            catch (Exception ex)
+            {
+                Monitor.Log($"Error moving file '{screenshotNameWithExtension}' into {stardewValleyScreenshotsDirectory} folder. Technical details:\n{ex}", LogLevel.Error);
             }
         }
 
