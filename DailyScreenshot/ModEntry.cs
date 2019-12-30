@@ -102,16 +102,14 @@ namespace DailyScreenshot
         private void TakeScreenshot()
         {
             ConvertInGameDateToNumericFormat();
-
             string screenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}";
-            takeScreenshot.Invoke<string>(0.25f, screenshotName);
-            screenshotTakenToday = true;
-
-            MoveScreenshotToCorrectFolder(screenshotName);
 
             string mapScreenshot = Game1.game1.takeMapScreenshot(0.25f, screenshotName);
             Game1.addHUDMessage(new HUDMessage(mapScreenshot, 6));
             Game1.playSound("cameraNoise");
+
+            screenshotTakenToday = true;
+            MoveScreenshotToCorrectFolder(screenshotName);
         }
 
         /// <summary>Takes a screenshot of the entire map, activated via keypress.</summary>
@@ -237,15 +235,15 @@ namespace DailyScreenshot
             string defaultStardewValleyScreenshotsDirectory = Path.Combine(path, "StardewValley", "Screenshots");
             string stardewValleyScreenshotsDirectory = defaultStardewValleyScreenshotsDirectory;
 
-            if (Config.FolderDestinationForKeypressScreenshots != "default")
+            if (Config.FolderDestinationForDailyScreenshots != "default")
             {
-                stardewValleyScreenshotsDirectory = Config.FolderDestinationForKeypressScreenshots;
+                stardewValleyScreenshotsDirectory = Config.FolderDestinationForDailyScreenshots;
             }
 
             string screenshotNameWithExtension = screenshotName + ".png";
 
             // path for original screenshot location and new screenshot location
-            string sourceFile = Path.Combine(defaultStardewValleyScreenshotsDirectory, screenshotNameWithExtension);
+            string sourceFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
             string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
 
             // create save directory if it doesn't already exist
