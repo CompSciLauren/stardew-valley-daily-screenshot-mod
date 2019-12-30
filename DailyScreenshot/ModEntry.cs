@@ -98,8 +98,29 @@ namespace DailyScreenshot
             }
         }
 
-        /// <summary>Takes a screenshot of the entire farm.</summary>
+        /// <summary>Checks whether it is the appropriate day to take a screenshot of the entire farm.</summary>
         private void TakeScreenshot()
+        {
+            if (Config.HowOftenToTakeScreenshot["Daily"] == true)
+            {
+                ActuallyTakeScreenshot();
+            }
+            else if (Config.HowOftenToTakeScreenshot[Game1.Date.DayOfWeek + "s"] == true)
+            {
+                ActuallyTakeScreenshot();
+            }
+            else if (Config.HowOftenToTakeScreenshot["First Day of Month"] == true && Game1.Date.DayOfMonth.ToString() == "1")
+            {
+                ActuallyTakeScreenshot();
+            }
+            else if (Config.HowOftenToTakeScreenshot["Last Day of Month"] == true && Game1.Date.DayOfMonth.ToString() == "28")
+            {
+                ActuallyTakeScreenshot();
+            }
+        }
+
+        /// <summary>Takes a screenshot of the entire farm.</summary>
+        private void ActuallyTakeScreenshot()
         {
             ConvertInGameDateToNumericFormat();
             string screenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}";
