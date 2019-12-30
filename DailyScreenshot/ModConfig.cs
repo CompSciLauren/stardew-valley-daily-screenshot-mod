@@ -14,7 +14,7 @@ class ModConfig
     public ModConfig()
     {
         TimeScreenshotGetsTakenAfter = 600; // 6:00 AM
-        TakeScreenshotKey = SButton.OemPeriod; // period key on keyboard
+        TakeScreenshotKey = SButton.None;
         TakeScreenshotKeyZoomLevel = 0.25f; // zoomed out to view entire map
         FolderDestinationForDailyScreenshots = "default";
         FolderDestinationForKeypressScreenshots = "default";
