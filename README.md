@@ -43,8 +43,8 @@ Releases can be found at the following websites:
 | TimeScreenshotGetsTakenAfter     | Any integer between 600 and 2600   | 600 (screenshot gets taken anytime after 6:00 AM, upon entering your farm) |
 | TakeScreenshotKey | [List of Possible Key Bindings](https://stardewvalleywiki.com/Modding:Player_Guide/Key_Bindings) | None |
 | TakeScreenshotKeyZoomLevel     | Any number from 0 to 1   | 0.25 (full-map screenshot) |
-| FolderDestinationForDailyScreenshots | A path to a folder on your computer (if the path you specify does not exist, it will be created) | default (StardewValley/Screenshots/Your-Farm-Name-Here folder) |
-| FolderDestinationForKeypressScreenshots | A path to a folder on your computer (if the path you specify does not exist, it will be created) | default (StardewValley/Screenshots folder) |
+| FolderDestinationForDailyScreenshots | A path to a folder on your computer (if the path you specify does not exist, it will be created) Note: Needs to have two slashes in the file path. Example: C:\\\Users\\\Lauren\\\OneDrive\\\Pictures\\\Screenshots | default (located in StardewValley\Screenshots\Your-Farm-Name-Here folder) |
+| FolderDestinationForKeypressScreenshots | A path to a folder on your computer (if the path you specify does not exist, it will be created) Note: Needs to have two slashes in the file path. Example: C:\\\Users\\\Lauren\\\OneDrive\\\Pictures\\\Screenshots | default (located in StardewValley\Screenshots\Your-Farm-Name-Here folder) |
 | HowOftenToTakeScreenshot | Everything described for the rest of this table | -- |
 | Daily | true, false | true |
 | Mondays | true, false | true |
