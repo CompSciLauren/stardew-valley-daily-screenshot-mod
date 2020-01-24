@@ -32,14 +32,15 @@ namespace DailyScreenshot
         public override void Entry(IModHelper helper)
         {
             Config = Helper.ReadConfig<ModConfig>();
-            Helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
+            Helper.Events.GameLoop.GameLaunched += OnSaveLoaded;
         }
 
         /// <summary>Raised after the save file is loaded.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event data.</param>
-        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        private void OnSaveLoaded(object sender, GameLaunchedEventArgs e)
         {
+            // TODO: Check if this needs to happen on game creation as well
             saveFileCode = Game1.uniqueIDForThisGame;
             Helper.Events.Player.Warped += OnWarped;
             Helper.Events.GameLoop.DayStarted += OnDayStarted;
@@ -299,7 +300,13 @@ namespace DailyScreenshot
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
             screenshotTakenToday = false;
-            countdownInSeconds = 60;
+            countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
+            // Unregister events
+            Helper.Events.Player.Warped -= OnWarped;
+            Helper.Events.GameLoop.DayStarted -= OnDayStarted;
+            Helper.Events.GameLoop.ReturnedToTitle -= OnReturnedToTitle;
+            Helper.Events.Input.ButtonPressed -= OnButtonPressed;
+
         }
     }
 }
