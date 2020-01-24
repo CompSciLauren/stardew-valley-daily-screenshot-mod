@@ -7,12 +7,16 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace DailyScreenshot
 {
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod
     {
+        private const int MAX_ATTEMPTS_TO_MOVE = 20;
+        private const int SHARING_VIOLATION = 32;
+
         /// <summary>The mod configuration from the player.</summary>
         private ModConfig Config;
 
@@ -144,7 +148,7 @@ namespace DailyScreenshot
 
             if (Config.FolderDestinationForKeypressScreenshots != "default")
             {
-                MoveKeypressScreenshotToCorrectFolder(screenshotName);
+                MoveScreenshotToCorrectFolder(screenshotName, true);
             }
         }
 
@@ -195,7 +199,8 @@ namespace DailyScreenshot
 
         /// <summary>Moves screenshot into StardewValley/Screenshots directory, in the save file folder.</summary>
         /// <param name="screenshotName">The name of the screenshot file.</param>
-        private void MoveScreenshotToCorrectFolder(string screenshotName)
+        /// <param name="keypress">true if the user pressed the key</param>
+        private void MoveScreenshotToCorrectFolder(string screenshotName, bool keypress=false)
         {
             // special folder path
             int num11 = Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28;
@@ -205,66 +210,36 @@ namespace DailyScreenshot
             string defaultStardewValleyScreenshotsDirectory = Path.Combine(path, "StardewValley", "Screenshots");
             string stardewValleyScreenshotsDirectory = defaultStardewValleyScreenshotsDirectory;
 
-            if (Config.FolderDestinationForDailyScreenshots != "default")
-            {
-                stardewValleyScreenshotsDirectory = Config.FolderDestinationForDailyScreenshots;
-            }
-
-            // path for farm folder and screenshots
-            string saveFilePath = Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode;
-            string screenshotNameWithExtension = screenshotName + ".png";
-
             // path for original screenshot location and new screenshot location
-            string sourceFile = Path.Combine(defaultStardewValleyScreenshotsDirectory, screenshotNameWithExtension);
-            string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, saveFilePath, screenshotNameWithExtension);
-
-            // path for farm folder
-            string saveDirectoryFullPath = Path.Combine(stardewValleyScreenshotsDirectory, saveFilePath);
-
-            // create save directory if it doesn't already exist
-            if (!File.Exists(saveDirectoryFullPath))
-            {
-                Directory.CreateDirectory(saveDirectoryFullPath);
-            }
-
-            // delete old version of screenshot if one exists
-            if (File.Exists(destinationFile))
-            {
-                File.Delete(destinationFile);
-            }
-
-            try
-            {
-                File.Move(sourceFile, destinationFile);
-            }
-            catch (Exception ex)
-            {
-                Monitor.Log($"Error moving file '{screenshotNameWithExtension}' into {saveFilePath} folder. Technical details:\n{ex}", LogLevel.Error);
-            }
-        }
-
-        /// <summary>Moves keypress screenshot into StardewValley/Screenshots directory.</summary>
-        /// <param name="screenshotName">The name of the screenshot file.</param>
-        private void MoveKeypressScreenshotToCorrectFolder(string screenshotName)
-        {
-            // special folder path
-            int num11 = Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28;
-            var path = Environment.GetFolderPath((Environment.SpecialFolder)num11);
-
-            // path is combined with StardewValley and then Screenshots
-            string defaultStardewValleyScreenshotsDirectory = Path.Combine(path, "StardewValley", "Screenshots");
-            string stardewValleyScreenshotsDirectory = defaultStardewValleyScreenshotsDirectory;
-
-            if (Config.FolderDestinationForKeypressScreenshots != "default")
-            {
-                stardewValleyScreenshotsDirectory = Config.FolderDestinationForKeypressScreenshots;
-            }
-
             string screenshotNameWithExtension = screenshotName + ".png";
-
-            // path for original screenshot location and new screenshot location
             string sourceFile = Path.Combine(defaultStardewValleyScreenshotsDirectory, screenshotNameWithExtension);
-            string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
+            string destinationFile;
+
+            if(keypress)
+            {
+                if(Config.FolderDestinationForKeypressScreenshots != "default")
+                {
+                    stardewValleyScreenshotsDirectory = Config.FolderDestinationForKeypressScreenshots;
+                }
+                else
+                {
+                    stardewValleyScreenshotsDirectory = defaultStardewValleyScreenshotsDirectory;
+                }
+            }   
+            else
+            {
+                if (Config.FolderDestinationForDailyScreenshots != "default")
+                {
+                    stardewValleyScreenshotsDirectory = Path.Combine(Config.FolderDestinationForDailyScreenshots,
+                        Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode);
+                }
+                else
+                {
+                    stardewValleyScreenshotsDirectory = Path.Combine(defaultStardewValleyScreenshotsDirectory,
+                        Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode);
+                }
+            }
+            destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
 
             // create save directory if it doesn't already exist
             if (!File.Exists(stardewValleyScreenshotsDirectory))
@@ -278,13 +253,42 @@ namespace DailyScreenshot
                 File.Delete(destinationFile);
             }
 
-            try
+            int attemptCount = 0;
+            while(File.Exists(sourceFile) && attemptCount < MAX_ATTEMPTS_TO_MOVE)
             {
-                File.Move(sourceFile, destinationFile);
-            }
-            catch (Exception ex)
-            {
-                Monitor.Log($"Error moving file '{screenshotNameWithExtension}' into {stardewValleyScreenshotsDirectory} folder. Technical details:\n{ex}", LogLevel.Error);
+                try
+                {
+                    attemptCount++;
+                    using (FileStream lockFile = new FileStream(
+                        sourceFile,
+                        FileMode.Open,
+                        FileAccess.ReadWrite,
+                        FileShare.Read | FileShare.Delete
+                    ))
+                    {
+                        File.Copy(sourceFile, destinationFile);
+                        File.Delete(sourceFile);
+                    }
+                }
+                catch (IOException ex)
+                {
+                    int HResult = System.Runtime.InteropServices.Marshal.GetHRForException(ex);
+                    if (SHARING_VIOLATION == (HResult & 0xFFFF))
+                    {
+                        Monitor.Log($"File may be in use, retrying in 10 milliseconds, attempt {attemptCount} of {MAX_ATTEMPTS_TO_MOVE}", LogLevel.Info);
+                        Thread.Sleep(10);
+                    }
+                    else
+                    {
+                        Monitor.Log($"Error moving file '{screenshotNameWithExtension}' into {stardewValleyScreenshotsDirectory} folder. Technical details:\n{ex}", LogLevel.Error);
+                        attemptCount = MAX_ATTEMPTS_TO_MOVE;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Monitor.Log($"Error moving file '{screenshotNameWithExtension}' into {stardewValleyScreenshotsDirectory} folder. Technical details:\n{ex}", LogLevel.Error);
+                    attemptCount = MAX_ATTEMPTS_TO_MOVE;
+                }
             }
         }
 
