@@ -1,8 +1,6 @@
-<h1 align="center">
-    <img src="FeatureImage.png" alt="Feature Image">
-</h1>
+[!logo](FeatureImage.png)
 
-# Daily Screenshot v1.1.0
+# Daily Screenshot v1.1.1
 
 > A Stardew Valley mod that automatically takes a screenshot of your entire farm at the start of each day.
 
@@ -27,13 +25,13 @@ Releases can be found at the following websites:
 ## Installation
 
 1. [Install the latest version of SMAPI](https://smapi.io/).
-3. Download this mod and unzip it into Stardew Valley/Mods.
-4. Run the game using SMAPI.
+1. Download this mod and unzip it into Stardew Valley/Mods.
+1. Run the game using SMAPI.
 
 ## Compatibility
 
 - Works with Stardew Valley 1.4 or later on Linux/Mac/Windows.
-- Works in both singleplayer and multiplayer.
+- Works in both single player and multiplayer.
 - No known mod conflicts.
 
 ## Config
@@ -59,4 +57,5 @@ Releases can be found at the following websites:
 
 ## License
 
-[![CC0](http://mirrors.creativecommons.org/presskit/buttons/88x31/svg/cc-zero.svg)](https://creativecommons.org/publicdomain/zero/1.0/)<br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/1.0/">Creative Commons Attribution 1.0 International License</a>.
+[![CC0](http://mirrors.creativecommons.org/presskit/buttons/88x31/svg/cc-zero.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
+This work is licensed under a [Creative Commons Attribution 1.0 International License](http://creativecommons.org/licenses/by/1.0/).

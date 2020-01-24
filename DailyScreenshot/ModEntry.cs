@@ -16,6 +16,7 @@ namespace DailyScreenshot
     {
         private const int MAX_ATTEMPTS_TO_MOVE = 20;
         private const int SHARING_VIOLATION = 32;
+        private const int MAX_COUNTDOWN_IN_SECONDS = 60;
 
         /// <summary>The mod configuration from the player.</summary>
         private ModConfig Config;
@@ -23,7 +24,7 @@ namespace DailyScreenshot
         IReflectedMethod takeScreenshot = null;
         private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
-        int countdownInSeconds = 60;
+        int countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
         ulong saveFileCode;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
@@ -70,7 +71,7 @@ namespace DailyScreenshot
         {
             Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
             screenshotTakenToday = false;
-            countdownInSeconds = 60;
+            countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
 
             EnqueueAction(() => {
                 TakeScreenshot();
