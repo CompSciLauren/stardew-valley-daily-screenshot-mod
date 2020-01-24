@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Netcode;
 using StardewModdingAPI;
@@ -293,6 +293,7 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
+            Helper.Events.GameLoop.DayStarted -= OnDayStarted;
             screenshotTakenToday = false;
             countdownInSeconds = 60;
         }
