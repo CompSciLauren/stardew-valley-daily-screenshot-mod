@@ -327,8 +327,7 @@ namespace DailyScreenshot
                         {
                             File.Delete(destinationFile);
                         }
-                        File.Copy(sourceFile, destinationFile);
-                        File.Delete(sourceFile);
+                        File.Move(sourceFile, destinationFile);
                     }
                 }
                 catch (IOException ex)
