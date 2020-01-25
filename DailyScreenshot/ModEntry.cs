@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 using Netcode;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -14,38 +13,108 @@ namespace DailyScreenshot
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod
     {
-        private const int MAX_ATTEMPTS_TO_MOVE = 1000;
+#region Constants 
+        /// <summary>
+        /// Maximum attempts to move the file
+        /// </summary>
+        private const int MAX_ATTEMPTS_TO_MOVE = 10000;
+
+        /// <summary>
+        /// Sharing violation code
+        /// </summary>
         private const int SHARING_VIOLATION = 32;
+
+        /// <summary>
+        /// Tick countdown
+        /// </summary>
         private const int MAX_COUNTDOWN_IN_SECONDS = 60;
-        private const int MILLISECONDS_TIMEOUT = 50;
+
+        /// <summary>
+        /// Time to sleep between move attempts
+        /// </summary>
+        private const int MILLISECONDS_TIMEOUT = 10;
+
+#endregion
 
         /// <summary>The mod configuration from the player.</summary>
         private ModConfig Config;
 
-        IReflectedMethod takeScreenshot = null;
-        private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
+
         int countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
-        ulong saveFileCode;
+
+        public string defaultStardewValleyScreenshotsDirectory { get; private set; }
+
+        /// <summary>
+        /// Check that a directory contains no files or directories
+        /// </summary>
+        /// <param name="path">Directory to check</param>
+        /// <returns>true if the directory is empty</returns>
+        private bool DirectoryIsEmpty(string path) => Directory.GetDirectories(path).Length == 0 && Directory.GetFiles(path).Length == 0;
+#region Logging
+        /// <summary>
+        /// Sends messages to the SMAPI console
+        /// </summary>
+        /// <param name="message">text to send</param>
+        /// <param name="level">type of message</param>
+        // Private copy so there's one place to alter all log messages if needed
+#if DEBUG
+        private void LogMessageToConsole(string message, LogLevel level) => Monitor.Log(message, level);
+#else
+        private void LogMessageToConsole(string message, LogLevel level) => Monitor.VerboseLog(message, level);
+#endif
+
+
+        /// <summary>
+        /// Helper function for sending trace messages
+        /// </summary>
+        /// <param name="message">text to send</param>
+        private void MTrace(string message) => LogMessageToConsole(message, LogLevel.Trace);
+
+
+        /// <summary>
+        /// Helper function for sending trace messages
+        /// </summary>
+        /// <param name="message">text to send</param>
+        private void MDebug(string message) => LogMessageToConsole(message, LogLevel.Debug);
+
+        /// <summary>
+        /// Helper function for sending trace messages
+        /// </summary>
+        /// <param name="message">text to send</param>
+        private void MInfo(string message) => LogMessageToConsole(message, LogLevel.Info);
+
+        /// <summary>
+        /// Helper function for sending trace messages
+        /// </summary>
+        /// <param name="message">text to send</param>
+        private void MAlert(string message) => LogMessageToConsole(message, LogLevel.Alert);
+
+        /// <summary>
+        /// Helper function for sending warning messages
+        /// </summary>
+        /// <param name="message">text to send</param>
+        private void MWarn(string message) => LogMessageToConsole(message, LogLevel.Warn);
+
+        /// <summary>
+        /// Helper function for sending error messages
+        /// Always display even if verbose logging is off
+        /// </summary>
+        /// <param name="message">text to send</param>
+        private void MError(string message) => Monitor.Log(message, LogLevel.Error);
+#endregion
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             Config = Helper.ReadConfig<ModConfig>();
+            int num11 = Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28;
+            var path = Environment.GetFolderPath((Environment.SpecialFolder)num11);
+
+            // path is combined with StardewValley and then Screenshots
+            defaultStardewValleyScreenshotsDirectory = Path.Combine(path, "StardewValley", "Screenshots");
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
-            Helper.Events.GameLoop.SaveCreated += OnSaveCreated;
-            Helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
-        }
-
-        private void OnSaveCreated(object sender, SaveCreatedEventArgs e)
-        {
-            saveFileCode = Game1.uniqueIDForThisGame;
-        }
-
-        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
-        {
-            saveFileCode = Game1.uniqueIDForThisGame;
         }
 
         /// <summary>Raised after the save file is loaded.</summary>
@@ -56,9 +125,6 @@ namespace DailyScreenshot
             Helper.Events.Player.Warped += OnWarped;
             Helper.Events.GameLoop.DayStarted += OnDayStarted;
             Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
-
-            takeScreenshot = Helper.Reflection.GetMethod(Game1.game1, "takeMapScreenshot");
-
             Helper.Events.Input.ButtonPressed += OnButtonPressed;
         }
 
@@ -85,8 +151,9 @@ namespace DailyScreenshot
             screenshotTakenToday = false;
             countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
 
-            EnqueueAction(() => {
-                TakeScreenshot();
+            EnqueueAction(() =>
+            {
+                CheckScreenshotAction();
             });
         }
 
@@ -116,52 +183,76 @@ namespace DailyScreenshot
         }
 
         /// <summary>Checks whether it is the appropriate day to take a screenshot of the entire farm.</summary>
-        private void TakeScreenshot()
+        private void CheckScreenshotAction()
         {
             if (Config.HowOftenToTakeScreenshot["Daily"] == true)
             {
-                ActuallyTakeScreenshot();
+                AutoScreenshot();
             }
             else if (Config.HowOftenToTakeScreenshot[Game1.Date.DayOfWeek + "s"] == true)
             {
-                ActuallyTakeScreenshot();
+                AutoScreenshot();
             }
             else if (Config.HowOftenToTakeScreenshot["First Day of Month"] == true && Game1.Date.DayOfMonth.ToString() == "1")
             {
-                ActuallyTakeScreenshot();
+                AutoScreenshot();
             }
             else if (Config.HowOftenToTakeScreenshot["Last Day of Month"] == true && Game1.Date.DayOfMonth.ToString() == "28")
             {
-                ActuallyTakeScreenshot();
+                AutoScreenshot();
             }
         }
 
         /// <summary>Takes a screenshot of the entire farm.</summary>
-        private void ActuallyTakeScreenshot()
+        private void AutoScreenshot()
         {
-            ConvertInGameDateToNumericFormat();
-            string screenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}";
-
-            string mapScreenshot = Game1.game1.takeMapScreenshot(0.25f, screenshotName);
-            Game1.addHUDMessage(new HUDMessage(mapScreenshot, 6));
+            // path must be relative
+            string autoSSDirectory = Game1.player.farmName + "-Farm-Screenshots-" + Game1.uniqueIDForThisGame;
+            string screenshotPath = Path.Combine(autoSSDirectory, GameDateToName());
+            // yes, we're going to create the directory even if we move out of it and delete it
+            // this is for two reasons.
+            // 1. Ensures we're not stomping over another file unless it was made by this mod
+            // 2. Gives a good fallback location if the move fails for some reason
+            if (!Directory.Exists(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory)))
+            {
+                Directory.CreateDirectory(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory));
+            }
+            string mapScreenshot = Game1.game1.takeMapScreenshot(Config.TakeScreenshotZoomLevel, screenshotPath);
+            MTrace($"Snapshot saved to {mapScreenshot}");
+            Game1.addHUDMessage(new HUDMessage(Path.GetFileName(mapScreenshot), HUDMessage.screenshot_type));
             Game1.playSound("cameraNoise");
-
             screenshotTakenToday = true;
-            MoveScreenshotToCorrectFolder(screenshotName);
+            if(ModConfig.DEFAULT_FOLDER != Config.FolderDestinationForDailyScreenshots)
+            {
+                countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
+
+                EnqueueAction(() =>
+                {
+                    MoveScreenshotToCorrectFolder(mapScreenshot);
+                    if (DirectoryIsEmpty(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory)))
+                    {
+                        Directory.Delete(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory));
+                    }
+                });
+            }
         }
 
         /// <summary>Takes a screenshot of the entire map, activated via keypress.</summary>
         private void TakeScreenshotViaKeypress()
         {
-            string screenshotName = SaveGame.FilterFileName((string)(NetFieldBase<string, NetString>)Game1.player.name) + "_" + DateTime.UtcNow.Month + "-" + DateTime.UtcNow.Day.ToString() + "-" + DateTime.UtcNow.Year.ToString() + "_" + (int)DateTime.UtcNow.TimeOfDay.TotalMilliseconds;
-
-            string mapScreenshot = Game1.game1.takeMapScreenshot(Config.TakeScreenshotKeyZoomLevel, screenshotName);
+            string mapScreenshot = Game1.game1.takeMapScreenshot(Config.TakeScreenshotKeyZoomLevel);
             Game1.addHUDMessage(new HUDMessage(mapScreenshot, 6));
             Game1.playSound("cameraNoise");
+            MTrace($"Snapshot saved to {mapScreenshot}");
 
-            if (Config.FolderDestinationForKeypressScreenshots != "default")
+            if (ModConfig.DEFAULT_FOLDER != Config.FolderDestinationForKeypressScreenshots)
             {
-                MoveScreenshotToCorrectFolder(screenshotName, true);
+                countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
+
+                EnqueueAction(() =>
+                {
+                    MoveScreenshotToCorrectFolder(mapScreenshot, true);
+                });
             }
         }
 
@@ -171,103 +262,55 @@ namespace DailyScreenshot
         /// <param name="action">The action.</param>
         public void EnqueueAction(Action action)
         {
-            if (action == null) return;
+            if (null == action) return;
             _actions.Enqueue(action);
         }
 
-        /// <summary>Fixes the screenshot name to be in the proper format.</summary>
-        private void ConvertInGameDateToNumericFormat()
+        /// <summary>
+        /// Turns the current game date into a constant filename for the day
+        /// Setup so OS naturally keeps the files in order
+        /// </summary>
+        /// <returns>01-02-03 for year 1, summer, day 3</returns>
+        private string GameDateToName()
         {
-            stardewValleyYear = Game1.Date.Year.ToString();
-            stardewValleySeason = Game1.Date.Season.ToString();
-            stardewValleyDayOfMonth = Game1.Date.DayOfMonth.ToString();
-
-            // fix year and month to be in numeric format
-            if (int.Parse(stardewValleyYear) < 10)
-            {
-                stardewValleyYear = "0" + stardewValleyYear;
-            }
-            if (int.Parse(stardewValleyDayOfMonth) < 10)
-            {
-                stardewValleyDayOfMonth = "0" + stardewValleyDayOfMonth;
-            }
-
-            // fix season to be in numeric format
-            switch (Game1.Date.Season)
-            {
-                case "spring":
-                    stardewValleySeason = "01";
-                    break;
-                case "summer":
-                    stardewValleySeason = "02";
-                    break;
-                case "fall":
-                    stardewValleySeason = "03";
-                    break;
-                case "winter":
-                    stardewValleySeason = "04";
-                    break;
-            }
+            return string.Format("{0:D2}-{1:D2}-{2:D2}",Game1.Date.Year, Game1.Date.SeasonIndex+1, Game1.Date.DayOfMonth);
         }
 
         /// <summary>Moves screenshot into StardewValley/Screenshots directory, in the save file folder.</summary>
-        /// <param name="screenshotName">The name of the screenshot file.</param>
+        /// <param name="screenshotPath">The name of the screenshot file.</param>
         /// <param name="keypress">true if the user pressed the key</param>
-        private void MoveScreenshotToCorrectFolder(string screenshotName, bool keypress=false)
+        private void MoveScreenshotToCorrectFolder(string screenshotPath, bool keypress = false)
         {
             // special folder path
-            int num11 = Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28;
-            var path = Environment.GetFolderPath((Environment.SpecialFolder)num11);
-
-            // path is combined with StardewValley and then Screenshots
-            string defaultStardewValleyScreenshotsDirectory = Path.Combine(path, "StardewValley", "Screenshots");
-            string stardewValleyScreenshotsDirectory = defaultStardewValleyScreenshotsDirectory;
 
             // path for original screenshot location and new screenshot location
-            string screenshotNameWithExtension = screenshotName + ".png";
-            string sourceFile = Path.Combine(defaultStardewValleyScreenshotsDirectory, screenshotNameWithExtension);
+            string sourceFile = Path.Combine(defaultStardewValleyScreenshotsDirectory, screenshotPath);
             string destinationFile;
-
             if(keypress)
             {
-                if(Config.FolderDestinationForKeypressScreenshots != "default")
-                {
-                    stardewValleyScreenshotsDirectory = Config.FolderDestinationForKeypressScreenshots;
-                }
-                else
-                {
-                    stardewValleyScreenshotsDirectory = defaultStardewValleyScreenshotsDirectory;
-                }
-            }   
+                destinationFile = Path.Combine(Config.FolderDestinationForKeypressScreenshots, screenshotPath);
+            }
             else
             {
-                if (Config.FolderDestinationForDailyScreenshots != "default")
-                {
-                    stardewValleyScreenshotsDirectory = Path.Combine(Config.FolderDestinationForDailyScreenshots,
-                        Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode);
-                }
-                else
-                {
-                    stardewValleyScreenshotsDirectory = Path.Combine(defaultStardewValleyScreenshotsDirectory,
-                        Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode);
-                }
+                destinationFile = Path.Combine(Config.FolderDestinationForDailyScreenshots, screenshotPath);
             }
-            destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
+            MTrace($"Snapshot moving from {sourceFile} to {destinationFile}");
+
 
             // create save directory if it doesn't already exist
-            if (!File.Exists(stardewValleyScreenshotsDirectory))
+            if (!Directory.Exists(Path.GetDirectoryName(destinationFile)))
             {
-                Directory.CreateDirectory(stardewValleyScreenshotsDirectory);
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
             }
 
-            // delete old version of screenshot if one exists
-            if (File.Exists(destinationFile))
+            // wait for screenshot to finish
+            while (Game1.game1.takingMapScreenshot)
             {
-                File.Delete(destinationFile);
+                MTrace("Sleeping while takingMapScreenshot");
+                Thread.Sleep(MILLISECONDS_TIMEOUT);
             }
-
             int attemptCount = 0;
-            while(File.Exists(sourceFile) && attemptCount < MAX_ATTEMPTS_TO_MOVE)
+            while (File.Exists(sourceFile) && attemptCount < MAX_ATTEMPTS_TO_MOVE)
             {
                 try
                 {
@@ -279,6 +322,11 @@ namespace DailyScreenshot
                         FileShare.Read | FileShare.Delete
                     ))
                     {
+                        // delete old version of screenshot if one exists
+                        if (File.Exists(destinationFile))
+                        {
+                            File.Delete(destinationFile);
+                        }
                         File.Copy(sourceFile, destinationFile);
                         File.Delete(sourceFile);
                     }
@@ -288,18 +336,19 @@ namespace DailyScreenshot
                     int HResult = System.Runtime.InteropServices.Marshal.GetHRForException(ex);
                     if (SHARING_VIOLATION == (HResult & 0xFFFF))
                     {
-                        Monitor.Log($"File may be in use, retrying in {MILLISECONDS_TIMEOUT} milliseconds, attempt {attemptCount} of {MAX_ATTEMPTS_TO_MOVE}", LogLevel.Info);
+                        // Hiding the warning as it isn't useful to other mod devs
+                        //MWarn($"File may be in use, retrying in {MILLISECONDS_TIMEOUT} milliseconds, attempt {attemptCount} of {MAX_ATTEMPTS_TO_MOVE}");
                         Thread.Sleep(MILLISECONDS_TIMEOUT);
                     }
                     else
                     {
-                        Monitor.Log($"Error moving file '{screenshotNameWithExtension}' into {stardewValleyScreenshotsDirectory} folder. Technical details:\n{ex}", LogLevel.Error);
+                        MError($"Error moving file '{screenshotPath}' to {destinationFile}. Technical details:\n{ex}");
                         attemptCount = MAX_ATTEMPTS_TO_MOVE;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Monitor.Log($"Error moving file '{screenshotNameWithExtension}' into {stardewValleyScreenshotsDirectory} folder. Technical details:\n{ex}", LogLevel.Error);
+                    MError($"Error moving file '{screenshotPath}' to {destinationFile} folder. Technical details:\n{ex}");
                     attemptCount = MAX_ATTEMPTS_TO_MOVE;
                 }
             }

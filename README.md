@@ -17,7 +17,7 @@ Releases can be found at the following websites:
 - Choose what time the screenshot gets taken.
 - Choose how often a screenshot gets taken.
 - Stores screenshots in the StardewValley/Screenshots folder, with each save file getting its own "FarmName-Screenshots" folder, so you can easily access the screenshots in-game under the "Options" tab in the menu and screenshots from multiple save files will not get mixed up. The file path to the screenshots folder is C:\Users\USERNAME\AppData\Roaming\StardewValley\Screenshots
-- Makes it super easy to gather screenshots to create a GIF that shows how your farm changes over time! There are many GIF makers that can be found online, such as [ezgif GIF maker](https://ezgif.com/maker).
+- Makes it super easy to gather screenshots to create a GIF that shows how your farm changes over time! There are many GIF makers that can be found online, such as [ezgif GIF maker](https://ezgif.com/maker).  Here is an [example](example.gif).
 - Keeps the screenshots in the correct order to make creating the GIF easier. This is achieved by naming each screenshot with a "year-season-day.png" numerical format. For example, on Year 1, Spring, Day 3, the screenshot would be named "01-01-03.png".
 - Can enable a keyboard shortcut for taking screenshots (set to "None" by default, so you need to specify a key on your keyboard in the Config file for this to work)
 - Custom configuration options! See below.
