@@ -14,9 +14,10 @@ namespace DailyScreenshot
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod
     {
-        private const int MAX_ATTEMPTS_TO_MOVE = 20;
+        private const int MAX_ATTEMPTS_TO_MOVE = 1000;
         private const int SHARING_VIOLATION = 32;
         private const int MAX_COUNTDOWN_IN_SECONDS = 60;
+        private const int MillisecondsTimeout = 50;
 
         /// <summary>The mod configuration from the player.</summary>
         private ModConfig Config;
@@ -32,16 +33,26 @@ namespace DailyScreenshot
         public override void Entry(IModHelper helper)
         {
             Config = Helper.ReadConfig<ModConfig>();
-            Helper.Events.GameLoop.GameLaunched += OnSaveLoaded;
+            Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+            Helper.Events.GameLoop.SaveCreated += OnSaveCreated;
+            Helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
+        }
+
+        private void OnSaveCreated(object sender, SaveCreatedEventArgs e)
+        {
+            saveFileCode = Game1.uniqueIDForThisGame;
+        }
+
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        {
+            saveFileCode = Game1.uniqueIDForThisGame;
         }
 
         /// <summary>Raised after the save file is loaded.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event data.</param>
-        private void OnSaveLoaded(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            // TODO: Check if this needs to happen on game creation as well
-            saveFileCode = Game1.uniqueIDForThisGame;
             Helper.Events.Player.Warped += OnWarped;
             Helper.Events.GameLoop.DayStarted += OnDayStarted;
             Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
@@ -278,7 +289,7 @@ namespace DailyScreenshot
                     if (SHARING_VIOLATION == (HResult & 0xFFFF))
                     {
                         Monitor.Log($"File may be in use, retrying in 10 milliseconds, attempt {attemptCount} of {MAX_ATTEMPTS_TO_MOVE}", LogLevel.Info);
-                        Thread.Sleep(10);
+                        Thread.Sleep(MillisecondsTimeout);
                     }
                     else
                     {
@@ -301,12 +312,6 @@ namespace DailyScreenshot
         {
             screenshotTakenToday = false;
             countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
-            // Unregister events
-            Helper.Events.Player.Warped -= OnWarped;
-            Helper.Events.GameLoop.DayStarted -= OnDayStarted;
-            Helper.Events.GameLoop.ReturnedToTitle -= OnReturnedToTitle;
-            Helper.Events.Input.ButtonPressed -= OnButtonPressed;
-
         }
     }
 }
