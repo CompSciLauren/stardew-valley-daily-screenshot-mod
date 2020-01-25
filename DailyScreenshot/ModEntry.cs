@@ -27,7 +27,7 @@ namespace DailyScreenshot
         /// <summary>
         /// Tick countdown
         /// </summary>
-        private const int MAX_COUNTDOWN_IN_SECONDS = 60;
+        private const int MAX_COUNTDOWN_IN_TICKS = 60;
 
         /// <summary>
         /// Time to sleep between move attempts
@@ -41,7 +41,7 @@ namespace DailyScreenshot
 
         private bool screenshotTakenToday = false;
 
-        int countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
+        int countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
 
         public string defaultStardewValleyScreenshotsDirectory { get; private set; }
 
@@ -149,7 +149,7 @@ namespace DailyScreenshot
         {
             Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
             screenshotTakenToday = false;
-            countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
+            countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
 
             EnqueueAction(() =>
             {
@@ -173,9 +173,9 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            countdownInSeconds--;
+            countdownInTicks--;
 
-            if (countdownInSeconds == 0)
+            if (countdownInTicks == 0)
             {
                 while (_actions.Count > 0)
                     _actions.Dequeue().Invoke();
@@ -224,16 +224,11 @@ namespace DailyScreenshot
             screenshotTakenToday = true;
             if(ModConfig.DEFAULT_FOLDER != Config.FolderDestinationForDailyScreenshots)
             {
-                countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
-
-                EnqueueAction(() =>
+                MoveScreenshotToCorrectFolder(mapScreenshot);
+                if (DirectoryIsEmpty(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory)))
                 {
-                    MoveScreenshotToCorrectFolder(mapScreenshot);
-                    if (DirectoryIsEmpty(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory)))
-                    {
-                        Directory.Delete(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory));
-                    }
-                });
+                    Directory.Delete(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory));
+                }
             }
         }
 
@@ -247,12 +242,7 @@ namespace DailyScreenshot
 
             if (ModConfig.DEFAULT_FOLDER != Config.FolderDestinationForKeypressScreenshots)
             {
-                countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
-
-                EnqueueAction(() =>
-                {
-                    MoveScreenshotToCorrectFolder(mapScreenshot, true);
-                });
+                MoveScreenshotToCorrectFolder(mapScreenshot, true);
             }
         }
 
@@ -359,7 +349,7 @@ namespace DailyScreenshot
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
             screenshotTakenToday = false;
-            countdownInSeconds = MAX_COUNTDOWN_IN_SECONDS;
+            countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
         }
     }
 }
