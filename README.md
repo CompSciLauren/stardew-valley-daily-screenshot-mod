@@ -1,4 +1,4 @@
-[!logo](FeatureImage.png)
+![logo](FeatureImage.png)
 
 # Daily Screenshot v1.1.1
 
