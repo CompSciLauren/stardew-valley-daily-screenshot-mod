@@ -17,7 +17,7 @@ namespace DailyScreenshot
         private const int MAX_ATTEMPTS_TO_MOVE = 1000;
         private const int SHARING_VIOLATION = 32;
         private const int MAX_COUNTDOWN_IN_SECONDS = 60;
-        private const int MillisecondsTimeout = 50;
+        private const int MILLISECONDS_TIMEOUT = 50;
 
         /// <summary>The mod configuration from the player.</summary>
         private ModConfig Config;
@@ -288,8 +288,8 @@ namespace DailyScreenshot
                     int HResult = System.Runtime.InteropServices.Marshal.GetHRForException(ex);
                     if (SHARING_VIOLATION == (HResult & 0xFFFF))
                     {
-                        Monitor.Log($"File may be in use, retrying in 10 milliseconds, attempt {attemptCount} of {MAX_ATTEMPTS_TO_MOVE}", LogLevel.Info);
-                        Thread.Sleep(MillisecondsTimeout);
+                        Monitor.Log($"File may be in use, retrying in {MILLISECONDS_TIMEOUT} milliseconds, attempt {attemptCount} of {MAX_ATTEMPTS_TO_MOVE}", LogLevel.Info);
+                        Thread.Sleep(MILLISECONDS_TIMEOUT);
                     }
                     else
                     {
