@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using Netcode;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -227,7 +226,7 @@ namespace DailyScreenshot
             Game1.addHUDMessage(new HUDMessage(Path.GetFileName(mapScreenshot), HUDMessage.screenshot_type));
             Game1.playSound("cameraNoise");
             screenshotTakenToday = true;
-            if(ModConfig.DEFAULT_FOLDER != Config.FolderDestinationForDailyScreenshots)
+            if(ModConfig.DEFAULT_STRING != Config.FolderDestinationForDailyScreenshots)
             {
                 MoveScreenshotToCorrectFolder(mapScreenshot);
                 if (DirectoryIsEmpty(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory)))
@@ -245,7 +244,7 @@ namespace DailyScreenshot
             Game1.playSound("cameraNoise");
             MTrace($"Snapshot saved to {mapScreenshot}");
 
-            if (ModConfig.DEFAULT_FOLDER != Config.FolderDestinationForKeypressScreenshots)
+            if (ModConfig.DEFAULT_STRING != Config.FolderDestinationForKeypressScreenshots)
             {
                 MoveScreenshotToCorrectFolder(mapScreenshot, true);
             }

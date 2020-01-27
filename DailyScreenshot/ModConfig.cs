@@ -1,42 +1,50 @@
 ﻿using StardewModdingAPI;
 using System.Collections.Generic;
 
-class ModConfig
+namespace DailyScreenshot
 {
-    public static string DEFAULT_FOLDER = "default";
-    private const float DEFAULT_ZOOM = 0.25f;
-
-    public int TimeScreenshotGetsTakenAfter { get; set; }
-    public float TakeScreenshotZoomLevel { get; set; }
-    public SButton TakeScreenshotKey { get; set; }
-    public float TakeScreenshotKeyZoomLevel { get; set; }
-    public string FolderDestinationForDailyScreenshots { get; set; }
-    public string FolderDestinationForKeypressScreenshots { get; set; }
-    public Dictionary<string, bool> HowOftenToTakeScreenshot { get; set; }
-    public bool TakeScreenshotOnRainyDays { get; set; }
-
-    public ModConfig()
+    class ModConfig
     {
-        TimeScreenshotGetsTakenAfter = 600; // 6:00 AM
-        TakeScreenshotZoomLevel = DEFAULT_ZOOM; // zoomed out to view entire map
-        TakeScreenshotKey = SButton.None;
-        TakeScreenshotKeyZoomLevel = DEFAULT_ZOOM; // zoomed out to view entire map
-        FolderDestinationForDailyScreenshots = DEFAULT_FOLDER;
-        FolderDestinationForKeypressScreenshots = DEFAULT_FOLDER;
-        TakeScreenshotOnRainyDays = true;
+        public static string DEFAULT_STRING = "default";
+        public const float DEFAULT_ZOOM = 0.25f;
 
-        HowOftenToTakeScreenshot = new Dictionary<string, bool>
+        public List<ModRule> SnapshotRules {get; set;} = new List<ModRule>();
+        public int TimeScreenshotGetsTakenAfter { get; set; }
+        public float TakeScreenshotZoomLevel { get; set; }
+        public SButton TakeScreenshotKey { get; set; }
+        public float TakeScreenshotKeyZoomLevel { get; set; }
+        public string FolderDestinationForDailyScreenshots { get; set; }
+        public string FolderDestinationForKeypressScreenshots { get; set; }
+        public Dictionary<string, bool> HowOftenToTakeScreenshot { get; set; }
+        public bool TakeScreenshotOnRainyDays { get; set; }
+
+        public ModConfig()
         {
-            {"Daily", true},
-            {"Mondays", true},
-            {"Tuesdays", true},
-            {"Wednesdays", true},
-            {"Thursdays", true},
-            {"Fridays", true},
-            {"Saturdays", true},
-            {"Sundays", true},
-            {"First Day of Month", true},
-            {"Last Day of Month", true}
-        };
+            TimeScreenshotGetsTakenAfter = 600; // 6:00 AM
+            TakeScreenshotZoomLevel = DEFAULT_ZOOM; // zoomed out to view entire map
+            TakeScreenshotKey = SButton.None;
+            TakeScreenshotKeyZoomLevel = DEFAULT_ZOOM; // zoomed out to view entire map
+            FolderDestinationForDailyScreenshots = DEFAULT_STRING;
+            FolderDestinationForKeypressScreenshots = DEFAULT_STRING;
+            TakeScreenshotOnRainyDays = true;
+
+            HowOftenToTakeScreenshot = new Dictionary<string, bool>
+            {
+                {"Daily", true},
+                {"Mondays", true},
+                {"Tuesdays", true},
+                {"Wednesdays", true},
+                {"Thursdays", true},
+                {"Fridays", true},
+                {"Saturdays", true},
+                {"Sundays", true},
+                {"First Day of Month", true},
+                {"Last Day of Month", true}
+            };
+            ModRule rule1 = new ModRule();
+            rule1.Triggers.Type = ModTriggers.TriggerType.Time;
+            SnapshotRules.Add(rule1);
+
+        }
     }
 }
