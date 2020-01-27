@@ -185,6 +185,11 @@ namespace DailyScreenshot
         /// <summary>Checks whether it is the appropriate day to take a screenshot of the entire farm.</summary>
         private void CheckScreenshotAction()
         {
+            if (Config.TakeScreenshotOnRainyDays == false && (Game1.isRaining == true || Game1.isLightning == true))
+            {
+                return;
+            }
+
             if (Config.HowOftenToTakeScreenshot["Daily"] == true)
             {
                 AutoScreenshot();

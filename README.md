@@ -1,6 +1,6 @@
 ![logo](FeatureImage.png)
 
-# Daily Screenshot v1.1.1
+# Daily Screenshot v1.2.0
 
 > A Stardew Valley mod that automatically takes a screenshot of your entire farm at the start of each day.
 
@@ -43,6 +43,7 @@ Releases can be found at the following websites:
 | TakeScreenshotKeyZoomLevel     | Any number from 0 to 1   | 0.25 (full-map screenshot) |
 | FolderDestinationForDailyScreenshots | A path to a folder on your computer (if the path you specify does not exist, it will be created) Note: Needs to have two slashes in the file path. Example: C:\\\Users\\\Lauren\\\OneDrive\\\Pictures\\\Screenshots | default (located in StardewValley\Screenshots\Your-Farm-Name-Here folder) |
 | FolderDestinationForKeypressScreenshots | A path to a folder on your computer (if the path you specify does not exist, it will be created) Note: Needs to have two slashes in the file path. Example: C:\\\Users\\\Lauren\\\OneDrive\\\Pictures\\\Screenshots | default (located in StardewValley\Screenshots\Your-Farm-Name-Here folder) |
+| TakeScreenshotOnRainyDays | true, false | true |
 | HowOftenToTakeScreenshot | Everything described for the rest of this table | -- |
 | Daily | true, false | true |
 | Mondays | true, false | true |
