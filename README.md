@@ -1,8 +1,6 @@
-<h1 align="center">
-    <img src="FeatureImage.png" alt="Feature Image">
-</h1>
+![logo](FeatureImage.png)
 
-# Daily Screenshot v1.1.0
+# Daily Screenshot v1.1.1
 
 > A Stardew Valley mod that automatically takes a screenshot of your entire farm at the start of each day.
 
@@ -19,21 +17,21 @@ Releases can be found at the following websites:
 - Choose what time the screenshot gets taken.
 - Choose how often a screenshot gets taken.
 - Stores screenshots in the StardewValley/Screenshots folder, with each save file getting its own "FarmName-Screenshots" folder, so you can easily access the screenshots in-game under the "Options" tab in the menu and screenshots from multiple save files will not get mixed up. The file path to the screenshots folder is C:\Users\USERNAME\AppData\Roaming\StardewValley\Screenshots
-- Makes it super easy to gather screenshots to create a GIF that shows how your farm changes over time! There are many GIF makers that can be found online, such as [ezgif GIF maker](https://ezgif.com/maker).
-- Keeps the screenshots in the correct order to make creating the GIF easier. This is achieved by naming each screenshot with a "year-season-day.png" numerical format. For example, on Year 1, Spring, Day 3, the screenshot would be named "01-01-03.png". 
+- Makes it super easy to gather screenshots to create a GIF that shows how your farm changes over time! There are many GIF makers that can be found online, such as [ezgif GIF maker](https://ezgif.com/maker).  Here is an [example](example.gif).
+- Keeps the screenshots in the correct order to make creating the GIF easier. This is achieved by naming each screenshot with a "year-season-day.png" numerical format. For example, on Year 1, Spring, Day 3, the screenshot would be named "01-01-03.png".
 - Can enable a keyboard shortcut for taking screenshots (set to "None" by default, so you need to specify a key on your keyboard in the Config file for this to work)
 - Custom configuration options! See below.
 
 ## Installation
 
 1. [Install the latest version of SMAPI](https://smapi.io/).
-3. Download this mod and unzip it into Stardew Valley/Mods.
-4. Run the game using SMAPI.
+1. Download this mod and unzip it into Stardew Valley/Mods.
+1. Run the game using SMAPI.
 
 ## Compatibility
 
 - Works with Stardew Valley 1.4 or later on Linux/Mac/Windows.
-- Works in both singleplayer and multiplayer.
+- Works in both single player and multiplayer.
 - No known mod conflicts.
 
 ## Config
@@ -59,4 +57,5 @@ Releases can be found at the following websites:
 
 ## License
 
-[![CC0](http://mirrors.creativecommons.org/presskit/buttons/88x31/svg/cc-zero.svg)](https://creativecommons.org/publicdomain/zero/1.0/)<br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/1.0/">Creative Commons Attribution 1.0 International License</a>.
+[![CC0](http://mirrors.creativecommons.org/presskit/buttons/88x31/svg/cc-zero.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
+This work is licensed under a [Creative Commons Attribution 1.0 International License](http://creativecommons.org/licenses/by/1.0/).
