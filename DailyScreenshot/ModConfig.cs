@@ -13,6 +13,7 @@ class ModConfig
     public string FolderDestinationForDailyScreenshots { get; set; }
     public string FolderDestinationForKeypressScreenshots { get; set; }
     public Dictionary<string, bool> HowOftenToTakeScreenshot { get; set; }
+    public bool TakeScreenshotOnRainyDays { get; set; }
 
     public ModConfig()
     {
@@ -22,6 +23,7 @@ class ModConfig
         TakeScreenshotKeyZoomLevel = DEFAULT_ZOOM; // zoomed out to view entire map
         FolderDestinationForDailyScreenshots = DEFAULT_FOLDER;
         FolderDestinationForKeypressScreenshots = DEFAULT_FOLDER;
+        TakeScreenshotOnRainyDays = true;
 
         HowOftenToTakeScreenshot = new Dictionary<string, bool>
         {
