@@ -46,7 +46,7 @@
     <Compile Include="ModConfig.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="ModRule.cs" />
-    <Compile Include="ModTriggers.cs" />
+    <Compile Include="ModTrigger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

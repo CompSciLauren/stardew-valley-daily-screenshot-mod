@@ -41,10 +41,16 @@ namespace DailyScreenshot
                 {"First Day of Month", true},
                 {"Last Day of Month", true}
             };
-            ModRule rule1 = new ModRule();
-            rule1.Triggers.Type = ModTriggers.TriggerType.Time;
-            SnapshotRules.Add(rule1);
-
+            SnapshotRules.Add(new ModRule());
+            int cnt = 0;
+            foreach (ModRule rule in SnapshotRules)
+            {
+                if (rule.Name == null)
+                {
+                    cnt++;
+                    rule.Name = string.Format("Unnamed rule {}", cnt);
+                }
+            }
         }
     }
 }

@@ -132,12 +132,9 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (e.Button.TryGetKeyboard(out Keys _))
+            if (e.Button.TryGetKeyboard(out Keys k))
             {
-                if (e.Button == Config.TakeScreenshotKey)
-                {
-                    TakeScreenshotViaKeypress();
-                }
+                RunTriggers(k);
             }
         }
 
@@ -152,8 +149,19 @@ namespace DailyScreenshot
 
             EnqueueAction(() =>
             {
-                CheckScreenshotAction();
+                RunTriggers();
             });
+        }
+
+        private void RunTriggers(Keys key = Keys.None)
+        {
+            foreach (ModRule rule in Config.SnapshotRules)
+            {
+                if(rule.Trigger.CheckTrigger(key))
+                {
+                    TakeScreenshot(rule);
+                }
+            }
         }
 
         /// <summary>Raised after the player enters a new location.</summary>
@@ -205,6 +213,11 @@ namespace DailyScreenshot
             {
                 AutoScreenshot();
             }
+        }
+
+        private void TakeScreenshot(ModRule rule)
+        {
+            
         }
 
         /// <summary>Takes a screenshot of the entire farm.</summary>
@@ -329,7 +342,7 @@ namespace DailyScreenshot
                     int HResult = System.Runtime.InteropServices.Marshal.GetHRForException(ex);
                     if (SHARING_VIOLATION == (HResult & 0xFFFF))
                     {
-                        // Hiding the warning as it isn't useful to other mod devs
+                        // Hiding the warning as it isn't useful to other mod developers
                         //MWarn($"File may be in use, retrying in {MILLISECONDS_TIMEOUT} milliseconds, attempt {attemptCount} of {MAX_ATTEMPTS_TO_MOVE}");
                         Thread.Sleep(MILLISECONDS_TIMEOUT);
                     }

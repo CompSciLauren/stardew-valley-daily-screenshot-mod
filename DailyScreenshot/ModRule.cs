@@ -41,7 +41,7 @@ namespace DailyScreenshot
         /// Triggers for this screenshot
         /// </summary>
         /// <value></value>
-        public ModTriggers Triggers { get; set; } = new ModTriggers();
+        public ModTrigger Trigger { get; set; } = new ModTrigger();
     }
 
 }
