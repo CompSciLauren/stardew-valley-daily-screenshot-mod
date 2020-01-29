@@ -42,6 +42,10 @@ namespace DailyScreenshot
                 {"Last Day of Month", true}
             };
             SnapshotRules.Add(new ModRule());
+        }
+
+        public void NameRules()
+        {
             int cnt = 0;
             foreach (ModRule rule in SnapshotRules)
             {
