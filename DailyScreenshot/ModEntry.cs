@@ -153,7 +153,7 @@ namespace DailyScreenshot
         {
             if (e.Button.TryGetKeyboard(out Keys k))
             {
-                RunTriggers(k);
+                RunTriggers(e.Button);
             }
         }
 
@@ -171,7 +171,7 @@ namespace DailyScreenshot
             RunTriggers();
         }
 
-        private void RunTriggers(Keys key = Keys.None)
+        private void RunTriggers(SButton key = SButton.None)
         {
             foreach (ModRule rule in Config.SnapshotRules)
             {

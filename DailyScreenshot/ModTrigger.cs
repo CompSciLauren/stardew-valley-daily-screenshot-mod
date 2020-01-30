@@ -1,5 +1,5 @@
 using System;
-using Microsoft.Xna.Framework.Input;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace DailyScreenshot
@@ -189,12 +189,12 @@ namespace DailyScreenshot
         /// Note: Enum value, no need to validate
         /// </summary>
         /// <value>User specified key for a screenshot</value>
-        public Keys Key { get; set; } = Keys.None;
+        public SButton Key { get; set; } = SButton.None;
         #endregion
 
-        public int StartTime { get; set; } = 600;
+        public int StartTime { get; set; } = ModConfig.DEFAULT_START_TIME;
 
-        public int EndTime { get; set; } = 2600;
+        public int EndTime { get; set; } = ModConfig.DEFAULT_END_TIME;
 
         /// <summary>
         /// Resets the triggered flag, should be called at the start of the day
@@ -209,7 +209,7 @@ namespace DailyScreenshot
         /// </summary>
         /// <param name="key">Optional, used for keypress</param>
         /// <returns></returns>
-        public bool CheckTrigger(Keys key = Keys.None)
+        public bool CheckTrigger(SButton key = SButton.None)
         {
             if (m_triggered)
                 return false;
@@ -239,8 +239,8 @@ namespace DailyScreenshot
             if (Key != key)
                 return false;
             
-            // Remember we've already taken out screenshot for the day
-            if (Keys.None != key)
+            // If it is button based, allow another screenshot after this one for this day
+            if (SButton.None != key)
                 m_triggered = true;
             
             return true;

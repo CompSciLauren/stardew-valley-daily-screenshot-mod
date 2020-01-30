@@ -13,42 +13,25 @@ namespace DailyScreenshot
         private string m_launchGuid;
         public static string DEFAULT_STRING = "default";
         public const float DEFAULT_ZOOM = 0.25f;
+        public const int DEFAULT_START_TIME = 600;
+        public const int DEFAULT_END_TIME = 2600;
         public List<ModRule> SnapshotRules { get; set; } = new List<ModRule>();
 
         // Place to put json that doesn't match properties here
         // This can be used to upgrade the config file
-        // See: https://www.newtonsoft.com/json/help/html/SerializationAttributes.htm
+        // See: https://www.newtonsoft.com/json/help/html/SerializationAttributes.htm#JsonExtensionDataAttribute
         [JsonExtensionData]
-        [JsonIgnore]
         private IDictionary<string, JToken> _additionalData = null;
 
         [JsonIgnore]
         internal bool RulesModified { get; set; } = false;
 
 #if false
-        [JsonIgnore]
-        public int TimeScreenshotGetsTakenAfter { get; set; }
-
-        [JsonIgnore]
-        public float TakeScreenshotZoomLevel { get; set; }
-
-        [JsonIgnore]
         public SButton TakeScreenshotKey { get; set; }
 
-        [JsonIgnore]
         public float TakeScreenshotKeyZoomLevel { get; set; }
 
-        [JsonIgnore]
-        public string FolderDestinationForDailyScreenshots { get; set; }
-
-        [JsonIgnore]
         public string FolderDestinationForKeypressScreenshots { get; set; }
-
-        [JsonIgnore]
-        public Dictionary<string, bool> HowOftenToTakeScreenshot { get; set; }
-
-        [JsonIgnore]
-        public bool TakeScreenshotOnRainyDays { get; set; }
 #endif
 
         public ModConfig()
@@ -56,6 +39,15 @@ namespace DailyScreenshot
             m_launchGuid = Guid.NewGuid().ToString();
             SnapshotRules.Add(new ModRule());
             SnapshotRules[0].Name = m_launchGuid;
+        }
+
+        private T GetOldData<T>(IDictionary<string, JToken> oldDatDict, string key, T defaultValue)
+        {
+            if(oldDatDict.TryGetValue(key, out JToken value))
+            {
+                return value.ToObject<T>();
+            }
+            return default;
         }
 
         /// <summary>
@@ -83,8 +75,9 @@ namespace DailyScreenshot
                         SnapshotRules.Add(autoRule);
                     }
                     ModTrigger autoTrigger = autoRule.Trigger;
+                    autoRule.FileName = ModRule.FileNameFlags.Default;
                     autoTrigger.Location = ModTrigger.LocationFlags.Farm;
-                    autoTrigger.EndTime = 2600;
+                    autoTrigger.EndTime = DEFAULT_END_TIME;
                     if (_additionalData.TryGetValue("TakeScreenshotOnRainyDays", out JToken rainyDays))
                     {
                         if (!(bool)rainyDays)
@@ -111,12 +104,29 @@ namespace DailyScreenshot
                                 ModEntry.DailySS.MWarn($"Unknown key: \"{key}\"");
                         }
                     }
-                    // TODO: TryGet all these values and return default value if not found
-                    autoRule.Directory = (string)_additionalData["FolderDestinationForDailyScreenshots"];
-                    autoRule.FileName = ModRule.FileNameFlags.Default;
-                    autoRule.ZoomLevel = (float)_additionalData["TakeScreenshotZoomLevel"];
-                    autoTrigger.StartTime = (int)_additionalData["TimeScreenshotGetsTakenAfter"];
+
+                    autoRule.Directory = GetOldData<string>(_additionalData,
+                        "FolderDestinationForDailyScreenshots", DEFAULT_STRING);
+                    autoRule.ZoomLevel = GetOldData < float>(_additionalData,
+                        "TakeScreenshotZoomLevel",DEFAULT_ZOOM);
+                    autoTrigger.StartTime = GetOldData < int>(_additionalData,
+                        "TimeScreenshotGetsTakenAfter", DEFAULT_START_TIME);
                     RulesModified = true;
+                    SButton button = GetOldData<SButton>(_additionalData,
+                        "TakeScreenshotKey", SButton.None);
+                    if(button != SButton.None)
+                    {
+                        ModRule keyRule = new ModRule();
+                        keyRule.Trigger.Key = button;
+                        keyRule.Trigger.Location = ModTrigger.LocationFlags.Any;
+                        keyRule.ZoomLevel = GetOldData<float>(_additionalData,
+                            "TakeScreenshotKeyZoomLevel", DEFAULT_ZOOM);
+                        keyRule.Directory = GetOldData<string>(_additionalData,
+                            "FolderDestinationForKeypressScreenshots", DEFAULT_STRING);
+                        keyRule.FileName = ModRule.FileNameFlags.None;
+                        SnapshotRules.Add(keyRule);
+                    }
+
                 }
             }
             catch (Exception ex)
