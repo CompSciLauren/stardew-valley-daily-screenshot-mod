@@ -12,6 +12,7 @@ namespace DailyScreenshot
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod
     {
+        internal static ModEntry DailySS = null;
 #region Constants 
         /// <summary>
         /// Maximum attempts to move the file
@@ -50,6 +51,7 @@ namespace DailyScreenshot
         /// <param name="path">Directory to check</param>
         /// <returns>true if the directory is empty</returns>
         private bool DirectoryIsEmpty(string path) => Directory.GetDirectories(path).Length == 0 && Directory.GetFiles(path).Length == 0;
+
 #region Logging
         /// <summary>
         /// Sends messages to the SMAPI console
@@ -58,9 +60,9 @@ namespace DailyScreenshot
         /// <param name="level">type of message</param>
         // Private copy so there's one place to alter all log messages if needed
 #if DEBUG
-        private void LogMessageToConsole(string message, LogLevel level) => Monitor.Log(message, level);
+        internal void LogMessageToConsole(string message, LogLevel level) => Monitor.Log(message, level);
 #else
-        private void LogMessageToConsole(string message, LogLevel level) => Monitor.VerboseLog(message, level);
+        internal void LogMessageToConsole(string message, LogLevel level) => Monitor.VerboseLog(message, level);
 #endif
 
 
@@ -68,46 +70,59 @@ namespace DailyScreenshot
         /// Helper function for sending trace messages
         /// </summary>
         /// <param name="message">text to send</param>
-        private void MTrace(string message) => LogMessageToConsole(message, LogLevel.Trace);
+        internal void MTrace(string message) => LogMessageToConsole(message, LogLevel.Trace);
 
 
         /// <summary>
         /// Helper function for sending trace messages
         /// </summary>
         /// <param name="message">text to send</param>
-        private void MDebug(string message) => LogMessageToConsole(message, LogLevel.Debug);
+        internal void MDebug(string message) => LogMessageToConsole(message, LogLevel.Debug);
 
         /// <summary>
         /// Helper function for sending trace messages
         /// </summary>
         /// <param name="message">text to send</param>
-        private void MInfo(string message) => LogMessageToConsole(message, LogLevel.Info);
+        internal void MInfo(string message) => LogMessageToConsole(message, LogLevel.Info);
 
         /// <summary>
         /// Helper function for sending trace messages
         /// </summary>
         /// <param name="message">text to send</param>
-        private void MAlert(string message) => LogMessageToConsole(message, LogLevel.Alert);
+        internal void MAlert(string message) => LogMessageToConsole(message, LogLevel.Alert);
 
         /// <summary>
         /// Helper function for sending warning messages
         /// </summary>
         /// <param name="message">text to send</param>
-        private void MWarn(string message) => LogMessageToConsole(message, LogLevel.Warn);
+        internal void MWarn(string message) => LogMessageToConsole(message, LogLevel.Warn);
 
         /// <summary>
         /// Helper function for sending error messages
         /// Always display even if verbose logging is off
         /// </summary>
         /// <param name="message">text to send</param>
-        private void MError(string message) => Monitor.Log(message, LogLevel.Error);
+        internal void MError(string message) => Monitor.Log(message, LogLevel.Error);
 #endregion
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            if(DailySS != null)
+            {
+                string message = "Entry called twice - breaking singelton";
+                MError(message);
+                throw new Exception(message);
+            }
+            DailySS = this;
             Config = Helper.ReadConfig<ModConfig>();
+            //Config.ValidateUserInput();
+            Config.NameRules();
+            // Fixed something up, write new rules
+            if(Config.RulesModified)
+                Helper.WriteConfig<ModConfig>(Config);
+
             int num11 = Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28;
             var path = Environment.GetFolderPath((Environment.SpecialFolder)num11);
 
@@ -122,9 +137,15 @@ namespace DailyScreenshot
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             Helper.Events.Player.Warped += OnWarped;
+            Helper.Events.GameLoop.TimeChanged += OnTimeChanged;
             Helper.Events.GameLoop.DayStarted += OnDayStarted;
             Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
             Helper.Events.Input.ButtonPressed += OnButtonPressed;
+        }
+
+        private void OnTimeChanged(object sender, TimeChangedEventArgs e)
+        {
+            RunTriggers();
         }
 
         /// <summary>Raised after a button is pressed.</summary>
@@ -146,11 +167,11 @@ namespace DailyScreenshot
             Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
             screenshotTakenToday = false;
             countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
-
-            EnqueueAction(() =>
+            foreach (ModRule rule in Config.SnapshotRules)
             {
-                RunTriggers();
-            });
+                rule.Trigger.ResetTrigger();
+            }
+            RunTriggers();
         }
 
         private void RunTriggers(Keys key = Keys.None)
@@ -169,10 +190,7 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnWarped(object sender, WarpedEventArgs e)
         {
-            if (e.NewLocation is Farm && !screenshotTakenToday && Game1.timeOfDay >= Config.TimeScreenshotGetsTakenAfter)
-            {
-                Helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
-            }
+            RunTriggers();
         }
 
         /// <summary>Raised after game state is updated.</summary>
@@ -189,78 +207,15 @@ namespace DailyScreenshot
             }
         }
 
-        /// <summary>Checks whether it is the appropriate day to take a screenshot of the entire farm.</summary>
-        private void CheckScreenshotAction()
-        {
-            if (Config.TakeScreenshotOnRainyDays == false && (Game1.isRaining == true || Game1.isLightning == true))
-            {
-                return;
-            }
-
-            if (Config.HowOftenToTakeScreenshot["Daily"] == true)
-            {
-                AutoScreenshot();
-            }
-            else if (Config.HowOftenToTakeScreenshot[Game1.Date.DayOfWeek + "s"] == true)
-            {
-                AutoScreenshot();
-            }
-            else if (Config.HowOftenToTakeScreenshot["First Day of Month"] == true && Game1.Date.DayOfMonth.ToString() == "1")
-            {
-                AutoScreenshot();
-            }
-            else if (Config.HowOftenToTakeScreenshot["Last Day of Month"] == true && Game1.Date.DayOfMonth.ToString() == "28")
-            {
-                AutoScreenshot();
-            }
-        }
-
         private void TakeScreenshot(ModRule rule)
         {
-            
-        }
-
-        /// <summary>Takes a screenshot of the entire farm.</summary>
-        private void AutoScreenshot()
-        {
-            // path must be relative
-            string autoSSDirectory = Game1.player.farmName + "-Farm-Screenshots-" + Game1.uniqueIDForThisGame;
-            string screenshotPath = Path.Combine(autoSSDirectory, GameDateToName());
-            // yes, we're going to create the directory even if we move out of it and delete it
-            // this is for two reasons.
-            // 1. Ensures we're not stomping over another file unless it was made by this mod
-            // 2. Gives a good fallback location if the move fails for some reason
-            if (!Directory.Exists(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory)))
-            {
-                Directory.CreateDirectory(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory));
-            }
-            string mapScreenshot = Game1.game1.takeMapScreenshot(Config.TakeScreenshotZoomLevel, screenshotPath);
+            string ssPath = rule.GetFileName();
+            string ssDirectory = Path.GetDirectoryName(ssPath);
+            Directory.CreateDirectory(Path.Combine(defaultStardewValleyScreenshotsDirectory, ssDirectory));
+            string mapScreenshot = Game1.game1.takeMapScreenshot(rule.ZoomLevel, ssPath);
             MTrace($"Snapshot saved to {mapScreenshot}");
-            Game1.addHUDMessage(new HUDMessage(Path.GetFileName(mapScreenshot), HUDMessage.screenshot_type));
+            Game1.addHUDMessage(new HUDMessage(rule.Name, HUDMessage.screenshot_type));
             Game1.playSound("cameraNoise");
-            screenshotTakenToday = true;
-            if(ModConfig.DEFAULT_STRING != Config.FolderDestinationForDailyScreenshots)
-            {
-                MoveScreenshotToCorrectFolder(mapScreenshot);
-                if (DirectoryIsEmpty(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory)))
-                {
-                    Directory.Delete(Path.Combine(defaultStardewValleyScreenshotsDirectory, autoSSDirectory));
-                }
-            }
-        }
-
-        /// <summary>Takes a screenshot of the entire map, activated via keypress.</summary>
-        private void TakeScreenshotViaKeypress()
-        {
-            string mapScreenshot = Game1.game1.takeMapScreenshot(Config.TakeScreenshotKeyZoomLevel);
-            Game1.addHUDMessage(new HUDMessage(mapScreenshot, 6));
-            Game1.playSound("cameraNoise");
-            MTrace($"Snapshot saved to {mapScreenshot}");
-
-            if (ModConfig.DEFAULT_STRING != Config.FolderDestinationForKeypressScreenshots)
-            {
-                MoveScreenshotToCorrectFolder(mapScreenshot, true);
-            }
         }
 
         private Queue<Action> _actions = new Queue<Action>();
@@ -273,16 +228,7 @@ namespace DailyScreenshot
             _actions.Enqueue(action);
         }
 
-        /// <summary>
-        /// Turns the current game date into a constant filename for the day
-        /// Setup so OS naturally keeps the files in order
-        /// </summary>
-        /// <returns>01-02-03 for year 1, summer, day 3</returns>
-        private string GameDateToName()
-        {
-            return string.Format("{0:D2}-{1:D2}-{2:D2}",Game1.Date.Year, Game1.Date.SeasonIndex+1, Game1.Date.DayOfMonth);
-        }
-
+#if false
         /// <summary>Moves screenshot into StardewValley/Screenshots directory, in the save file folder.</summary>
         /// <param name="screenshotPath">The name of the screenshot file.</param>
         /// <param name="keypress">true if the user pressed the key</param>
@@ -359,7 +305,7 @@ namespace DailyScreenshot
                 }
             }
         }
-
+#endif
         /// <summary>Raised after the player returns to the title screen.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event data.</param>

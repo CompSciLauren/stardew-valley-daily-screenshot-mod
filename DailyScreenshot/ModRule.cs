@@ -124,6 +124,16 @@ namespace DailyScreenshot
         /// </summary>
         /// <value></value>
         public ModTrigger Trigger { get; set; } = new ModTrigger();
+
+        /// <summary>
+        /// Checks user input and sets default values if needed
+        /// </summary>
+        /// <returns>true if the user input was modified</returns>
+        internal bool ValidateUserInput()
+        {
+            Trigger.ValidateUserInput();
+            throw new NotImplementedException();
+        }
     }
 
 }

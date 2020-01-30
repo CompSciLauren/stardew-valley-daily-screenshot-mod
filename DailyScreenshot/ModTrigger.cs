@@ -55,7 +55,7 @@ namespace DailyScreenshot
             Winter = 1 << 31,
             AnyDay = Sundays | Mondays | Tuesdays | Wednesdays | Thursdays | Fridays | Saturdays,
             AnySeason = Spring | Summer | Fall | Winter,
-            Sundays = Day_01 | Day_07 | Day_14 | Day_21,
+            Sundays = Day_01 | Day_08 | Day_15 | Day_22,
             Mondays = Sundays << 1,
             Tuesdays = Sundays << 2,
             Wednesdays = Sundays << 3,
@@ -138,6 +138,11 @@ namespace DailyScreenshot
             Unknown = 1 << 12,
             Any = Farm | GreenHouse | Farmhouse | Beach | Unknown |
                 Mountain | CommunityCenter | Museum | FarmCave | Cellar | Desert
+        }
+
+        internal bool ValidateUserInput()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
