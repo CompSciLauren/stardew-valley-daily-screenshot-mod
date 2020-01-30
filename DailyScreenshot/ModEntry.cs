@@ -39,8 +39,6 @@ namespace DailyScreenshot
         /// <summary>The mod configuration from the player.</summary>
         private ModConfig Config;
 
-        private bool screenshotTakenToday = false;
-
         int countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
 
         public string defaultStardewValleyScreenshotsDirectory { get; private set; }
@@ -165,7 +163,6 @@ namespace DailyScreenshot
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
-            screenshotTakenToday = false;
             countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
             foreach (ModRule rule in Config.SnapshotRules)
             {
@@ -311,7 +308,6 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
-            screenshotTakenToday = false;
             countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
         }
     }

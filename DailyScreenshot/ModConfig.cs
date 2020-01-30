@@ -66,6 +66,9 @@ namespace DailyScreenshot
         [OnDeserialized]
         private void OnDeserializedFixup(StreamingContext context)
         {
+            // If there's no extra Json attributes, there's nothing to fixup
+            if(_additionalData == null)
+                return;
             try
             {
                 // Convert the automatic snapshot rules to the new format
@@ -140,7 +143,7 @@ namespace DailyScreenshot
                 if (string.IsNullOrEmpty(rule.Name) || rule.Name == m_launchGuid)
                 {
                     cnt++;
-                    rule.Name = $"Unnamed rule {cnt}";
+                    rule.Name = $"Unnamed Rule {cnt}";
                     RulesModified = true;
                 }
             }
