@@ -7,10 +7,13 @@ namespace DailyScreenshot
 
     /// <summary>
     /// User specified Triggers.  Use with caution, data is 
-    /// not validated in this class
+    /// not validated during construction.  Call 
+    /// ValidateUserInput before using values
     /// </summary>
     public class ModTrigger
     {
+        void MTrace(string message) => ModEntry.DailySS.MTrace(message);
+
         private bool m_triggered = false;
 
         #region Dates 
@@ -142,7 +145,45 @@ namespace DailyScreenshot
 
         internal bool ValidateUserInput()
         {
-            throw new NotImplementedException();
+            bool modified = false;
+            int startTime = SetLimits(StartTime);
+            int endTime = SetLimits(EndTime);
+            if(StartTime != startTime || EndTime != endTime || startTime > endTime)
+            {
+                modified = true;
+
+                // if the times are impossible then swap them
+                if(startTime > endTime)
+                {
+                    StartTime = endTime;
+                    EndTime = startTime;
+                }
+                else
+                {
+                    StartTime = startTime;
+                    EndTime = endTime;
+                }
+            }
+            return modified;
+        }
+
+        private bool IsAtLimits(int time)
+        {
+            if (ModConfig.DEFAULT_START_TIME == time)
+                return true;
+            if (ModConfig.DEFAULT_END_TIME < time)
+                return true;
+            return false;        }
+
+        private int SetLimits(int time)
+        {
+            if(ModConfig.DEFAULT_START_TIME > time)
+                return ModConfig.DEFAULT_START_TIME;
+            if (ModConfig.DEFAULT_END_TIME < time)
+                return ModConfig.DEFAULT_END_TIME;
+            // round to the nearest 10 minutes
+            time += 5;
+            return time - (time % 10);
         }
 
         /// <summary>
@@ -192,8 +233,18 @@ namespace DailyScreenshot
         public SButton Key { get; set; } = SButton.None;
         #endregion
 
+        /// <summary>
+        /// Start of the time frame to take screenshot
+        /// Note: must validate
+        /// </summary>
+        /// <value>Value between ModConfig.DEFAULT_START_TIME and ModConfig.DEFAULT_END_TIME divisible by 10</value>
         public int StartTime { get; set; } = ModConfig.DEFAULT_START_TIME;
 
+        /// <summary>
+        /// End of the time frame to take screenshot
+        /// Note: must validate
+        /// </summary>
+        /// <value>Value between ModConfig.DEFAULT_START_TIME and ModConfig.DEFAULT_END_TIME divisible by 10</value>
         public int EndTime { get; set; } = ModConfig.DEFAULT_END_TIME;
 
         /// <summary>
@@ -201,6 +252,7 @@ namespace DailyScreenshot
         /// </summary>
         public void ResetTrigger()
         {
+            MTrace("Triggers reset");
             m_triggered = false;
         }
 
@@ -211,6 +263,7 @@ namespace DailyScreenshot
         /// <returns></returns>
         public bool CheckTrigger(SButton key = SButton.None)
         {
+            MTrace($"m_triggered = {m_triggered}");
             if (m_triggered)
                 return false;
             DateFlags current_date = (DateFlags)((1 << (Game1.Date.SeasonIndex + 28)) | (1 << (Game1.Date.DayOfMonth - 1)));
@@ -238,11 +291,12 @@ namespace DailyScreenshot
             // Keys is not a flags enum, only one can be set at a time
             if (Key != key)
                 return false;
-            
+
+
             // If it is button based, allow another screenshot after this one for this day
-            if (SButton.None != key)
+            if (SButton.None == key)
                 m_triggered = true;
-            
+
             return true;
         }
 

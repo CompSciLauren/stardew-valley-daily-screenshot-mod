@@ -10,8 +10,11 @@ namespace DailyScreenshot
     class ModConfig
     {
 
+        void MTrace(string message) => ModEntry.DailySS.MTrace(message);
+
+        void MWarn(string message) => ModEntry.DailySS.MWarn(message);
         private string m_launchGuid;
-        public static string DEFAULT_STRING = "default";
+        public static string DEFAULT_STRING = "Default";
         public const float DEFAULT_ZOOM = 0.25f;
         public const int DEFAULT_START_TIME = 600;
         public const int DEFAULT_END_TIME = 2600;
@@ -101,7 +104,7 @@ namespace DailyScreenshot
                             if (Enum.TryParse<ModTrigger.DateFlags>(key_to_enum, out ModTrigger.DateFlags date))
                                 autoTrigger.Days |= date;
                             else
-                                ModEntry.DailySS.MWarn($"Unknown key: \"{key}\"");
+                                MWarn($"Unknown key: \"{key}\"");
                         }
                     }
 
@@ -131,9 +134,14 @@ namespace DailyScreenshot
             }
             catch (Exception ex)
             {
-                ModEntry.DailySS.MWarn($"Unable to read old config. Technical details:{ex}");
+                MWarn($"Unable to read old config. Technical details:{ex}");
             }
             _additionalData=new Dictionary<string, JToken>();
+        }
+
+        internal void SortRules()
+        {
+            SnapshotRules.Sort();
         }
 
         public void ValidateUserInput()

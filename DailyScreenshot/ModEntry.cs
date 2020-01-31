@@ -13,7 +13,7 @@ namespace DailyScreenshot
     public class ModEntry : Mod
     {
         internal static ModEntry DailySS = null;
-#region Constants 
+        #region Constants 
         /// <summary>
         /// Maximum attempts to move the file
         /// </summary>
@@ -34,14 +34,14 @@ namespace DailyScreenshot
         /// </summary>
         private const int MILLISECONDS_TIMEOUT = 10;
 
-#endregion
+        #endregion
 
         /// <summary>The mod configuration from the player.</summary>
-        private ModConfig Config;
+        private ModConfig m_config;
 
-        int countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
+        int m_countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
 
-        public string defaultStardewValleyScreenshotsDirectory { get; private set; }
+        public string m_defaultSSdirectory { get; private set; }
 
         /// <summary>
         /// Check that a directory contains no files or directories
@@ -50,7 +50,7 @@ namespace DailyScreenshot
         /// <returns>true if the directory is empty</returns>
         private bool DirectoryIsEmpty(string path) => Directory.GetDirectories(path).Length == 0 && Directory.GetFiles(path).Length == 0;
 
-#region Logging
+        #region Logging
         /// <summary>
         /// Sends messages to the SMAPI console
         /// </summary>
@@ -101,31 +101,32 @@ namespace DailyScreenshot
         /// </summary>
         /// <param name="message">text to send</param>
         internal void MError(string message) => Monitor.Log(message, LogLevel.Error);
-#endregion
+        #endregion
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            if(DailySS != null)
+            if (DailySS != null)
             {
                 string message = "Entry called twice - breaking singelton";
                 MError(message);
                 throw new Exception(message);
             }
             DailySS = this;
-            Config = Helper.ReadConfig<ModConfig>();
+            m_config = Helper.ReadConfig<ModConfig>();
             //Config.ValidateUserInput();
-            Config.NameRules();
+            m_config.NameRules();
             // Fixed something up, write new rules
-            if(Config.RulesModified)
-                Helper.WriteConfig<ModConfig>(Config);
+            if (m_config.RulesModified)
+                Helper.WriteConfig<ModConfig>(m_config);
+            m_config.SortRules();
 
             int num11 = Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28;
             var path = Environment.GetFolderPath((Environment.SpecialFolder)num11);
 
             // path is combined with StardewValley and then Screenshots
-            defaultStardewValleyScreenshotsDirectory = Path.Combine(path, "StardewValley", "Screenshots");
+            m_defaultSSdirectory = Path.Combine(path, "StardewValley", "Screenshots");
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
         }
 
@@ -163,8 +164,8 @@ namespace DailyScreenshot
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
-            countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
-            foreach (ModRule rule in Config.SnapshotRules)
+            m_countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
+            foreach (ModRule rule in m_config.SnapshotRules)
             {
                 rule.Trigger.ResetTrigger();
             }
@@ -173,9 +174,9 @@ namespace DailyScreenshot
 
         private void RunTriggers(SButton key = SButton.None)
         {
-            foreach (ModRule rule in Config.SnapshotRules)
+            foreach (ModRule rule in m_config.SnapshotRules)
             {
-                if(rule.Trigger.CheckTrigger(key))
+                if (rule.Trigger.CheckTrigger(key))
                 {
                     TakeScreenshot(rule);
                 }
@@ -195,9 +196,9 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            countdownInTicks--;
+            m_countdownInTicks--;
 
-            if (countdownInTicks == 0)
+            if (m_countdownInTicks == 0)
             {
                 while (_actions.Count > 0)
                     _actions.Dequeue().Invoke();
@@ -207,12 +208,37 @@ namespace DailyScreenshot
         private void TakeScreenshot(ModRule rule)
         {
             string ssPath = rule.GetFileName();
-            string ssDirectory = Path.GetDirectoryName(ssPath);
-            Directory.CreateDirectory(Path.Combine(defaultStardewValleyScreenshotsDirectory, ssDirectory));
+            if (null != ssPath)
+            {
+                MTrace($"ssPath = \"{ssPath}\"");
+                string ssDirectory = Path.GetDirectoryName(ssPath);
+                Directory.CreateDirectory(Path.Combine(m_defaultSSdirectory, ssDirectory));
+            }
+            Game1.addHUDMessage(new HUDMessage(rule.Name, HUDMessage.screenshot_type));
             string mapScreenshot = Game1.game1.takeMapScreenshot(rule.ZoomLevel, ssPath);
             MTrace($"Snapshot saved to {mapScreenshot}");
-            Game1.addHUDMessage(new HUDMessage(rule.Name, HUDMessage.screenshot_type));
             Game1.playSound("cameraNoise");
+            if (ModConfig.DEFAULT_STRING != rule.Directory)
+            {
+                MoveScreenshotToCorrectFolder(mapScreenshot, rule);
+                CleanUpEmptyDirectories(Path.GetDirectoryName(
+                    Path.Combine(m_defaultSSdirectory, mapScreenshot)));
+            }
+        }
+
+        /// <summary>
+        /// Recursively cleanup empty directories
+        /// </summary>
+        /// <param name="directory">path to the directory to remove</param>
+        private void CleanUpEmptyDirectories(string directory)
+        {
+            if (DirectoryIsEmpty(directory) &&
+                Path.GetFullPath(directory) != Path.GetFullPath(
+                    m_defaultSSdirectory))
+            {
+                Directory.Delete(directory);
+                CleanUpEmptyDirectories(Path.GetDirectoryName(directory));
+            }
         }
 
         private Queue<Action> _actions = new Queue<Action>();
@@ -225,25 +251,17 @@ namespace DailyScreenshot
             _actions.Enqueue(action);
         }
 
-#if false
+
         /// <summary>Moves screenshot into StardewValley/Screenshots directory, in the save file folder.</summary>
         /// <param name="screenshotPath">The name of the screenshot file.</param>
-        /// <param name="keypress">true if the user pressed the key</param>
-        private void MoveScreenshotToCorrectFolder(string screenshotPath, bool keypress = false)
+        /// <param name="rule">Rule for this screenshot</param>
+        private void MoveScreenshotToCorrectFolder(string screenshotPath, ModRule rule)
         {
             // special folder path
 
             // path for original screenshot location and new screenshot location
-            string sourceFile = Path.Combine(defaultStardewValleyScreenshotsDirectory, screenshotPath);
-            string destinationFile;
-            if(keypress)
-            {
-                destinationFile = Path.Combine(Config.FolderDestinationForKeypressScreenshots, screenshotPath);
-            }
-            else
-            {
-                destinationFile = Path.Combine(Config.FolderDestinationForDailyScreenshots, screenshotPath);
-            }
+            string sourceFile = Path.Combine(m_defaultSSdirectory, screenshotPath);
+            string destinationFile = Path.Combine(rule.Directory, screenshotPath);
             MTrace($"Snapshot moving from {sourceFile} to {destinationFile}");
 
 
@@ -302,13 +320,13 @@ namespace DailyScreenshot
                 }
             }
         }
-#endif
+
         /// <summary>Raised after the player returns to the title screen.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event data.</param>
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
-            countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
+            m_countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
         }
     }
 }
