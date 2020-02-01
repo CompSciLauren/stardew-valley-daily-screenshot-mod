@@ -148,12 +148,12 @@ namespace DailyScreenshot
             bool modified = false;
             int startTime = SetLimits(StartTime);
             int endTime = SetLimits(EndTime);
-            if(StartTime != startTime || EndTime != endTime || startTime > endTime)
+            if (StartTime != startTime || EndTime != endTime || startTime > endTime)
             {
                 modified = true;
 
                 // if the times are impossible then swap them
-                if(startTime > endTime)
+                if (startTime > endTime)
                 {
                     StartTime = endTime;
                     EndTime = startTime;
@@ -173,17 +173,25 @@ namespace DailyScreenshot
                 return true;
             if (ModConfig.DEFAULT_END_TIME < time)
                 return true;
-            return false;        }
+            return false;
+        }
 
+        /// <summary>
+        /// Makes sure the time is set to be a multiple of 10 and
+        /// between ModConfig.DEFAULT_START_TIME and 
+        /// ModConfig.DEFAULT_END_TIME
+        /// </summary>
+        /// <param name="time">User specified time</param>
+        /// <returns>Fixed up time rounded to the nearest 10 minutes</returns>
         private int SetLimits(int time)
         {
-            if(ModConfig.DEFAULT_START_TIME > time)
-                return ModConfig.DEFAULT_START_TIME;
-            if (ModConfig.DEFAULT_END_TIME < time)
-                return ModConfig.DEFAULT_END_TIME;
             // round to the nearest 10 minutes
-            time += 5;
-            return time - (time % 10);
+            int val = Math.Max(time + 5, ModConfig.DEFAULT_START_TIME);
+            val = Math.Min(val, ModConfig.DEFAULT_END_TIME);
+
+            // Round to the nearest 10 mintues
+            // TODO: move these magic numbers to constants
+            return val - (val % 10);
         }
 
         /// <summary>

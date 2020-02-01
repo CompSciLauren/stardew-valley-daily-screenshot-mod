@@ -115,7 +115,7 @@ namespace DailyScreenshot
             }
             DailySS = this;
             m_config = Helper.ReadConfig<ModConfig>();
-            //Config.ValidateUserInput();
+            m_config.ValidateUserInput();
             m_config.NameRules();
             // Fixed something up, write new rules
             if (m_config.RulesModified)
@@ -176,8 +176,9 @@ namespace DailyScreenshot
         {
             foreach (ModRule rule in m_config.SnapshotRules)
             {
-                if (rule.Trigger.CheckTrigger(key))
+                if (rule.Enabled && rule.Trigger.CheckTrigger(key))
                 {
+                    MTrace("Want to take a screen shot");
                     TakeScreenshot(rule);
                 }
             }

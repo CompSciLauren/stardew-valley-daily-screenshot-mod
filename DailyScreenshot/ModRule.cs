@@ -2,8 +2,10 @@ using System;
 using System.Text;
 using System.IO;
 using StardewValley;
+using System.Globalization;
 using StardewModdingAPI;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace DailyScreenshot
 {
@@ -15,6 +17,15 @@ namespace DailyScreenshot
     /// </summary>
     public class ModRule : IComparable
     {
+        void MError(string message) => ModEntry.DailySS.MError(message);
+
+        /// <summary>
+        /// Is this rule active?
+        /// </summary>
+        /// <value>True if the rule should be used to take a screenshot</value>
+        [JsonIgnore]
+        public bool Enabled { get; set; } = true;
+
         /// <summary>
         /// Name of the rule to show
         /// Note: must validate
@@ -77,47 +88,82 @@ namespace DailyScreenshot
         /// <returns></returns>
         public string GetFileName()
         {
-            if(FileNameFlags.None == FileName)
+            if (FileNameFlags.None == FileName)
                 return null;
             TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
             int secondsSinceEpoch = (int)t.TotalSeconds;
             char sep = Path.DirectorySeparatorChar;
             StringBuilder sb = new StringBuilder(".");
-            if (AddFilenamePart(FileNameFlags.FarmName, sep, ref sb, Game1.player.farmName, "-Farm-Screenshots"))
+            if (AddFilenamePart(FileNameFlags.FarmName,
+                                sep,
+                                ref sb,
+                                Game1.player.farmName + "-Farm-Screenshots"))
                 sep = '-';
-            if (AddFilenamePart(FileNameFlags.GameID, sep, ref sb, Game1.uniqueIDForThisGame))
+            if (AddFilenamePart(FileNameFlags.GameID,
+                                sep,
+                                ref sb,
+                                Game1.uniqueIDForThisGame))
                 sep = Path.DirectorySeparatorChar;
             if ('-' == sep)
                 sep = Path.DirectorySeparatorChar;
-            if (AddFilenamePart(FileNameFlags.Location, sep, ref sb, Trigger.GetLocation()))
+            if (AddFilenamePart(FileNameFlags.Location,
+                                sep,
+                                ref sb,
+                                Trigger.GetLocation()))
                 sep = Path.DirectorySeparatorChar;
             if ('-' == sep)
                 sep = Path.DirectorySeparatorChar;
-            if (AddFilenamePart(FileNameFlags.Weather, sep, ref sb, Trigger.GetWeather()))
+            if (AddFilenamePart(FileNameFlags.Weather,
+                                sep,
+                                ref sb,
+                                Trigger.GetWeather()))
                 sep = Path.DirectorySeparatorChar;
             if ('-' == sep)
                 sep = Path.DirectorySeparatorChar;
-            if (AddFilenamePart(FileNameFlags.PlayerName, sep, ref sb, Game1.player.name))
+            if (AddFilenamePart(FileNameFlags.PlayerName,
+                                sep,
+                                ref sb,
+                                Game1.player.name))
                 sep = '-';
-            if (AddFilenamePart(FileNameFlags.Date, sep, ref sb, GameDateToName()))
+            if (AddFilenamePart(FileNameFlags.Date,
+                                sep,
+                                ref sb,
+                                GameDateToName()))
                 sep = '-';
-            if (AddFilenamePart(FileNameFlags.Time, sep, ref sb, Game1.timeOfDay))
+            if (AddFilenamePart(FileNameFlags.Time,
+                                sep,
+                                ref sb,
+                                Game1.timeOfDay))
                 sep = '-';
-            AddFilenamePart(FileNameFlags.UniqueID, sep, ref sb, secondsSinceEpoch);
+            AddFilenamePart(FileNameFlags.UniqueID,
+                            sep,
+                            ref sb,
+                            secondsSinceEpoch);
 
             return sb.ToString();
         }
 
-        private bool AddFilenamePart(FileNameFlags flag, char sep, ref StringBuilder sb, object value, string suffix = "")
+        /// <summary>
+        /// Function for adding elements to the string to build
+        /// based on the flag values set
+        /// </summary>
+        /// <param name="flag">Flag to check</param>
+        /// <param name="sep">Seperator to use, either . or Path.DirectorySeparatorChar</param>
+        /// <param name="sb">Reference to the string builder object which will be modified</param>
+        /// <param name="value">String to add to the string builder if the flag is set</param>
+        /// <returns>true if sb was modified</returns>
+        private bool AddFilenamePart(FileNameFlags flag,
+                                     char sep,
+                                     ref StringBuilder sb,
+                                     object value)
         {
             if (FileNameFlags.None != (flag & FileName))
             {
-                if ('\0' != sep)
+                if ('-' == sep || Path.DirectorySeparatorChar == sep)
                 {
                     sb.Append(sep);
                 }
                 sb.Append(value);
-                sb.Append(suffix);
                 return true;
             }
             return false;
@@ -136,8 +182,48 @@ namespace DailyScreenshot
         internal bool ValidateUserInput()
         {
             bool modified = Trigger.ValidateUserInput();
-            throw new NotImplementedException();
-            //eturn modified;
+            if (ModConfig.DEFAULT_STRING != Directory)
+            {
+                // String.compare usually uses the current culture which can have
+                // weird rules for uppercase/lowercase.  Do an insensitive match
+                // using the InvariantCulture to prevent different behavior based
+                // on the system language
+                if (0 == String.Compare(ModConfig.DEFAULT_STRING,
+                                       Directory.Trim(),
+                                       true,
+                                       CultureInfo.InvariantCulture) ||
+                    String.IsNullOrEmpty(Directory.Trim()))
+                {
+                    modified = true;
+                    Directory = ModConfig.DEFAULT_STRING;
+                }
+                else
+                {
+                    // rewrite the path as a full path
+                    try
+                    {
+                        string path = Path.GetFullPath(Directory);
+                        if (path != Directory)
+                        {
+                            modified = true;
+                            Directory = path;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MError($"Invalid path {Directory} specified.\nTechnical Details:\n{ex}");
+                        Enabled = false;
+                    }
+                }
+            }
+            if (ZoomLevel < 0.25f || ZoomLevel > 1.0f)
+            {
+                modified = true;
+                ZoomLevel = Math.Max(ZoomLevel, 0.25f);
+                ZoomLevel = Math.Min(ZoomLevel, 1.0f);
+            }
+            // What do we need to check for on the name?
+            return modified;
         }
 
         /// <summary>
@@ -146,7 +232,7 @@ namespace DailyScreenshot
         /// <returns>true if files cannot collide</returns>
         internal bool IsEachShotUnique()
         {
-            if(FileNameFlags.UniqueID == (FileName & FileNameFlags.UniqueID))
+            if (FileNameFlags.UniqueID == (FileName & FileNameFlags.UniqueID))
                 return true;
             return FileNameFlags.None == FileName;
         }
@@ -166,9 +252,9 @@ namespace DailyScreenshot
             ModRule otherRule = obj as ModRule;
             if (otherRule != null)
             {
-                if(ModConfig.DEFAULT_STRING != Directory)
+                if (ModConfig.DEFAULT_STRING != Directory)
                 {
-                    if(ModConfig.DEFAULT_STRING != otherRule.Directory)
+                    if (ModConfig.DEFAULT_STRING != otherRule.Directory)
                         return 0;
                     return -1;
                 }
