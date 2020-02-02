@@ -58,15 +58,15 @@ namespace DailyScreenshot
             Winter = 1 << 31,
             AnyDay = Sundays | Mondays | Tuesdays | Wednesdays | Thursdays | Fridays | Saturdays,
             AnySeason = Spring | Summer | Fall | Winter,
-            Sundays = AnySeason | Day_01 | Day_08 | Day_15 | Day_22,
+            Sundays = Day_01 | Day_08 | Day_15 | Day_22,
             Mondays = Sundays << 1,
             Tuesdays = Sundays << 2,
             Wednesdays = Sundays << 3,
             Thursdays = Sundays << 4,
             Fridays = Sundays << 5,
             Saturdays = Sundays << 6,
-            FirstDayOfTheMonth = AnySeason | Day_01,
-            LastDayOfTheMonth = AnySeason | Day_28,
+            FirstDayOfTheMonth = Day_01,
+            LastDayOfTheMonth = Day_28,
             Daily = AnyDay | AnySeason
         }
 
