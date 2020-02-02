@@ -79,7 +79,7 @@ Triggers are things that must happen for a screenshot to take place.  All of the
 | --------|------- | -------- | -------- |
 | Name | What to show when taking a picture.  Rules without a name will be given a name automatically | string | Unnamed Rule # |
 | ZoomLevel | How should the picture be scaled.  Any number between 0.25 and 1.0 | float | 0.25 |
-| Directory | Where to save the picture.<BR/><BR/>**Note: Remember to use a double backslash on Windows.** | string | Stardew Valley Screenshot folder |
+| Directory | Where to save the picture.<BR/><BR/>Default or empty means the standard Startdew Valley screenshot directory.<BR/><BR/>**Note: Remember to use a double backslash on Windows.** | string | Default |
 | Filename | A combination of values for the filename, seperated by commas.<br/><br/>Possible values are: None, Date, Farmname, GameID, Location, Weather, Playername, Time, UniqueID.<br/><br/>Will follow the pattern: {Farm Name}-{GameID}/{Location}/{Weather}/{Player Name}-{Date}-{Time}-{Unique ID} | Enum | Date, FarmName, GameID, Location |
 | Days | A combination of values for the days and seasons to take a screen shot.<br/><br/>Possible values are: Day_01 .. Day_28, Sundays, Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays, FirstDayOfTheMonth, LastDayOfTheMonth, Spring, Summer, Fall, Winter, AnySeason, AnyDay, Daily.<br/><br/>**Note: It is important if not using the daily value to specify season(s) and day(s) or a picture will not be taken.**<BR/><br/>Example: To take a picture on the 15th of fall use Day_15, Fall. | enum | Daily |
 | Weather| A combination of values for the weather.<BR/><BR/>Possible values are: Sunny, Rainy, Windy, Stormy, Snowy, Any. | enum | Any |
