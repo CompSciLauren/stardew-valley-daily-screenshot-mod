@@ -1,5 +1,10 @@
 # Todo List
 
+## Documentation
+
+- [ ] Functions
+- [ ] User
+
 ## User Input Validation
 
 - [x] Triggers
@@ -15,10 +20,13 @@
 
 ## Known Defects
 
-- [ ] Wait till screen is rendered (warp)
-- [ ] Show notice first
-- [ ] Config file is always written
-- [ ] Takes full daylight shot at night
+- [x] Wait till screen is rendered (warp)
+- [x] Show notice first
+- [ ] Config file is always written (may not be fixable)
+- [x] Takes full daylight shot at night
+- [x] Weekday enums don't work
+- [x] Exception for key presses before save game is loaded
+- [x] Day rules are not working
 
 ## Test Cases
 

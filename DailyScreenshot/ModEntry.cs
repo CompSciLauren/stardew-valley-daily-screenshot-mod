@@ -27,7 +27,7 @@ namespace DailyScreenshot
         /// <summary>
         /// Tick countdown
         /// </summary>
-        private const int MAX_COUNTDOWN_IN_TICKS = 60;
+        private const int MAX_COUNTDOWN_IN_TICKS = 35;
 
         /// <summary>
         /// Time to sleep between move attempts
@@ -39,9 +39,14 @@ namespace DailyScreenshot
         /// <summary>The mod configuration from the player.</summary>
         private ModConfig m_config;
 
-        int m_countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
+        int m_ssCntDwnTicks = 0;
+
+        int m_mvCntDwnTicks = 0;
+
+        bool m_shouldProcessRules = false;
 
         public string m_defaultSSdirectory { get; private set; }
+        public bool m_updateTickEventActive { get; private set; }
 
         /// <summary>
         /// Check that a directory contains no files or directories
@@ -93,7 +98,7 @@ namespace DailyScreenshot
         /// Helper function for sending warning messages
         /// </summary>
         /// <param name="message">text to send</param>
-        internal void MWarn(string message) => LogMessageToConsole(message, LogLevel.Warn);
+        internal void MWarn(string message) => Monitor.Log(message, LogLevel.Warn);
 
         /// <summary>
         /// Helper function for sending error messages
@@ -163,8 +168,7 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
-            Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
-            m_countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
+            m_shouldProcessRules = true;
             foreach (ModRule rule in m_config.SnapshotRules)
             {
                 rule.Trigger.ResetTrigger();
@@ -172,14 +176,24 @@ namespace DailyScreenshot
             RunTriggers();
         }
 
+        /// <summary>
+        /// Check the rule triggers and take a screenshot if appropriate
+        /// </summary>
+        /// <param name="key"></param>
         private void RunTriggers(SButton key = SButton.None)
         {
+            if (!m_shouldProcessRules)
+                return;
             foreach (ModRule rule in m_config.SnapshotRules)
             {
                 if (rule.Enabled && rule.Trigger.CheckTrigger(key))
                 {
-                    MTrace("Want to take a screen shot");
-                    TakeScreenshot(rule);
+                    DisplayRuleHUD(rule);
+                    EnqueueAction(() =>
+                        {
+                            TakeScreenshot(rule);
+                        }, ref m_ssActions
+                    );
                 }
             }
         }
@@ -189,6 +203,13 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnWarped(object sender, WarpedEventArgs e)
         {
+            // if we enqueued a screen shot and warped before
+            // the timeout, reset the timeout
+            lock (this)
+            {
+                if (m_ssActions.Count > 0)
+                    m_ssCntDwnTicks = MAX_COUNTDOWN_IN_TICKS;
+            }
             RunTriggers();
         }
 
@@ -197,15 +218,46 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            m_countdownInTicks--;
+            if (m_ssCntDwnTicks > 0)
+                m_ssCntDwnTicks--;
 
-            if (m_countdownInTicks == 0)
+            if (m_ssCntDwnTicks == 0)
             {
-                while (_actions.Count > 0)
-                    _actions.Dequeue().Invoke();
+                if (m_mvCntDwnTicks > 0)
+                    m_mvCntDwnTicks--;
+                while (m_ssActions.Count > 0)
+                {
+                    m_ssActions.Dequeue().Invoke();
+                    if (m_mvCntDwnTicks == 0 && m_mvActions.Count > 0)
+                        m_mvCntDwnTicks = MAX_COUNTDOWN_IN_TICKS;
+                }
+                if (m_mvCntDwnTicks == 0)
+                {
+                    while (m_mvActions.Count > 0)
+                        m_mvActions.Dequeue().Invoke();
+
+                }
+            }
+            lock (this)
+            {
+                if (m_mvActions.Count == 0 &&
+                    m_ssActions.Count == 0 &&
+                    m_mvCntDwnTicks == 0 &&
+                    m_ssCntDwnTicks == 0)
+                {
+                    m_updateTickEventActive = false;
+                    Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
+                    return;
+                }
             }
         }
 
+        /// <summary>
+        /// Rule said it was time to take a screenshot,
+        /// HUD message has been added and we waited for
+        /// our timeout in ticks, so take a screenshot
+        /// </summary>
+        /// <param name="rule"></param>
         private void TakeScreenshot(ModRule rule)
         {
             string ssPath = rule.GetFileName();
@@ -215,17 +267,27 @@ namespace DailyScreenshot
                 string ssDirectory = Path.GetDirectoryName(ssPath);
                 Directory.CreateDirectory(Path.Combine(m_defaultSSdirectory, ssDirectory));
             }
-            Game1.addHUDMessage(new HUDMessage(rule.Name, HUDMessage.screenshot_type));
             string mapScreenshot = Game1.game1.takeMapScreenshot(rule.ZoomLevel, ssPath);
             MTrace($"Snapshot saved to {mapScreenshot}");
             Game1.playSound("cameraNoise");
             if (ModConfig.DEFAULT_STRING != rule.Directory)
             {
-                MoveScreenshotToCorrectFolder(mapScreenshot, rule);
-                CleanUpEmptyDirectories(Path.GetDirectoryName(
-                    Path.Combine(m_defaultSSdirectory, mapScreenshot)));
+                EnqueueAction(() =>
+                    {
+                        MoveScreenshotToCorrectFolder(mapScreenshot, rule);
+                        CleanUpEmptyDirectories(Path.GetDirectoryName(
+                            Path.Combine(m_defaultSSdirectory, mapScreenshot)));
+                    }, ref m_mvActions
+                    );
             }
         }
+
+        /// <summary>
+        /// Display the HUD message
+        /// </summary>
+        /// <param name="rule"></param>
+        private void DisplayRuleHUD(ModRule rule) =>
+            Game1.addHUDMessage(new HUDMessage(rule.Name, HUDMessage.screenshot_type));
 
         /// <summary>
         /// Recursively cleanup empty directories
@@ -242,14 +304,32 @@ namespace DailyScreenshot
             }
         }
 
-        private Queue<Action> _actions = new Queue<Action>();
+        /// <summary>
+        /// Queue of screen shot actions to take when the timeout expires
+        /// </summary>
+        private Queue<Action> m_ssActions = new Queue<Action>();
+
+        /// <summary>
+        /// Queue of move actions to take when the timeout expires
+        /// </summary>
+        private Queue<Action> m_mvActions = new Queue<Action>();
 
         /// <summary>Allows ability to enqueue actions to the queue.</summary>
         /// <param name="action">The action.</param>
-        public void EnqueueAction(Action action)
+        public void EnqueueAction(Action action, ref Queue<Action> actionQueue)
         {
             if (null == action) return;
-            _actions.Enqueue(action);
+
+            lock (this)
+            {
+                actionQueue.Enqueue(action);
+                if (!m_updateTickEventActive)
+                {
+                    m_ssCntDwnTicks = MAX_COUNTDOWN_IN_TICKS;
+                    Helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
+                }
+                m_updateTickEventActive = true;
+            }
         }
 
 
@@ -268,9 +348,7 @@ namespace DailyScreenshot
 
             // create save directory if it doesn't already exist
             if (!Directory.Exists(Path.GetDirectoryName(destinationFile)))
-            {
                 Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
-            }
 
             // wait for screenshot to finish
             while (Game1.game1.takingMapScreenshot)
@@ -305,7 +383,7 @@ namespace DailyScreenshot
                     if (SHARING_VIOLATION == (HResult & 0xFFFF))
                     {
                         // Hiding the warning as it isn't useful to other mod developers
-                        //MWarn($"File may be in use, retrying in {MILLISECONDS_TIMEOUT} milliseconds, attempt {attemptCount} of {MAX_ATTEMPTS_TO_MOVE}");
+                        MWarn($"File may be in use, retrying in {MILLISECONDS_TIMEOUT} milliseconds, attempt {attemptCount} of {MAX_ATTEMPTS_TO_MOVE}");
                         Thread.Sleep(MILLISECONDS_TIMEOUT);
                     }
                     else
@@ -327,7 +405,13 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
-            m_countdownInTicks = MAX_COUNTDOWN_IN_TICKS;
+            m_shouldProcessRules = false;
+
+            // if there are pending screenshots, cancel them
+            if (m_ssActions.Count > 0)
+                m_ssActions.Clear();
+
+            m_ssCntDwnTicks = 0;
         }
     }
 }

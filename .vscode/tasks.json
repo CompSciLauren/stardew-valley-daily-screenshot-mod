@@ -47,6 +47,20 @@
             ],
             "problemMatcher": [],
             "group": "build"
+        }, {
+            "label": "Deploy Release",
+            "type": "shell",
+            "options": {
+                "cwd": "DailyScreenshot/obj/Release"
+            },
+            "command": "mv",
+            "args": [
+                "DailyScreenshot.dll",
+                "~/.steam/steam/steamapps/common/'Stardew Valley'/Mods/DailyScreenshot/."
+            ],
+            "problemMatcher": [],
+            "group": "none",
+            "dependsOn": ["Build Release"]
         }
     ]
 }

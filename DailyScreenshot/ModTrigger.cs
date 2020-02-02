@@ -58,7 +58,7 @@ namespace DailyScreenshot
             Winter = 1 << 31,
             AnyDay = Sundays | Mondays | Tuesdays | Wednesdays | Thursdays | Fridays | Saturdays,
             AnySeason = Spring | Summer | Fall | Winter,
-            Sundays = Day_01 | Day_08 | Day_15 | Day_22,
+            Sundays = AnySeason | Day_01 | Day_08 | Day_15 | Day_22,
             Mondays = Sundays << 1,
             Tuesdays = Sundays << 2,
             Wednesdays = Sundays << 3,
@@ -277,11 +277,11 @@ namespace DailyScreenshot
             DateFlags current_date = (DateFlags)((1 << (Game1.Date.SeasonIndex + 28)) | (1 << (Game1.Date.DayOfMonth - 1)));
             WeatherFlags current_weather = GetWeather();
             LocationFlags current_location = GetLocation();
-            if (WeatherFlags.Weather_None == (current_weather & Weather))
+            if (current_weather != (current_weather & Weather))
                 return false;
-            if (LocationFlags.Location_None == (current_location & Location))
+            if (current_location != (current_location & Location))
                 return false;
-            if (DateFlags.Day_None == (current_date & Days))
+            if (current_date != (current_date & Days))
             {
                 // Trigger will never be valid for this day,
                 // wait for the next to reset.
