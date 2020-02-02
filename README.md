@@ -34,7 +34,9 @@ Releases can be found at the following websites:
 - Works in both single player and multiplayer.
 - No known mod conflicts.
 
-## Config
+## Configuration File
+
+> Note: Older configuration files will automatically be upgraded to the newer format
 
 ```json
 {
