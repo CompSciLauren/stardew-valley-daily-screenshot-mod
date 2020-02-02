@@ -93,7 +93,7 @@ namespace DailyScreenshot
                     else
                         autoTrigger.Weather = ModTrigger.WeatherFlags.Any;
                     // Clear the default for a new value
-                    autoTrigger.Days = ModTrigger.DateFlags.Day_None;
+                    autoTrigger.Days = ModTrigger.DateFlags.AnySeason;
                     Dictionary<string, bool> ssDict = oldSSRules.ToObject<Dictionary<string, bool>>();
                     foreach (string key in ssDict.Keys)
                     {
