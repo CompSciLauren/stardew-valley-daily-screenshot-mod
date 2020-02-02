@@ -38,6 +38,8 @@ Releases can be found at the following websites:
 
 > Note: Older configuration files will automatically be upgraded to the newer format
 
+You can add as many rules as you would like.  The config file looks like:
+
 ```json
 {
   "SnapshotRules": [
