@@ -1,8 +1,8 @@
 ![logo](FeatureImage.png)
 
-# Daily Screenshot v1.2.0
+# Daily Screenshot v2.0
 
-> A Stardew Valley mod that automatically takes a screenshot of your entire farm at the start of each day.
+> A Stardew Valley mod that automatically takes a screenshot of based on rules
 
 Releases can be found at the following websites:
 
@@ -36,25 +36,55 @@ Releases can be found at the following websites:
 
 ## Config
 
-| Configuration Description                                | Setting Options | Default Setting |
-| -------------------------------------------------------- | -------- | -------- |
-| TimeScreenshotGetsTakenAfter     | Any integer between 600 and 2600   | 600 (screenshot gets taken anytime after 6:00 AM, upon entering your farm) |
-| TakeScreenshotKey | [List of Possible Key Bindings](https://stardewvalleywiki.com/Modding:Player_Guide/Key_Bindings) | None |
-| TakeScreenshotKeyZoomLevel     | Any number from 0 to 1   | 0.25 (full-map screenshot) |
-| FolderDestinationForDailyScreenshots | A path to a folder on your computer (if the path you specify does not exist, it will be created) Note: Needs to have two slashes in the file path. Example: C:\\\Users\\\Lauren\\\OneDrive\\\Pictures\\\Screenshots | default (located in StardewValley\Screenshots\Your-Farm-Name-Here folder) |
-| FolderDestinationForKeypressScreenshots | A path to a folder on your computer (if the path you specify does not exist, it will be created) Note: Needs to have two slashes in the file path. Example: C:\\\Users\\\Lauren\\\OneDrive\\\Pictures\\\Screenshots | default (located in StardewValley\Screenshots\Your-Farm-Name-Here folder) |
-| TakeScreenshotOnRainyDays | true, false | true |
-| HowOftenToTakeScreenshot | Everything described for the rest of this table | -- |
-| Daily | true, false | true |
-| Mondays | true, false | true |
-| Tuesdays | true, false | true |
-| Wednesdays | true, false | true |
-| Thursdays | true, false | true |
-| Fridays | true, false | true |
-| Saturdays | true, false | true |
-| Sundays | true, false | true |
-| First Day of Month | true, false| true |
-| Last Day of Month | true, false | true |
+```json
+{
+  "SnapshotRules": [
+    {
+      "Name": "Daily Farm Picture",
+      "ZoomLevel": 0.25,
+      "Directory": "Default",
+      "FileName": "Default",
+      "Trigger": {
+        "Days": "Daily",
+        "Weather": "Any",
+        "Location": "Farm",
+        "Key": "None",
+        "StartTime": 600,
+        "EndTime": 2600
+      }
+    },
+    {
+      "Name": "Keypress Picture",
+      "ZoomLevel": 1.0,
+      "Directory": "/home/bob/SDV",
+      "FileName": "None",
+      "Trigger": {
+        "Days": "Daily",
+        "Weather": "Any",
+        "Location": "Any",
+        "Key": "Multiply",
+        "StartTime": 600,
+        "EndTime": 2600
+      }
+    }
+  ]
+}
+```
+
+Triggers are things that must happen for a screenshot to take place.  All of the items must be true.  Automatic screen shots (without a key press) happen at most once a day.
+
+| Setting | Description | Type | Default Setting |
+| --------|------- | -------- | -------- |
+| Name | What to show when taking a picture.  Rules without a name will be given a name automatically | string | Unnamed Rule # |
+| ZoomLevel | How should the picture be scaled | Any number between 0.25 and 1.0 | 0.25 |
+| Directory | Where to save the picture (Remember to use a double backslash on Windows) | string | Stardew Valley Screenshot folder |
+| Filename | A combination of values for the filename, seperated by commas.  Possible values are: None, Date, Farmname, GameID, Location, Weather, Playername, Time, UniqueID.  Will follow the pattern: {Farm Name}-{GameID}/{Location}/{Weather}/{Player Name}-{Date}-{Time}-{Unique ID} | Enum | Date, FarmName, GameID, Location |
+| Days | A combination of values for the days and seasons to take a screen shot.  Possible values are: Day_01 .. Day_28, Sundays, Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays, FirstDayOfTheMonth, LastDayOfTheMonth, Spring, Summer, Fall, Winter, AnySeason, AnyDay, Daily.  Note: Day_## do not include a season, so you must include it for a screenshot to happen.  To take a picture on the 15th of fall use Day_15, Fall. | enum | Daily |
+| Weather| A combination of values for the weather.  Possible values are: Sunny, Rainy, Windy, Stormy, Snowy, Any. | enum | Any |
+| Location | A combination of locations to take a picture.  Picture will be taken when going to one of these locations.  Possible values are: Farm, Farmhouse, Greenhouse, Beach, FarmCave, Cellar, Desert, Museum, CommunityCenter, Moutain, Unknown, Any.  Unknown is not any of the listed locations. | enum | Any |
+| Key | Key press to look for to take a picture.  If set the picture will be taken on demand and not automatically.  Possible values: [List of possible keybindings](https://stardewvalleywiki.com/Modding:Player_Guide/Key_Bindings) | enum | None |
+| StartTime | Earliest point at which to take the picture.  The time cannot be less than 600 and must be in increments of 10.  It also must be less than or equal to EndTime | int | 600 |
+| EndTime | Lasest point at which to take the picture. The time cannot be less than StartTime and cannot be more than 2600 | int | 2600 |
 
 ## License
 
