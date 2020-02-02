@@ -3,7 +3,7 @@
 ## Documentation
 
 - [ ] Functions
-- [ ] User
+- [x] User
 
 ## User Input Validation
 
