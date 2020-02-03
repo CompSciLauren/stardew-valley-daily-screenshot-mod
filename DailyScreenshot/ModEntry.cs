@@ -34,6 +34,8 @@ namespace DailyScreenshot
         /// </summary>
         private const int MILLISECONDS_TIMEOUT = 10;
 
+        private const string FailedToLoadMessage = "Error: Failed to load the configuration file for DailyScreenshot. Pictures will not be taken. Check the console for more details.";
+
         #endregion
 
         /// <summary>The mod configuration from the player.</summary>
@@ -119,13 +121,20 @@ namespace DailyScreenshot
                 throw new Exception(message);
             }
             DailySS = this;
-            m_config = Helper.ReadConfig<ModConfig>();
-            m_config.ValidateUserInput();
-            m_config.NameRules();
-            // Fixed something up, write new rules
-            if (m_config.RulesModified)
-                Helper.WriteConfig<ModConfig>(m_config);
-            m_config.SortRules();
+            try
+            {
+                m_config = Helper.ReadConfig<ModConfig>();
+                m_config.ValidateUserInput();
+                // Fixed something up, write new rules
+                if (m_config.RulesModified)
+                    Helper.WriteConfig<ModConfig>(m_config);
+                m_config.SortRules();
+            }
+            catch (Exception ex)
+            {
+                MError($"Failed to load config file.\nTechnical Details: {ex}");
+                Helper.Events.GameLoop.OneSecondUpdateTicked += LoadingErrorOnTick;
+            }
 
             int num11 = Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28;
             var path = Environment.GetFolderPath((Environment.SpecialFolder)num11);
@@ -133,6 +142,24 @@ namespace DailyScreenshot
             // path is combined with StardewValley and then Screenshots
             m_defaultSSdirectory = Path.Combine(path, "StardewValley", "Screenshots");
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+        }
+
+        private void LoadingErrorOnTick(object sender, OneSecondUpdateTickedEventArgs e)
+        {
+            if (e.Ticks < 60) return;
+
+            // And only fire once.
+            Helper.Events.GameLoop.OneSecondUpdateTicked -= LoadingErrorOnTick;
+            ReportLoadingError();
+        }
+
+        private void ReportLoadingError()
+        {
+            List<string> text = new List<string>() { FailedToLoadMessage };
+            StardewValley.Menus.DialogueBox box = new StardewValley.Menus.DialogueBox(text);
+            StardewValley.Game1.activeClickableMenu = box;
+            StardewValley.Game1.dialogueUp = true;
+            box.finishTyping();
         }
 
         /// <summary>Raised after the save file is loaded.</summary>
@@ -341,6 +368,7 @@ namespace DailyScreenshot
             // special folder path
 
             // path for original screenshot location and new screenshot location
+            // TODO: Make these file info objects
             string sourceFile = Path.Combine(m_defaultSSdirectory, screenshotPath);
             string destinationFile = Path.Combine(rule.Directory, screenshotPath);
             MTrace($"Snapshot moving from {sourceFile} to {destinationFile}");
@@ -371,9 +399,7 @@ namespace DailyScreenshot
                     {
                         // delete old version of screenshot if one exists
                         if (File.Exists(destinationFile))
-                        {
                             File.Delete(destinationFile);
-                        }
                         File.Move(sourceFile, destinationFile);
                     }
                 }

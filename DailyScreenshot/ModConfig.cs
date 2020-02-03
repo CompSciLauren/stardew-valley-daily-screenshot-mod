@@ -46,7 +46,7 @@ namespace DailyScreenshot
 
         private T GetOldData<T>(IDictionary<string, JToken> oldDatDict, string key, T defaultValue)
         {
-            if(oldDatDict.TryGetValue(key, out JToken value))
+            if (oldDatDict.TryGetValue(key, out JToken value))
             {
                 return value.ToObject<T>();
             }
@@ -62,7 +62,7 @@ namespace DailyScreenshot
         private void OnDeserializedFixup(StreamingContext context)
         {
             // If there's no extra Json attributes, there's nothing to fixup
-            if(_additionalData == null)
+            if (_additionalData == null)
                 return;
             try
             {
@@ -70,7 +70,7 @@ namespace DailyScreenshot
                 if (_additionalData.TryGetValue("HowOftenToTakeScreenshot", out JToken oldSSRules))
                 {
                     ModRule autoRule;
-                    if(SnapshotRules.Count == 1 && SnapshotRules[0].Name == m_launchGuid)
+                    if (SnapshotRules.Count == 1 && SnapshotRules[0].Name == m_launchGuid)
                         autoRule = SnapshotRules[0];
                     else
                     {
@@ -110,14 +110,14 @@ namespace DailyScreenshot
 
                     autoRule.Directory = GetOldData<string>(_additionalData,
                         "FolderDestinationForDailyScreenshots", DEFAULT_STRING);
-                    autoRule.ZoomLevel = GetOldData < float>(_additionalData,
-                        "TakeScreenshotZoomLevel",DEFAULT_ZOOM);
-                    autoTrigger.StartTime = GetOldData < int>(_additionalData,
+                    autoRule.ZoomLevel = GetOldData<float>(_additionalData,
+                        "TakeScreenshotZoomLevel", DEFAULT_ZOOM);
+                    autoTrigger.StartTime = GetOldData<int>(_additionalData,
                         "TimeScreenshotGetsTakenAfter", DEFAULT_START_TIME);
                     RulesModified = true;
                     SButton button = GetOldData<SButton>(_additionalData,
                         "TakeScreenshotKey", SButton.None);
-                    if(button != SButton.None)
+                    if (button != SButton.None)
                     {
                         ModRule keyRule = new ModRule();
                         keyRule.Trigger.Key = button;
@@ -136,7 +136,7 @@ namespace DailyScreenshot
             {
                 MWarn($"Unable to read old config. Technical details:{ex}");
             }
-            _additionalData=new Dictionary<string, JToken>();
+            _additionalData = new Dictionary<string, JToken>();
         }
 
         internal void SortRules()
@@ -146,15 +146,6 @@ namespace DailyScreenshot
 
         public void ValidateUserInput()
         {
-            foreach (ModRule rule in SnapshotRules)
-            {
-                if(rule.ValidateUserInput())
-                    RulesModified = true;
-            }
-        }
-
-        public void NameRules()
-        {
             int cnt = 0;
             foreach (ModRule rule in SnapshotRules)
             {
@@ -162,8 +153,11 @@ namespace DailyScreenshot
                 {
                     cnt++;
                     rule.Name = $"Unnamed Rule {cnt}";
+                    MWarn($"Updating unnamed rule to be \"{rule.Name}\"");
                     RulesModified = true;
                 }
+                if (rule.ValidateUserInput())
+                    RulesModified = true;
             }
         }
     }

@@ -13,6 +13,7 @@ namespace DailyScreenshot
     public class ModTrigger
     {
         void MTrace(string message) => ModEntry.DailySS.MTrace(message);
+        void MWarn(string message) => ModEntry.DailySS.MWarn(message);
 
         private bool m_triggered = false;
 
@@ -143,7 +144,24 @@ namespace DailyScreenshot
                 Mountain | CommunityCenter | Museum | FarmCave | Cellar | Desert
         }
 
-        internal bool ValidateUserInput()
+        internal bool CanTrigger(string ruleName)
+        {
+            bool ret = true;
+            if (DateFlags.Day_None == (Days & DateFlags.AnySeason))
+            {
+                MWarn($"Rule {ruleName} will not trigger as no season is set.  Days=\"{Days}\"");
+                ret = false;
+            }
+            if (DateFlags.Day_None == (Days & DateFlags.AnyDay))
+            {
+                MWarn($"Rule {ruleName} will not trigger as no day is set.  Days=\"{Days}\"");
+                ret = false;
+            }
+
+            return ret;
+        }
+
+        internal bool ValidateUserInput(string ruleName)
         {
             bool modified = false;
             int startTime = SetLimits(StartTime);
@@ -152,9 +170,13 @@ namespace DailyScreenshot
             {
                 modified = true;
 
+                if (StartTime != startTime || EndTime != endTime)
+                    MWarn($"Setting limits on StartTime and Endtime for rule \"{ruleName}\"");
+
                 // if the times are impossible then swap them
                 if (startTime > endTime)
                 {
+                    MWarn($"Swapping StartTime and EndTime for rule \"{ruleName}\"");
                     StartTime = endTime;
                     EndTime = startTime;
                 }
@@ -163,7 +185,9 @@ namespace DailyScreenshot
                     StartTime = startTime;
                     EndTime = endTime;
                 }
+                MWarn($"StartTime is now \"{StartTime}\" amd EmdTime is now \"{EndTime}\" for rule \"{ruleName}\"");
             }
+
             return modified;
         }
 

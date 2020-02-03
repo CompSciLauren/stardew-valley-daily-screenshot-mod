@@ -17,7 +17,12 @@ namespace DailyScreenshot
     /// </summary>
     public class ModRule : IComparable
     {
+        private const float MIN_ZOOM = 0.05f;
+        private const float MAX_ZOOM = 1.0f;
+
         void MError(string message) => ModEntry.DailySS.MError(message);
+
+        void MWarn(string message) => ModEntry.DailySS.MWarn(message);
 
         /// <summary>
         /// Is this rule active?
@@ -181,7 +186,7 @@ namespace DailyScreenshot
         /// <returns>true if the user input was modified</returns>
         internal bool ValidateUserInput()
         {
-            bool modified = Trigger.ValidateUserInput();
+            bool modified = Trigger.ValidateUserInput(Name);
             if (ModConfig.DEFAULT_STRING != Directory)
             {
                 // String.compare usually uses the current culture which can have
@@ -196,6 +201,7 @@ namespace DailyScreenshot
                 {
                     modified = true;
                     Directory = ModConfig.DEFAULT_STRING;
+                    MWarn($"Updating directory for rule \"{Name}\" to be \"Default\"");
                 }
                 else
                 {
@@ -207,20 +213,22 @@ namespace DailyScreenshot
                         {
                             modified = true;
                             Directory = path;
+                            MWarn($"Updating directory for rule \"{Name}\" to be \"{path}\"");
                         }
                     }
                     catch (Exception ex)
                     {
-                        MError($"Invalid path {Directory} specified.\nTechnical Details:\n{ex}");
+                        MError($"Invalid path {Directory} specified for rule \"{Name}\".\nTechnical Details:\n{ex}");
                         Enabled = false;
                     }
                 }
             }
-            if (ZoomLevel < 0.25f || ZoomLevel > 1.0f)
+            if (ZoomLevel < MIN_ZOOM || ZoomLevel > MAX_ZOOM)
             {
                 modified = true;
-                ZoomLevel = Math.Max(ZoomLevel, 0.25f);
-                ZoomLevel = Math.Min(ZoomLevel, 1.0f);
+                ZoomLevel = Math.Max(ZoomLevel, MIN_ZOOM);
+                ZoomLevel = Math.Min(ZoomLevel, MAX_ZOOM);
+                MWarn($"Updating ZoomLevel for rule \"{Name}\" to be \"{ZoomLevel}\"");
             }
             // What do we need to check for on the name?
             return modified;
