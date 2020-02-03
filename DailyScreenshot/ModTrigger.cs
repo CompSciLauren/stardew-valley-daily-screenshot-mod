@@ -12,9 +12,26 @@ namespace DailyScreenshot
     /// </summary>
     public class ModTrigger
     {
+        /// <summary>
+        /// Trace messages to the console
+        /// </summary>
+        /// <param name="message">Text to display</param>
         void MTrace(string message) => ModEntry.DailySS.MTrace(message);
+
+        /// <summary>
+        /// Warning messages to the console
+        /// </summary>
+        /// <param name="message">Text to display</param>
         void MWarn(string message) => ModEntry.DailySS.MWarn(message);
 
+        /// <summary>
+        /// Minium time span the game allows (moves in 10 minute increments)
+        /// </summary>
+        private const int MIN_TIME_INTERVAL = 10;
+
+        /// <summary>
+        /// True if this rule has triggered automatically
+        /// </summary>
         private bool m_triggered = false;
 
         #region Dates 
@@ -26,14 +43,23 @@ namespace DailyScreenshot
         {
             Day_None = 0,
             Day_01 = 1 << 0,
+            Day_1 = Day_01,
             Day_02 = 1 << 1,
+            Day_2 = Day_02,
             Day_03 = 1 << 2,
+            Day_3 = Day_03,
             Day_04 = 1 << 3,
+            Day_4 = Day_04,
             Day_05 = 1 << 4,
+            Day_5 = Day_05,
             Day_06 = 1 << 5,
+            Day_6 = Day_06,
             Day_07 = 1 << 6,
+            Day_7 = Day_07,
             Day_08 = 1 << 7,
+            Day_8 = Day_08,
             Day_09 = 1 << 8,
+            Day_9 = Day_09,
             Day_10 = 1 << 9,
             Day_11 = 1 << 10,
             Day_12 = 1 << 10,
@@ -144,6 +170,11 @@ namespace DailyScreenshot
                 Mountain | CommunityCenter | Museum | FarmCave | Cellar | Desert
         }
 
+        /// <summary>
+        /// Checks if a rule can trigger
+        /// </summary>
+        /// <param name="ruleName">Name of the rule for warnings</param>
+        /// <returns>True if the rule can trigger</returns>
         internal bool CanTrigger(string ruleName)
         {
             bool ret = true;
@@ -157,10 +188,24 @@ namespace DailyScreenshot
                 MWarn($"Rule {ruleName} will not trigger as no day is set.  Days=\"{Days}\"");
                 ret = false;
             }
-
+            if (WeatherFlags.Weather_None == (Weather & WeatherFlags.Any))
+            {
+                MWarn($"Rule {ruleName} will not trigger as no weather is set.  Weather=\"{Weather}\"");
+                ret = false;
+            }
+            if (LocationFlags.Location_None == (Location & LocationFlags.Any))
+            {
+                MWarn($"Rule {ruleName} will not trigger as no location is set.  Location=\"{Location}\"");
+                ret = false;
+            }
             return ret;
         }
 
+        /// <summary>
+        /// Checks if the specified times are valid and fixes any user mistakes
+        /// </summary>
+        /// <param name="ruleName">Name of the rule for warnings</param>
+        /// <returns>True if the times were modified</returns>
         internal bool ValidateUserInput(string ruleName)
         {
             bool modified = false;
@@ -210,12 +255,11 @@ namespace DailyScreenshot
         private int SetLimits(int time)
         {
             // round to the nearest 10 minutes
-            int val = Math.Max(time + 5, ModConfig.DEFAULT_START_TIME);
+            int val = Math.Max(time + (MIN_TIME_INTERVAL / 2), ModConfig.DEFAULT_START_TIME);
             val = Math.Min(val, ModConfig.DEFAULT_END_TIME);
 
             // Round to the nearest 10 mintues
-            // TODO: move these magic numbers to constants
-            return val - (val % 10);
+            return val - (val % MIN_TIME_INTERVAL);
         }
 
         /// <summary>
@@ -280,6 +324,16 @@ namespace DailyScreenshot
         public int EndTime { get; set; } = ModConfig.DEFAULT_END_TIME;
 
         /// <summary>
+        /// Helper function to see if a time is contained by StartTime and EndTime
+        /// </summary>
+        /// <param name="time">Game time of day</param>
+        /// <returns>true if the time is contained</returns>
+        internal bool CheckTime(int time)
+        {
+            return time >= StartTime && time <= EndTime;
+        }
+
+        /// <summary>
         /// Resets the triggered flag, should be called at the start of the day
         /// </summary>
         public void ResetTrigger()
@@ -315,9 +369,7 @@ namespace DailyScreenshot
             }
 
             // Some mods can mess with time so don't set triggered flag
-            if (Game1.timeOfDay < StartTime)
-                return false;
-            if (Game1.timeOfDay > EndTime)
+            if (!CheckTime(Game1.timeOfDay))
                 return false;
 
             // Keys is not a flags enum, only one can be set at a time

@@ -17,12 +17,33 @@ namespace DailyScreenshot
     /// </summary>
     public class ModRule : IComparable
     {
-        private const float MIN_ZOOM = 0.05f;
+        /// <summary>
+        /// Minimum zoom level
+        /// </summary>
+        private const float MIN_ZOOM = 0.01f;
+
+        /// <summary>
+        /// Maximum zoom level
+        /// </summary>
         private const float MAX_ZOOM = 1.0f;
 
-        void MError(string message) => ModEntry.DailySS.MError(message);
+        /// <summary>
+        /// Trace messages to the console
+        /// </summary>
+        /// <param name="message">Text to display</param>
+        void MTrace(string message) => ModEntry.DailySS.MTrace(message);
 
+        /// <summary>
+        /// Warning messages to the console
+        /// </summary>
+        /// <param name="message">Text to display</param>
         void MWarn(string message) => ModEntry.DailySS.MWarn(message);
+
+        /// <summary>
+        /// Error messages to the console
+        /// </summary>
+        /// <param name="message">Text to display</param>
+        void MError(string message) => ModEntry.DailySS.MError(message);
 
         /// <summary>
         /// Is this rule active?
@@ -230,8 +251,54 @@ namespace DailyScreenshot
                 ZoomLevel = Math.Min(ZoomLevel, MAX_ZOOM);
                 MWarn($"Updating ZoomLevel for rule \"{Name}\" to be \"{ZoomLevel}\"");
             }
+            if (!Trigger.CanTrigger(Name))
+                Enabled = false;
             // What do we need to check for on the name?
             return modified;
+        }
+
+        /// <summary>
+        /// Returns true if these two rules can have overlapping filenames
+        /// </summary>
+        /// <param name="other">Rule to compare agains</param>
+        /// <returns>True if the filenames can overlap</returns>
+        internal bool FileNamesCanOverlap(ModRule other)
+        {
+            if (FileNameFlags.None != (this.FileName & FileNameFlags.UniqueID))
+                return false;
+            if (FileNameFlags.None != (other.FileName & FileNameFlags.UniqueID))
+                return false;
+            if (this.FileName != other.FileName)
+                return false;
+            if (Path.GetFullPath(this.Directory) != Path.GetFullPath(other.Directory))
+                return false;
+            if (FileNameFlags.None != (FileNameFlags.Weather & FileName))
+            {
+                if (ModTrigger.WeatherFlags.Weather_None == (
+                    this.Trigger.Weather & other.Trigger.Weather))
+                    return false;
+            }
+            if (FileNameFlags.None != (FileNameFlags.Location & FileName))
+            {
+                if (ModTrigger.LocationFlags.Location_None == (
+                    this.Trigger.Location & other.Trigger.Location))
+                    return false;
+            }
+            if (FileNameFlags.None != (FileNameFlags.Time & FileName))
+            {
+                if (!this.Trigger.CheckTime(other.Trigger.StartTime) &&
+                    !this.Trigger.CheckTime(other.Trigger.EndTime) &&
+                    !other.Trigger.CheckTime(this.Trigger.StartTime) &&
+                    !other.Trigger.CheckTime(this.Trigger.EndTime))
+                    return false;
+            }
+            if (FileNameFlags.None != (FileNameFlags.Date & FileName))
+            {
+                if (ModTrigger.DateFlags.Day_None == (
+                    this.Trigger.Days & other.Trigger.Days))
+                    return false;
+            }
+            return true;
         }
 
         /// <summary>

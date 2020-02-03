@@ -80,15 +80,15 @@ Triggers are things that must happen for a screenshot to take place.  All of the
 | Setting | Description | Type | Default Setting |
 | --------|------- | -------- | -------- |
 | Name | What to show when taking a picture.  Rules without a name will be given a name automatically | string | Unnamed Rule # |
-| ZoomLevel | How should the picture be scaled.  Any number between 0.25 and 1.0 | float | 0.25 |
+| ZoomLevel | How should the picture be scaled.  Any number between 0.01 and 1.0.  The smaller the number, the smaller the picture (smaller pictures take less disk space) | float | 0.25 |
 | Directory | Where to save the picture.<BR/><BR/>Default or empty means the standard Startdew Valley screenshot directory.<BR/><BR/>**Note: Remember to use a double backslash on Windows.** | string | Default |
-| Filename | A combination of values for the filename, seperated by commas.<BR/><BR/>Possible values are: None, Date, Farmname, GameID, Location, Weather, Playername, Time, UniqueID.<BR/><BR/>Will follow the pattern: {Farm Name}-{GameID}/{Location}/{Weather}/{Player Name}-{Date}-{Time}-{Unique ID} | Enum | Date, FarmName, GameID, Location |
-| Days | A combination of values for the days and seasons to take a screen shot.<br/><br/>Possible values are: Day_01 .. Day_28, Sundays, Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays, FirstDayOfTheMonth, LastDayOfTheMonth, Spring, Summer, Fall, Winter, AnySeason, AnyDay, Daily.<BR/><BR/>**Note: It is important if not using the daily value to specify season(s) and day(s) or a picture will not be taken.**<BR/><BR/>Example: To take a picture on the 15th of fall use Day_15, Fall. | enum | Daily |
+| Filename | A combination of values for the filename, separated by commas.<BR/><BR/>Possible values are: None, Date, Farmname, GameID, Location, Weather, PlayerName, Time, UniqueID.<BR/><BR/>Will follow the pattern: {Farm Name}-{GameID}/{Location}/{Weather}/{Player Name}-{Date}-{Time}-{Unique ID} | Enum | Date, FarmName, GameID, Location |
+| Days | A combination of values for the days and seasons to take a screen shot.<br/><br/>Possible values are: Day_1 .. Day_28, Sundays, Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays, FirstDayOfTheMonth, LastDayOfTheMonth, Spring, Summer, Fall, Winter, AnySeason, AnyDay, Daily.<BR/><BR/>**Note: It is important if not using the daily value to specify season(s) and day(s) or a picture will not be taken.**<BR/><BR/>Example: To take a picture on the 15th of fall use Day_15, Fall. | enum | Daily |
 | Weather| A combination of values for the weather.<BR/><BR/>Possible values are: Sunny, Rainy, Windy, Stormy, Snowy, Any. | enum | Any |
-| Location | A combination of locations to take a picture.  Picture will be taken when going to one of these locations.<BR/><BR/>Possible values are: Farm, Farmhouse, Greenhouse, Beach, FarmCave, Cellar, Desert, Museum, CommunityCenter, Moutain, Unknown, Any. <BR/><BR/>**Note: Unknown is not any of the listed locations.** | enum | Any |
+| Location | A combination of locations to take a picture.  Picture will be taken when going to one of these locations.<BR/><BR/>Possible values are: Farm, Farmhouse, Greenhouse, Beach, FarmCave, Cellar, Desert, Museum, CommunityCenter, Mountain, Unknown, Any. <BR/><BR/>**Note: Unknown is not any of the listed locations.** | enum | Any |
 | Key | Key press to look for to take a picture.  If set the picture will be taken on demand and not automatically.<BR/><BR/>Possible values: [List of possible keybindings](https://stardewvalleywiki.com/Modding:Player_Guide/Key_Bindings) | enum | None |
 | StartTime | Earliest point at which to take the picture.  The time cannot be more than EndTime and must be less than 600.  Must be an increment of 10. | int | 600 |
-| EndTime | Lasest point at which to take the picture. The time cannot be less than StartTime and cannot be more than 2600. Must be an increment of 10. | int | 2600 |
+| EndTime | Last point at which to take the picture. The time cannot be less than StartTime and cannot be more than 2600. Must be an increment of 10. | int | 2600 |
 
 ## License
 

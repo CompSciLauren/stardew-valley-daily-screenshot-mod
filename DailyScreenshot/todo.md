@@ -14,9 +14,17 @@
 ## Warnings
 
 - [ ] Colliding filenames
-- [ ] Rules that won't trigger
+  - [x] Location
+  - [x] Weather
+  - [x] Date
+  - [x] Directory
+  - [ ] Game ID
+  - [x] Time of day
+- [x] Changes to rules
+- [x] Rules that won't trigger
 - [x] Directory not rooted
   - [x] Check if it is possible to replace slashes for the user
+- [x] Config file not loading
 
 ## Known Defects
 
@@ -27,6 +35,7 @@
 - [x] Weekday enums don't work
 - [x] Exception for key presses before save game is loaded
 - [x] Day rules are not working
+- [x] Release builds not building (verbose logging)
 
 ## Test Cases
 
@@ -34,7 +43,16 @@
   - [x] Warp
   - [x] Time change
   - [x] Key press
+- [ ] Warnings
+  - [ ] Overlapping file names
+    - [ ] Location
+    - [ ] Weather
+    - [ ] Date
+    - [ ] Directory
+    - [ ] Game ID
+    - [ ] Time of day
 - [ ] Others
   - [x] Is the date correct after midnight
   - [ ] Bad user input in config
-  
+  - [ ] Warnings for inactive rules
+  - [x] Error message for invalid config

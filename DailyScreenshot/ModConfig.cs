@@ -10,9 +10,24 @@ namespace DailyScreenshot
     class ModConfig
     {
 
+        /// <summary>
+        /// Trace messages to the console
+        /// </summary>
+        /// <param name="message">Text to display</param>
         void MTrace(string message) => ModEntry.DailySS.MTrace(message);
 
+        /// <summary>
+        /// Warning messages to the console
+        /// </summary>
+        /// <param name="message">Text to display</param>
         void MWarn(string message) => ModEntry.DailySS.MWarn(message);
+
+        /// <summary>
+        /// Error messages to the console
+        /// </summary>
+        /// <param name="message">Text to display</param>
+        void MError(string message) => ModEntry.DailySS.MError(message);
+
         private string m_launchGuid;
         public static string DEFAULT_STRING = "Default";
         public const float DEFAULT_ZOOM = 0.25f;
@@ -158,6 +173,22 @@ namespace DailyScreenshot
                 }
                 if (rule.ValidateUserInput())
                     RulesModified = true;
+            }
+            for (int i = 0; i < SnapshotRules.Count; i++)
+            {
+                if (SnapshotRules[i].Enabled)
+                {
+                    for (int j = i + 1; j < SnapshotRules.Count; j++)
+                    {
+                        if (SnapshotRules[j].Enabled)
+                        {
+                            if (SnapshotRules[i].FileNamesCanOverlap(SnapshotRules[j]))
+                            {
+                                MWarn($"Rules \"{SnapshotRules[i].Name}\" and \"{SnapshotRules[j].Name}\" can over write one another.");
+                            }
+                        }
+                    }
+                }
             }
         }
     }

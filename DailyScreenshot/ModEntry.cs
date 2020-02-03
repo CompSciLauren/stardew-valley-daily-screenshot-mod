@@ -67,7 +67,7 @@ namespace DailyScreenshot
 #if DEBUG
         internal void LogMessageToConsole(string message, LogLevel level) => Monitor.Log(message, level);
 #else
-        internal void LogMessageToConsole(string message, LogLevel level) => Monitor.VerboseLog(message, level);
+        internal void LogMessageToConsole(string message, LogLevel level) => Monitor.VerboseLog(level.ToString() + ": " + message);
 #endif
 
 
