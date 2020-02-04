@@ -9,10 +9,16 @@ using System.Threading;
 
 namespace DailyScreenshot
 {
-    /// <summary>The mod entry point.</summary>
+    /// <summary>
+    /// The mod entry point.
+    /// </summary>
     public class ModEntry : Mod
     {
+        /// <summary>
+        /// Static global so ModConfig can log to the console
+        /// </summary>
         internal static ModEntry DailySS = null;
+
         #region Constants 
         /// <summary>
         /// Maximum attempts to move the file
@@ -34,20 +40,43 @@ namespace DailyScreenshot
         /// </summary>
         private const int MILLISECONDS_TIMEOUT = 10;
 
+        /// <summary>
+        /// Message to show when the config file fails to load
+        /// </summary>
         private const string FailedToLoadMessage = "Error: Failed to load the configuration file for DailyScreenshot. Pictures will not be taken. Check the console for more details.";
 
         #endregion
 
-        /// <summary>The mod configuration from the player.</summary>
+        /// <summary>
+        /// The mod configuration from the player.
+        /// </summary>
         private ModConfig m_config;
 
+        /// <summary>
+        /// Screenshot countdown ticks (make sure the world is rendered)
+        /// </summary>
         int m_ssCntDwnTicks = 0;
 
+        /// <summary>
+        /// File move countdown ticks (let the screenshot finish and game process a little)
+        /// </summary>
         int m_mvCntDwnTicks = 0;
 
+        /// <summary>
+        /// Way to disable rule processing
+        /// </summary>
         bool m_shouldProcessRules = false;
 
-        public string m_defaultSSdirectory { get; private set; }
+        /// <summary>
+        /// Default screenshot directory set in the entry
+        /// </summary>
+        /// <value>Path to the screenshot directory for this platform</value>
+        public DirectoryInfo m_defaultSSdirectory { get; private set; }
+
+        /// <summary>
+        /// Are ticks being counted?
+        /// </summary>
+        /// <value>True if there's a tick event being monitored</value>
         public bool m_updateTickEventActive { get; private set; }
 
         /// <summary>
@@ -55,19 +84,24 @@ namespace DailyScreenshot
         /// </summary>
         /// <param name="path">Directory to check</param>
         /// <returns>true if the directory is empty</returns>
-        private bool DirectoryIsEmpty(string path) => Directory.GetDirectories(path).Length == 0 && Directory.GetFiles(path).Length == 0;
+        private bool DirectoryIsEmpty(DirectoryInfo directory) => 
+            directory.GetDirectories().Length == 0 && directory.GetFiles().Length == 0;
 
         #region Logging
+        // Private copies of these functions so there's one
+        // place to alter all log messages if needed
+
         /// <summary>
         /// Sends messages to the SMAPI console
         /// </summary>
         /// <param name="message">text to send</param>
         /// <param name="level">type of message</param>
-        // Private copy so there's one place to alter all log messages if needed
 #if DEBUG
-        internal void LogMessageToConsole(string message, LogLevel level) => Monitor.Log(message, level);
+        internal void LogMessageToConsole(string message, LogLevel level) =>
+            Monitor.Log(message, level);
 #else
-        internal void LogMessageToConsole(string message, LogLevel level) => Monitor.VerboseLog(level.ToString() + ": " + message);
+        internal void LogMessageToConsole(string message, LogLevel level) =>
+            Monitor.VerboseLog(level.ToString() + ": " + message);
 #endif
 
 
@@ -110,7 +144,9 @@ namespace DailyScreenshot
         internal void MError(string message) => Monitor.Log(message, LogLevel.Error);
         #endregion
 
-        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <summary>
+        /// The mod entry point, called after the mod is first loaded.
+        /// </summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
@@ -140,10 +176,15 @@ namespace DailyScreenshot
             var path = Environment.GetFolderPath((Environment.SpecialFolder)num11);
 
             // path is combined with StardewValley and then Screenshots
-            m_defaultSSdirectory = Path.Combine(path, "StardewValley", "Screenshots");
+            m_defaultSSdirectory = new DirectoryInfo(Path.Combine(path, "StardewValley", "Screenshots"));
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
         }
 
+        /// <summary>
+        /// Event for showing a loading error (based on StardewHack)
+        /// </summary>
+        /// <param name="sender">Event sender</param>
+        /// <param name="e">Event details</param>
         private void LoadingErrorOnTick(object sender, OneSecondUpdateTickedEventArgs e)
         {
             if (e.Ticks < 60) return;
@@ -153,6 +194,9 @@ namespace DailyScreenshot
             ReportLoadingError();
         }
 
+        /// <summary>
+        /// Shows dialog indicating a config file loading error
+        /// </summary>
         private void ReportLoadingError()
         {
             List<string> text = new List<string>() { FailedToLoadMessage };
@@ -174,6 +218,11 @@ namespace DailyScreenshot
             Helper.Events.Input.ButtonPressed += OnButtonPressed;
         }
 
+        /// <summary>
+        /// Event to process on a time change
+        /// </summary>
+        /// <param name="sender">The event sender</param>
+        /// <param name="e">The event data</param>
         private void OnTimeChanged(object sender, TimeChangedEventArgs e)
         {
             RunTriggers();
@@ -255,6 +304,8 @@ namespace DailyScreenshot
                 while (m_ssActions.Count > 0)
                 {
                     m_ssActions.Dequeue().Invoke();
+                    // Ensure unique IDs
+                    Thread.Sleep(1);
                     if (m_mvCntDwnTicks == 0 && m_mvActions.Count > 0)
                         m_mvCntDwnTicks = MAX_COUNTDOWN_IN_TICKS;
                 }
@@ -284,7 +335,7 @@ namespace DailyScreenshot
         /// HUD message has been added and we waited for
         /// our timeout in ticks, so take a screenshot
         /// </summary>
-        /// <param name="rule"></param>
+        /// <param name="rule">Rule to follow for this screenshot</param>
         private void TakeScreenshot(ModRule rule)
         {
             string ssPath = rule.GetFileName();
@@ -292,18 +343,23 @@ namespace DailyScreenshot
             {
                 MTrace($"ssPath = \"{ssPath}\"");
                 string ssDirectory = Path.GetDirectoryName(ssPath);
-                Directory.CreateDirectory(Path.Combine(m_defaultSSdirectory, ssDirectory));
+                
+                Directory.CreateDirectory(Path.Combine(m_defaultSSdirectory.FullName, ssDirectory));
             }
-            string mapScreenshot = Game1.game1.takeMapScreenshot(rule.ZoomLevel, ssPath);
-            MTrace($"Snapshot saved to {mapScreenshot}");
+            string mapScreenshotPath = Game1.game1.takeMapScreenshot(rule.ZoomLevel, ssPath);
+            if(null == ssPath)
+            {
+                ssPath = mapScreenshotPath;
+            }
+            FileInfo mapScreenshot = new FileInfo(Path.Combine(m_defaultSSdirectory.FullName, mapScreenshotPath));
+            MTrace($"Snapshot saved to {mapScreenshot.FullName}");
             Game1.playSound("cameraNoise");
             if (ModConfig.DEFAULT_STRING != rule.Directory)
             {
                 EnqueueAction(() =>
                     {
-                        MoveScreenshotToCorrectFolder(mapScreenshot, rule);
-                        CleanUpEmptyDirectories(Path.GetDirectoryName(
-                            Path.Combine(m_defaultSSdirectory, mapScreenshot)));
+                        MoveScreenshotToCorrectFolder(mapScreenshot, new FileInfo(Path.Combine(rule.Directory, ssPath)));
+                        CleanUpEmptyDirectories(mapScreenshot.Directory);
                     }, ref m_mvActions
                     );
             }
@@ -312,22 +368,21 @@ namespace DailyScreenshot
         /// <summary>
         /// Display the HUD message
         /// </summary>
-        /// <param name="rule"></param>
+        /// <param name="rule">Rule to use for HUD message</param>
         private void DisplayRuleHUD(ModRule rule) =>
             Game1.addHUDMessage(new HUDMessage(rule.Name, HUDMessage.screenshot_type));
 
         /// <summary>
         /// Recursively cleanup empty directories
         /// </summary>
-        /// <param name="directory">path to the directory to remove</param>
-        private void CleanUpEmptyDirectories(string directory)
+        /// <param name="directory">The directory to remove</param>
+        private void CleanUpEmptyDirectories(DirectoryInfo directory)
         {
             if (DirectoryIsEmpty(directory) &&
-                Path.GetFullPath(directory) != Path.GetFullPath(
-                    m_defaultSSdirectory))
+                directory.FullName != m_defaultSSdirectory.FullName)
             {
-                Directory.Delete(directory);
-                CleanUpEmptyDirectories(Path.GetDirectoryName(directory));
+                directory.Delete();
+                CleanUpEmptyDirectories(directory.Parent);
             }
         }
 
@@ -359,24 +414,19 @@ namespace DailyScreenshot
             }
         }
 
-
         /// <summary>Moves screenshot into StardewValley/Screenshots directory, in the save file folder.</summary>
-        /// <param name="screenshotPath">The name of the screenshot file.</param>
-        /// <param name="rule">Rule for this screenshot</param>
-        private void MoveScreenshotToCorrectFolder(string screenshotPath, ModRule rule)
+        /// <param name="sourceFile">File to move</param>
+        /// <param name="destinationFile">Where to move the file</param>
+        private void MoveScreenshotToCorrectFolder(FileInfo sourceFile, FileInfo destinationFile)
         {
-            // special folder path
-
             // path for original screenshot location and new screenshot location
-            // TODO: Make these file info objects
-            string sourceFile = Path.Combine(m_defaultSSdirectory, screenshotPath);
-            string destinationFile = Path.Combine(rule.Directory, screenshotPath);
+            string sourceFilePath = sourceFile.FullName;
             MTrace($"Snapshot moving from {sourceFile} to {destinationFile}");
 
 
             // create save directory if it doesn't already exist
-            if (!Directory.Exists(Path.GetDirectoryName(destinationFile)))
-                Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
+            if (!Directory.Exists(destinationFile.DirectoryName))
+                Directory.CreateDirectory(destinationFile.DirectoryName);
 
             // wait for screenshot to finish
             while (Game1.game1.takingMapScreenshot)
@@ -385,22 +435,22 @@ namespace DailyScreenshot
                 Thread.Sleep(MILLISECONDS_TIMEOUT);
             }
             int attemptCount = 0;
-            while (File.Exists(sourceFile) && attemptCount < MAX_ATTEMPTS_TO_MOVE)
+            while (File.Exists(sourceFilePath) && attemptCount < MAX_ATTEMPTS_TO_MOVE)
             {
                 try
                 {
                     attemptCount++;
                     using (FileStream lockFile = new FileStream(
-                        sourceFile,
+                        sourceFile.FullName,
                         FileMode.Open,
                         FileAccess.ReadWrite,
                         FileShare.Read | FileShare.Delete
                     ))
                     {
                         // delete old version of screenshot if one exists
-                        if (File.Exists(destinationFile))
-                            File.Delete(destinationFile);
-                        File.Move(sourceFile, destinationFile);
+                        if (destinationFile.Exists)
+                            destinationFile.Delete();
+                        sourceFile.MoveTo(destinationFile.FullName);
                     }
                 }
                 catch (IOException ex)
@@ -414,13 +464,13 @@ namespace DailyScreenshot
                     }
                     else
                     {
-                        MError($"Error moving file '{screenshotPath}' to {destinationFile}. Technical details:\n{ex}");
+                        MError($"Error moving file '{sourceFile.FullName}' to {destinationFile.FullName}. Technical details:\n{ex}");
                         attemptCount = MAX_ATTEMPTS_TO_MOVE;
                     }
                 }
                 catch (Exception ex)
                 {
-                    MError($"Error moving file '{screenshotPath}' to {destinationFile} folder. Technical details:\n{ex}");
+                    MError($"Error moving file '{sourceFile.FullName}' to {destinationFile.FullName} folder. Technical details:\n{ex}");
                     attemptCount = MAX_ATTEMPTS_TO_MOVE;
                 }
             }

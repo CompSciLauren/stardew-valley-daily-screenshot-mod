@@ -111,15 +111,16 @@ namespace DailyScreenshot
         /// Builds a filename based on the FileName flags
         /// {Farm Name}-{GameID}/{Location}/{Weather}/{Player Name}-{Date}-{Time}-{Unique ID}
         /// </summary>
-        /// <returns></returns>
+        /// <returns>path to the file</returns>
         public string GetFileName()
         {
             if (FileNameFlags.None == FileName)
                 return null;
             TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
             int secondsSinceEpoch = (int)t.TotalSeconds;
+            int milliseconds = DateTime.UtcNow.Millisecond;
             char sep = Path.DirectorySeparatorChar;
-            StringBuilder sb = new StringBuilder(".");
+            StringBuilder sb = new StringBuilder('.');
             if (AddFilenamePart(FileNameFlags.FarmName,
                                 sep,
                                 ref sb,
@@ -161,10 +162,15 @@ namespace DailyScreenshot
                                 ref sb,
                                 Game1.timeOfDay))
                 sep = '-';
-            AddFilenamePart(FileNameFlags.UniqueID,
+            if(AddFilenamePart(FileNameFlags.UniqueID,
                             sep,
                             ref sb,
-                            secondsSinceEpoch);
+                            secondsSinceEpoch))
+                sep = '.';
+            AddFilenamePart(FileNameFlags.UniqueID,
+                        sep,
+                        ref sb,
+                        milliseconds);
 
             return sb.ToString();
         }
@@ -174,7 +180,7 @@ namespace DailyScreenshot
         /// based on the flag values set
         /// </summary>
         /// <param name="flag">Flag to check</param>
-        /// <param name="sep">Seperator to use, either . or Path.DirectorySeparatorChar</param>
+        /// <param name="sep">Seperator to use, either -, . or Path.DirectorySeparatorChar</param>
         /// <param name="sb">Reference to the string builder object which will be modified</param>
         /// <param name="value">String to add to the string builder if the flag is set</param>
         /// <returns>true if sb was modified</returns>

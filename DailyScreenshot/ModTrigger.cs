@@ -346,7 +346,7 @@ namespace DailyScreenshot
         /// Function for cheking if the trigger should cause a screenshot
         /// </summary>
         /// <param name="key">Optional, used for keypress</param>
-        /// <returns></returns>
+        /// <returns>True if the rule should trigger</returns>
         public bool CheckTrigger(SButton key = SButton.None)
         {
             MTrace($"m_triggered = {m_triggered}");

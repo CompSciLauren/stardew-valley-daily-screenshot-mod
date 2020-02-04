@@ -2,7 +2,7 @@
 
 ## Documentation
 
-- [ ] Functions
+- [x] Functions
 - [x] User
 
 ## User Input Validation
@@ -13,12 +13,12 @@
 
 ## Warnings
 
-- [ ] Colliding filenames
+- [x] Colliding filenames
   - [x] Location
   - [x] Weather
   - [x] Date
   - [x] Directory
-  - [ ] Game ID
+  - [x] Game ID
   - [x] Time of day
 - [x] Changes to rules
 - [x] Rules that won't trigger
