@@ -120,7 +120,7 @@ namespace DailyScreenshot
             int secondsSinceEpoch = (int)t.TotalSeconds;
             int milliseconds = DateTime.UtcNow.Millisecond;
             char sep = Path.DirectorySeparatorChar;
-            StringBuilder sb = new StringBuilder('.');
+            StringBuilder sb = new StringBuilder("." + Path.DirectorySeparatorChar);
             if (AddFilenamePart(FileNameFlags.FarmName,
                                 sep,
                                 ref sb,
@@ -162,7 +162,7 @@ namespace DailyScreenshot
                                 ref sb,
                                 Game1.timeOfDay))
                 sep = '-';
-            if(AddFilenamePart(FileNameFlags.UniqueID,
+            if (AddFilenamePart(FileNameFlags.UniqueID,
                             sep,
                             ref sb,
                             secondsSinceEpoch))

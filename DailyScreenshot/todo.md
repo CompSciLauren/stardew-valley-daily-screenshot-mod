@@ -39,10 +39,10 @@
 
 ## Test Cases
 
-- [x] Triggers
+- [ ] Triggers
   - [x] Warp
-  - [x] Time change
-  - [x] Key press
+  - [ ] Time change
+  - [ ] Key press
 - [ ] Warnings
   - [ ] Overlapping file names
     - [ ] Location
@@ -52,7 +52,7 @@
     - [ ] Game ID
     - [ ] Time of day
 - [ ] Others
-  - [x] Is the date correct after midnight
+  - [ ] Is the date correct after midnight
   - [ ] Bad user input in config
   - [ ] Warnings for inactive rules
-  - [x] Error message for invalid config
+  - [ ] Error message for invalid config

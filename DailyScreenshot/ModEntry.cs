@@ -84,7 +84,7 @@ namespace DailyScreenshot
         /// </summary>
         /// <param name="path">Directory to check</param>
         /// <returns>true if the directory is empty</returns>
-        private bool DirectoryIsEmpty(DirectoryInfo directory) => 
+        private bool DirectoryIsEmpty(DirectoryInfo directory) =>
             directory.GetDirectories().Length == 0 && directory.GetFiles().Length == 0;
 
         #region Logging
@@ -343,14 +343,10 @@ namespace DailyScreenshot
             {
                 MTrace($"ssPath = \"{ssPath}\"");
                 string ssDirectory = Path.GetDirectoryName(ssPath);
-                
+
                 Directory.CreateDirectory(Path.Combine(m_defaultSSdirectory.FullName, ssDirectory));
             }
             string mapScreenshotPath = Game1.game1.takeMapScreenshot(rule.ZoomLevel, ssPath);
-            if(null == ssPath)
-            {
-                ssPath = mapScreenshotPath;
-            }
             FileInfo mapScreenshot = new FileInfo(Path.Combine(m_defaultSSdirectory.FullName, mapScreenshotPath));
             MTrace($"Snapshot saved to {mapScreenshot.FullName}");
             Game1.playSound("cameraNoise");
@@ -358,7 +354,7 @@ namespace DailyScreenshot
             {
                 EnqueueAction(() =>
                     {
-                        MoveScreenshotToCorrectFolder(mapScreenshot, new FileInfo(Path.Combine(rule.Directory, ssPath)));
+                        MoveScreenshotToCorrectFolder(mapScreenshot, new FileInfo(Path.Combine(rule.Directory, mapScreenshotPath)));
                         CleanUpEmptyDirectories(mapScreenshot.Directory);
                     }, ref m_mvActions
                     );
