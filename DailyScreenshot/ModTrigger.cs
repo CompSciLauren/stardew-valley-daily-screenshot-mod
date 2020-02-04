@@ -25,6 +25,13 @@ namespace DailyScreenshot
         void MWarn(string message) => ModEntry.DailySS.MWarn(message);
 
         /// <summary>
+        /// Convert the current date to DateFlags
+        /// </summary>
+        /// <returns>The current date as DateFlags</returns>
+        private static DateFlags GetDate() =>
+            (DateFlags)((1 << (Game1.Date.SeasonIndex + 28)) | (1 << (Game1.Date.DayOfMonth - 1)));
+
+        /// <summary>
         /// Minium time span the game allows (moves in 10 minute increments)
         /// </summary>
         private const int MIN_TIME_INTERVAL = 10;
@@ -334,6 +341,46 @@ namespace DailyScreenshot
         }
 
         /// <summary>
+        /// Check if this trigger is still valid
+        /// </summary>
+        /// <returns>True if the trigger can still fire today</returns>
+        internal bool CanTriggerToday()
+        {
+            return m_triggered == false &&
+                DateFlags.Day_None != (GetDate() & Days) &&
+                Game1.timeOfDay <= EndTime;
+        }
+
+        /// <summary>
+        /// Is the trigger waiting on a warp?
+        /// </summary>
+        /// <returns>True if caller should be waiting on the warp event</returns>
+        internal bool IsWaitingOnWarp()
+        {
+            return LocationFlags.Location_None == (GetLocation() & Location) &&
+                CanTriggerToday();
+        }
+
+        /// <summary>
+        /// Is the trigger waiting on a time?
+        /// </summary>
+        /// <returns>True if caller should be waiting on the time event</returns>
+        internal bool IsWaitingOnTime()
+        {
+            return Game1.timeOfDay < StartTime &&
+                CanTriggerToday();
+        }
+
+        /// <summary>
+        /// Is the trigger waiting on a keypress?
+        /// </summary>
+        /// <returns>True if the caller should be waiting on the keypress event</returns>
+        internal bool IsWaitingOnKeypress()
+        {
+            return SButton.None != Key && CanTriggerToday();
+        }
+
+        /// <summary>
         /// Resets the triggered flag, should be called at the start of the day
         /// </summary>
         public void ResetTrigger()
@@ -352,7 +399,7 @@ namespace DailyScreenshot
             MTrace($"m_triggered = {m_triggered}");
             if (m_triggered)
                 return false;
-            DateFlags current_date = (DateFlags)((1 << (Game1.Date.SeasonIndex + 28)) | (1 << (Game1.Date.DayOfMonth - 1)));
+            DateFlags current_date = GetDate();
             WeatherFlags current_weather = GetWeather();
             LocationFlags current_location = GetLocation();
             if (current_weather != (current_weather & Weather))

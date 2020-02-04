@@ -37,6 +37,13 @@
 - [x] Day rules are not working
 - [x] Release builds not building (verbose logging)
 
+## Improvements
+
+- [ ] Only follow events if a rule needs it
+  - [ ] Time Change
+  - [ ] Location Change
+  - [ ] Keypress
+
 ## Test Cases
 
 - [ ] Triggers
