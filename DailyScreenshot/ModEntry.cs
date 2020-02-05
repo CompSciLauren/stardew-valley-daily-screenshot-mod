@@ -17,7 +17,7 @@ namespace DailyScreenshot
         /// <summary>
         /// Static global so ModConfig can log to the console
         /// </summary>
-        internal static ModEntry DailySS = null;
+        internal static ModEntry g_dailySS = null;
 
         #region Constants 
         /// <summary>
@@ -68,16 +68,52 @@ namespace DailyScreenshot
         bool m_shouldProcessRules = false;
 
         /// <summary>
+        /// Tracking time event registration
+        /// </summary>
+        /// <value>True if the time event is registered</value>
+        private bool TimeEventRegistered { get; set; } = false;
+
+        /// <summary>
+        /// Tracking warp event registration
+        /// </summary>
+        /// <value>True if the warp event is registered</value>
+        private bool WarpEventRegistered { get; set; } = false;
+
+        /// <summary>
+        /// Tracking key event registration
+        /// </summary>
+        /// <value>True if the key event is registered</value>
+        private bool KeyEventRegistered { get; set; } = false;
+
+        /// <summary>
+        /// Rules waiting on the time event (must be in the correct location)
+        /// </summary>
+        /// <value>Rules waiting on time events</value>
+        private List<ModRule> TimeRules { get; set; } = new List<ModRule>();
+
+        /// <summary>
+        /// Rules waiting on the warp event
+        /// </summary>
+        /// <value>Rules waiting on warp events</value>
+        private List<ModRule> WarpRules { get; set; } = new List<ModRule>();
+
+        /// <summary>
+        /// Rules waiting on the key event, must be correct time and location
+        /// </summary>
+        /// <value>Rules waiting on key events</value>
+        private List<ModRule> KeyRules { get; set; } = new List<ModRule>();
+
+        /// <summary>
         /// Default screenshot directory set in the entry
         /// </summary>
         /// <value>Path to the screenshot directory for this platform</value>
-        public DirectoryInfo m_defaultSSdirectory { get; private set; }
+        public DirectoryInfo DefaultSSdirectory { get; private set; }
 
         /// <summary>
         /// Are ticks being counted?
         /// </summary>
         /// <value>True if there's a tick event being monitored</value>
-        public bool m_updateTickEventActive { get; private set; }
+        public bool UpdateTickEventActive { get; private set; }
 
         /// <summary>
         /// Check that a directory contains no files or directories
@@ -150,13 +186,13 @@ namespace DailyScreenshot
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            if (DailySS != null)
+            if (null != g_dailySS)
             {
                 string message = "Entry called twice - breaking singelton";
                 MError(message);
                 throw new Exception(message);
             }
-            DailySS = this;
+            g_dailySS = this;
             try
             {
                 m_config = Helper.ReadConfig<ModConfig>();
@@ -172,12 +208,108 @@ namespace DailyScreenshot
                 Helper.Events.GameLoop.OneSecondUpdateTicked += LoadingErrorOnTick;
             }
 
-            int num11 = Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28;
+            int num11 = (Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28);
             var path = Environment.GetFolderPath((Environment.SpecialFolder)num11);
 
             // path is combined with StardewValley and then Screenshots
-            m_defaultSSdirectory = new DirectoryInfo(Path.Combine(path, "StardewValley", "Screenshots"));
+            DefaultSSdirectory = new DirectoryInfo(Path.Combine(path, "StardewValley", "Screenshots"));
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+        }
+
+        private enum EventAction
+        {
+            None,
+            Add,
+            Remove
+        }
+
+        /// <summary>
+        /// Move the config rules into lists for warp, time and keypress
+        /// and register events as needed
+        /// 
+        /// Use with caution, locks on this
+        /// </summary>
+        private void CheckRulesAndUpdateEventReg()
+        {
+            lock (this)
+            {
+                WarpRules.Clear();
+                TimeRules.Clear();
+                KeyRules.Clear();
+                foreach (ModRule rule in m_config.SnapshotRules)
+                {
+                    if (rule.Trigger.IsWaitingOnWarp())
+                    {
+                        WarpRules.Add(rule);
+                    }
+                    else if (rule.Trigger.IsWaitingOnTime())
+                    {
+                        TimeRules.Add(rule);
+                    }
+                    else if (rule.Trigger.IsWaitingOnKeypress())
+                    {
+                        KeyRules.Add(rule);
+                    }
+                }
+                EventAction warpAction = ShouldAlterEventReg(WarpEventRegistered, WarpRules.Count);
+                EventAction timeAction = ShouldAlterEventReg(TimeEventRegistered, TimeRules.Count);
+                EventAction keyAction = ShouldAlterEventReg(KeyEventRegistered, KeyRules.Count);
+                MTrace($"Warp = {WarpRules.Count} {warpAction}, Time = {TimeRules.Count} {timeAction}, Key = {KeyRules.Count} {keyAction}");
+                // Events cannot be passed, so this code must be duplicated
+                if (EventAction.Add == warpAction)
+                    Helper.Events.Player.Warped += OnWarped;
+                else if (EventAction.Remove == warpAction)
+                    Helper.Events.Player.Warped -= OnWarped;
+                WarpEventRegistered = 0 < WarpRules.Count;
+
+                if (EventAction.Add == timeAction)
+                    Helper.Events.GameLoop.TimeChanged += OnTimeChanged;
+                else if (EventAction.Remove == timeAction)
+                    Helper.Events.GameLoop.TimeChanged -= OnTimeChanged;
+                TimeEventRegistered = 0 < TimeRules.Count;
+
+                if (EventAction.Add == keyAction)
+                    Helper.Events.Input.ButtonPressed += OnButtonPressed;
+                else if (EventAction.Remove == keyAction)
+                    Helper.Events.Input.ButtonPressed -= OnButtonPressed;
+                KeyEventRegistered = 0 < KeyRules.Count;
+            }
+        }
+
+        /// <summary>
+        /// Helper function to figure out if the event should be registered unregistered
+        /// </summary>
+        /// <param name="eventRegistered">Is the event currently registered</param>
+        /// <param name="ruleCount">Number of rules are active for this eveht</param>
+        /// <returns>Add if the event should be added, remove if it should be removed</returns>
+        private EventAction ShouldAlterEventReg(bool eventRegistered, int ruleCount)
+        {
+            if (eventRegistered && 0 == ruleCount)
+                return EventAction.Remove;
+            if (!eventRegistered && 0 < ruleCount)
+                return EventAction.Add;
+            return EventAction.None;
+        }
+
+        /// <summary>
+        /// Removes all of the events registed via CheckRulesAndUpdateEventReg
+        /// 
+        ///  Use with caution, locks on this
+        /// </summary>
+        private void ClearPictureEventRegistration()
+        {
+            lock (this)
+            {
+                if (WarpEventRegistered)
+                    Helper.Events.Player.Warped -= OnWarped;
+                if (TimeEventRegistered)
+                    Helper.Events.GameLoop.TimeChanged -= OnTimeChanged;
+                if (KeyEventRegistered)
+                    Helper.Events.Input.ButtonPressed -= OnButtonPressed;
+                WarpEventRegistered = false;
+                TimeEventRegistered = false;
+                KeyEventRegistered = false;
+            }
         }
 
         /// <summary>
@@ -211,11 +343,9 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            Helper.Events.Player.Warped += OnWarped;
-            Helper.Events.GameLoop.TimeChanged += OnTimeChanged;
+            // Move this to OnDayStart and only register what is needed
             Helper.Events.GameLoop.DayStarted += OnDayStarted;
             Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
-            Helper.Events.Input.ButtonPressed += OnButtonPressed;
         }
 
         /// <summary>
@@ -225,7 +355,7 @@ namespace DailyScreenshot
         /// <param name="e">The event data</param>
         private void OnTimeChanged(object sender, TimeChangedEventArgs e)
         {
-            RunTriggers();
+            RunTriggers(TimeRules);
         }
 
         /// <summary>Raised after a button is pressed.</summary>
@@ -235,7 +365,7 @@ namespace DailyScreenshot
         {
             if (e.Button.TryGetKeyboard(out Keys k))
             {
-                RunTriggers(e.Button);
+                RunTriggers(KeyRules, e.Button);
             }
         }
 
@@ -249,18 +379,18 @@ namespace DailyScreenshot
             {
                 rule.Trigger.ResetTrigger();
             }
-            RunTriggers();
+            RunTriggers(m_config.SnapshotRules);
         }
 
         /// <summary>
         /// Check the rule triggers and take a screenshot if appropriate
         /// </summary>
         /// <param name="key"></param>
-        private void RunTriggers(SButton key = SButton.None)
+        private void RunTriggers(List<ModRule> rules, SButton key = SButton.None)
         {
             if (!m_shouldProcessRules)
                 return;
-            foreach (ModRule rule in m_config.SnapshotRules)
+            foreach (ModRule rule in rules)
             {
                 if (rule.Enabled && rule.Trigger.CheckTrigger(key))
                 {
@@ -272,9 +402,14 @@ namespace DailyScreenshot
                     );
                 }
             }
+            CheckRulesAndUpdateEventReg();
         }
 
-        /// <summary>Raised after the player enters a new location.</summary>
+        /// <summary>
+        /// Raised after the player enters a new location.
+        /// 
+        /// Use with caution, locks on this
+        /// </summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event data.</param>
         private void OnWarped(object sender, WarpedEventArgs e)
@@ -286,10 +421,14 @@ namespace DailyScreenshot
                 if (m_ssActions.Count > 0)
                     m_ssCntDwnTicks = MAX_COUNTDOWN_IN_TICKS;
             }
-            RunTriggers();
+            RunTriggers(WarpRules);
         }
 
-        /// <summary>Raised after game state is updated.</summary>
+        /// <summary>
+        /// Raised after game state is updated.
+        /// 
+        /// Use with caution, locks on this
+        /// </summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event data.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
@@ -323,7 +462,7 @@ namespace DailyScreenshot
                     m_mvCntDwnTicks == 0 &&
                     m_ssCntDwnTicks == 0)
                 {
-                    m_updateTickEventActive = false;
+                    UpdateTickEventActive = false;
                     Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
                     return;
                 }
@@ -344,10 +483,10 @@ namespace DailyScreenshot
                 MTrace($"ssPath = \"{ssPath}\"");
                 string ssDirectory = Path.GetDirectoryName(ssPath);
 
-                Directory.CreateDirectory(Path.Combine(m_defaultSSdirectory.FullName, ssDirectory));
+                Directory.CreateDirectory(Path.Combine(DefaultSSdirectory.FullName, ssDirectory));
             }
             string mapScreenshotPath = Game1.game1.takeMapScreenshot(rule.ZoomLevel, ssPath);
-            FileInfo mapScreenshot = new FileInfo(Path.Combine(m_defaultSSdirectory.FullName, mapScreenshotPath));
+            FileInfo mapScreenshot = new FileInfo(Path.Combine(DefaultSSdirectory.FullName, mapScreenshotPath));
             MTrace($"Snapshot saved to {mapScreenshot.FullName}");
             Game1.playSound("cameraNoise");
             if (ModConfig.DEFAULT_STRING != rule.Directory)
@@ -375,7 +514,7 @@ namespace DailyScreenshot
         private void CleanUpEmptyDirectories(DirectoryInfo directory)
         {
             if (DirectoryIsEmpty(directory) &&
-                directory.FullName != m_defaultSSdirectory.FullName)
+                directory.FullName != DefaultSSdirectory.FullName)
             {
                 directory.Delete();
                 CleanUpEmptyDirectories(directory.Parent);
@@ -392,7 +531,11 @@ namespace DailyScreenshot
         /// </summary>
         private Queue<Action> m_mvActions = new Queue<Action>();
 
-        /// <summary>Allows ability to enqueue actions to the queue.</summary>
+        /// <summary>
+        /// Allows ability to enqueue actions to the queue.
+        /// 
+        /// Use with caution, locks on this
+        /// </summary>
         /// <param name="action">The action.</param>
         public void EnqueueAction(Action action, ref Queue<Action> actionQueue)
         {
@@ -401,12 +544,12 @@ namespace DailyScreenshot
             lock (this)
             {
                 actionQueue.Enqueue(action);
-                if (!m_updateTickEventActive)
+                if (!UpdateTickEventActive)
                 {
                     m_ssCntDwnTicks = MAX_COUNTDOWN_IN_TICKS;
                     Helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
                 }
-                m_updateTickEventActive = true;
+                UpdateTickEventActive = true;
             }
         }
 
@@ -478,6 +621,7 @@ namespace DailyScreenshot
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
             m_shouldProcessRules = false;
+            ClearPictureEventRegistration();
 
             // if there are pending screenshots, cancel them
             if (m_ssActions.Count > 0)

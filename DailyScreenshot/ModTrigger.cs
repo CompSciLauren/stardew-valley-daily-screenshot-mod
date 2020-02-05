@@ -16,13 +16,13 @@ namespace DailyScreenshot
         /// Trace messages to the console
         /// </summary>
         /// <param name="message">Text to display</param>
-        void MTrace(string message) => ModEntry.DailySS.MTrace(message);
+        void MTrace(string message) => ModEntry.g_dailySS.MTrace(message);
 
         /// <summary>
         /// Warning messages to the console
         /// </summary>
         /// <param name="message">Text to display</param>
-        void MWarn(string message) => ModEntry.DailySS.MWarn(message);
+        void MWarn(string message) => ModEntry.g_dailySS.MWarn(message);
 
         /// <summary>
         /// Convert the current date to DateFlags

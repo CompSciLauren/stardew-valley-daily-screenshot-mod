@@ -4,75 +4,90 @@
     "version": "2.0.0",
     "tasks": [{
             "label": "Clean",
-            "type": "process",
-            "options": {
-                "cwd": "DailyScreenshot"
+            "linux": {
+                "type": "process",
+                "options": {
+                    "cwd": "DailyScreenshot"
+                },
+                "command": "mdtool",
+                "args": [
+                    "build",
+                    "-t:Clean",
+                    "-c:${input:Configuration}"
+                ],
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": false,
+                    "clear": true,
+                    "revealProblems": "onProblem"
+                }
             },
-            "command": "mdtool",
-            "args": [
-                "build",
-                "-t:Clean",
-                "-c:${input:Configuration}"
-            ],
             "problemMatcher": ["$msCompile"],
-            "group": "none",
+            "group": "build",
             "detail": "Cleans the workspace",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true,
-                "revealProblems": "onProblem"
+            "runOptions": {
+                "reevaluateOnRerun": false
             }
         }, {
             "label": "Build",
-            "type": "process",
-            "options": {
-                "cwd": "DailyScreenshot"
+            "linux": {
+                "type": "shell",
+                "options": {
+                    "cwd": "DailyScreenshot"
+                },
+                "command": "mdtool",
+                "args": [
+                    "build",
+                    "-c:${input:Configuration}"
+                ],
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": false,
+                    "clear": false,
+                    "revealProblems": "onProblem"
+                }
             },
-            "command": "mdtool",
-            "args": [
-                "build",
-                "-c:${input:Configuration}"
-            ],
             "problemMatcher": ["$msCompile"],
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false,
-                "revealProblems": "onProblem"
+            "runOptions": {
+                "reevaluateOnRerun": false
             }
         },
         {
             "label": "Deploy",
-            "type": "shell",
-            "options": {
-                "cwd": "DailyScreenshot/obj/${input:Configuration}"
-            },
-            "command": "mv",
-            "args": [
-                "DailyScreenshot.{dll,pdb}",
-                "~/.steam/steam/steamapps/common/'Stardew Valley'/Mods/DailyScreenshot/."
-            ],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
+            "linux": {
+                "type": "shell",
+                "options": {
+                    "cwd": "DailyScreenshot/obj/${input:Configuration}"
+                },
+                "command": "mv",
+                "args": [
+                    "DailyScreenshot.{dll,pdb}",
+                    "~/.steam/steam/steamapps/common/'Stardew Valley'/Mods/DailyScreenshot/."
+                ],
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": false,
+                    "clear": false
+                }
             },
             "problemMatcher": [],
             "group": "none",
+            "runOptions": {
+                "reevaluateOnRerun": false
+            },
             "dependsOn": ["Build"]
         }
     ],
