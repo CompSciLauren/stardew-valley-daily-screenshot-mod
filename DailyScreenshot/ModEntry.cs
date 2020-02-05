@@ -254,7 +254,7 @@ namespace DailyScreenshot
                 EventAction warpAction = ShouldAlterEventReg(WarpEventRegistered, WarpRules.Count);
                 EventAction timeAction = ShouldAlterEventReg(TimeEventRegistered, TimeRules.Count);
                 EventAction keyAction = ShouldAlterEventReg(KeyEventRegistered, KeyRules.Count);
-                MTrace($"Warp = {WarpRules.Count} {warpAction}, Time = {TimeRules.Count} {timeAction}, Key = {KeyRules.Count} {keyAction}");
+                //MTrace($"Warp = {WarpRules.Count} {warpAction}, Time = {TimeRules.Count} {timeAction}, Key = {KeyRules.Count} {keyAction}");
                 // Events cannot be passed, so this code must be duplicated
                 if (EventAction.Add == warpAction)
                     Helper.Events.Player.Warped += OnWarped;
@@ -570,7 +570,7 @@ namespace DailyScreenshot
             // wait for screenshot to finish
             while (Game1.game1.takingMapScreenshot)
             {
-                MTrace("Sleeping while takingMapScreenshot");
+                //MTrace("Sleeping while takingMapScreenshot");
                 Thread.Sleep(MILLISECONDS_TIMEOUT);
             }
             int attemptCount = 0;
@@ -598,7 +598,7 @@ namespace DailyScreenshot
                     if (SHARING_VIOLATION == (HResult & 0xFFFF))
                     {
                         // Hiding the warning as it isn't useful to other mod developers
-                        MWarn($"File may be in use, retrying in {MILLISECONDS_TIMEOUT} milliseconds, attempt {attemptCount} of {MAX_ATTEMPTS_TO_MOVE}");
+                        //MWarn($"File may be in use, retrying in {MILLISECONDS_TIMEOUT} milliseconds, attempt {attemptCount} of {MAX_ATTEMPTS_TO_MOVE}");
                         Thread.Sleep(MILLISECONDS_TIMEOUT);
                     }
                     else

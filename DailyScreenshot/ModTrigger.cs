@@ -385,7 +385,7 @@ namespace DailyScreenshot
         /// </summary>
         public void ResetTrigger()
         {
-            MTrace("Triggers reset");
+            //MTrace("Triggers reset");
             m_triggered = false;
         }
 
@@ -396,7 +396,7 @@ namespace DailyScreenshot
         /// <returns>True if the rule should trigger</returns>
         public bool CheckTrigger(SButton key = SButton.None)
         {
-            MTrace($"m_triggered = {m_triggered}");
+            //MTrace($"m_triggered = {m_triggered}");
             if (m_triggered)
                 return false;
             DateFlags current_date = GetDate();
