@@ -1,4 +1,4 @@
-# Todo List
+# ToDo List
 
 ## Documentation
 
@@ -39,17 +39,17 @@
 
 ## Improvements
 
-- [ ] Only follow events if a rule needs it
-  - [ ] Time Change
-  - [ ] Location Change
-  - [ ] Keypress
+- [x] Only follow events if a rule needs it
+  - [x] Time Change
+  - [x] Location Change
+  - [x] Key press
 
 ## Test Cases
 
 - [ ] Triggers
   - [x] Warp
   - [ ] Time change
-  - [ ] Key press
+  - [x] Key press
 - [ ] Warnings
   - [ ] Overlapping file names
     - [ ] Location
