@@ -59,7 +59,7 @@
     - [ ] Game ID
     - [ ] Time of day
 - [ ] Others
-  - [ ] Is the date correct after midnight
+  - [x] Is the date correct after midnight
   - [ ] Bad user input in config
   - [ ] Warnings for inactive rules
-  - [ ] Error message for invalid config
+  - [x] Error message for invalid config
