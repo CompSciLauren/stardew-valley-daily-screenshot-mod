@@ -243,15 +243,6 @@ namespace DailyScreenshot
             return modified;
         }
 
-        private bool IsAtLimits(int time)
-        {
-            if (ModConfig.DEFAULT_START_TIME == time)
-                return true;
-            if (ModConfig.DEFAULT_END_TIME < time)
-                return true;
-            return false;
-        }
-
         /// <summary>
         /// Makes sure the time is set to be a multiple of 10 and
         /// between ModConfig.DEFAULT_START_TIME and 
@@ -385,7 +376,9 @@ namespace DailyScreenshot
         /// </summary>
         public void ResetTrigger()
         {
-            //MTrace("Triggers reset");
+#if DEBUG
+            MTrace("Trigger reset");
+#endif
             m_triggered = false;
         }
 
@@ -396,7 +389,9 @@ namespace DailyScreenshot
         /// <returns>True if the rule should trigger</returns>
         public bool CheckTrigger(SButton key = SButton.None)
         {
-            //MTrace($"m_triggered = {m_triggered}");
+#if DEBUG
+            MTrace($"m_triggered = {m_triggered}");
+#endif
             if (m_triggered)
                 return false;
             DateFlags current_date = GetDate();
