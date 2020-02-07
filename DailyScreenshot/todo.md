@@ -36,7 +36,7 @@
 - [x] Exception for key presses before save game is loaded
 - [x] Day rules are not working
 - [x] Release builds not building (verbose logging)
-- [ ] Warnings of file overlap are not showing up
+- [x] Warnings of file overlap are not showing up (Fixed February 7th)
 
 ## Improvements
 

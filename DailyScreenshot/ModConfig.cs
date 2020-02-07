@@ -209,8 +209,8 @@ namespace DailyScreenshot
             for (int i = 0; i < SnapshotRules.Count; i++)
             {
                 if (SnapshotRules[i].Enabled &&
-                    SnapshotRules[i].FileName != ModRule.FileNameFlags.None &&
-                    ModRule.FileNameFlags.None != (ModRule.FileNameFlags.UniqueID & SnapshotRules[i].FileName))
+                    ModRule.FileNameFlags.None != SnapshotRules[i].FileName &&
+                    ModRule.FileNameFlags.None == (ModRule.FileNameFlags.UniqueID & SnapshotRules[i].FileName))
                 {
                     for (int j = i + 1; j < SnapshotRules.Count; j++)
                     {
