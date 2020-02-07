@@ -36,6 +36,7 @@
 - [x] Exception for key presses before save game is loaded
 - [x] Day rules are not working
 - [x] Release builds not building (verbose logging)
+- [ ] Warnings of file overlap are not showing up
 
 ## Improvements
 
@@ -58,6 +59,7 @@
     - [ ] Directory
     - [ ] Game ID
     - [ ] Time of day
+    - [x] Different saves
 - [ ] Others
   - [x] Is the date correct after midnight
   - [ ] Bad user input in config
