@@ -280,7 +280,7 @@ namespace DailyScreenshot
         /// Helper function to figure out if the event should be registered unregistered
         /// </summary>
         /// <param name="eventRegistered">Is the event currently registered</param>
-        /// <param name="ruleCount">Number of rules are active for this eveht</param>
+        /// <param name="ruleCount">Number of rules are active for this event</param>
         /// <returns>Add if the event should be added, remove if it should be removed</returns>
         private EventAction ShouldAlterEventReg(bool eventRegistered, int ruleCount)
         {
@@ -504,8 +504,9 @@ namespace DailyScreenshot
         /// Display the HUD message
         /// </summary>
         /// <param name="rule">Rule to use for HUD message</param>
+        // Adding space based on user feedback
         private void DisplayRuleHUD(ModRule rule) =>
-            Game1.addHUDMessage(new HUDMessage(rule.Name, HUDMessage.screenshot_type));
+            Game1.addHUDMessage(new HUDMessage(" " + rule.Name, HUDMessage.screenshot_type));
 
         /// <summary>
         /// Recursively cleanup empty directories

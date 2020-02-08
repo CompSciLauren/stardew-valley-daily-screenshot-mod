@@ -49,7 +49,7 @@
 
 - [ ] Triggers
   - [x] Warp
-  - [ ] Time change
+  - [x] Time change
   - [x] Key press
 - [ ] Warnings
   - [ ] Overlapping file names

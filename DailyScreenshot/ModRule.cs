@@ -300,8 +300,11 @@ namespace DailyScreenshot
             }
             if (FileNameFlags.None != (FileNameFlags.Date & FileName))
             {
-                if (ModTrigger.DateFlags.Day_None == (
-                    this.Trigger.Days & other.Trigger.Days))
+                if (ModTrigger.DateFlags.Day_None == (ModTrigger.DateFlags.AnyDay &
+                        (this.Trigger.Days & other.Trigger.Days)))
+                    return false;
+                if (ModTrigger.DateFlags.Day_None == (ModTrigger.DateFlags.AnySeason &
+                        (this.Trigger.Days & other.Trigger.Days)))
                     return false;
             }
             return true;
