@@ -44,6 +44,25 @@ EOT
     done
 done
 
+for i in AnyDay AnySeason; do
+    cat >> days.json <<EOT
+        {
+            "Name": "Days Inactive $i",
+            "ZoomLevel": 0.1,
+            "Directory": "Default",
+            "FileName": "GameID, Date",
+            "Trigger": {
+                "Days": "$i",
+                "Weather": "Any",
+                "Location": "Any",
+                "Key": "None",
+                "StartTime": 600,
+                "EndTime": 2600
+            }
+        },
+EOT
+done
+
 cat >> days.json <<EOT
         {
             "Name": "Days Overlap All",

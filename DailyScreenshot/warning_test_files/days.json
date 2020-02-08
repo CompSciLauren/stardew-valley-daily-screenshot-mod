@@ -1,5 +1,6 @@
 {
-    "SnapshotRules": [{
+    "SnapshotRules": [
+        {
             "Name": "Days No Overlap Season Spring Day 1",
             "ZoomLevel": 0.1,
             "Directory": "Default",
@@ -2064,6 +2065,34 @@
             "FileName": "GameID, Date",
             "Trigger": {
                 "Days": "Winter, LastDayOfTheMonth",
+                "Weather": "Any",
+                "Location": "Any",
+                "Key": "None",
+                "StartTime": 600,
+                "EndTime": 2600
+            }
+        },
+        {
+            "Name": "Days Inactive AnyDay",
+            "ZoomLevel": 0.1,
+            "Directory": "Default",
+            "FileName": "GameID, Date",
+            "Trigger": {
+                "Days": "AnyDay",
+                "Weather": "Any",
+                "Location": "Any",
+                "Key": "None",
+                "StartTime": 600,
+                "EndTime": 2600
+            }
+        },
+        {
+            "Name": "Days Inactive AnySeason",
+            "ZoomLevel": 0.1,
+            "Directory": "Default",
+            "FileName": "GameID, Date",
+            "Trigger": {
+                "Days": "AnySeason",
                 "Weather": "Any",
                 "Location": "Any",
                 "Key": "None",

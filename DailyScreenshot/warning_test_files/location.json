@@ -155,6 +155,19 @@
                 "StartTime": 600,
                 "EndTime": 2600
             }
+        }, {
+            "Name": "Location Inactive",
+            "ZoomLevel": 0.1,
+            "Directory": "Default",
+            "FileName": "GameID, Location",
+            "Trigger": {
+                "Days": "Daily",
+                "Weather": "Any",
+                "Location": "Location_None",
+                "Key": "None",
+                "StartTime": 600,
+                "EndTime": 2600
+            }
         }
 
     ]

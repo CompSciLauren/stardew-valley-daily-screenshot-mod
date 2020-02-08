@@ -30,7 +30,7 @@
 
 - [x] Wait till screen is rendered (warp)
 - [x] Show notice first
-- [ ] Config file is always written (may not be fixable)
+- [x] ~~Config file is always written~~ (not fixable)
 - [x] Takes full daylight shot at night
 - [x] Weekday enums don't work
 - [x] Exception for key presses before save game is loaded
@@ -47,24 +47,24 @@
 
 ## Test Cases
 
-- [ ] Triggers
+- [x] Triggers
   - [x] Warp
   - [x] Time change
   - [x] Key press
 - [ ] Warnings
   - [ ] Overlapping file names
-    - [x] Location
-    - [ ] Weather
-    - [x] Date
+    - [x] [Location](warning_test_files/location_result.txt)
+    - [x] [Weather](warning_test_files/weather_result.txt)
+    - [x] [Date](warning_test_files/days_result.txt)
     - [ ] Directory
     - [x] Game ID
     - [ ] Time of day
     - [x] Different saves
-  - [ ] Inactive Rules
-    - [ ] Location
-    - [ ] Weather
-    - [ ] Date
-- [ ] Others
+  - [x] Inactive Rules
+    - [x] [Location](warning_test_files/location_result.txt)
+    - [x] [Weather](warning_test_files/weather_result.txt)
+    - [x] [Date](warning_test_files/days_result.txt)
+- [x] Others
   - [x] Is the date correct after midnight
-  - [ ] Bad user input in config
+  - [x] Bad user input in config
   - [x] Error message for invalid config
