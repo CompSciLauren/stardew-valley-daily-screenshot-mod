@@ -53,15 +53,18 @@
   - [x] Key press
 - [ ] Warnings
   - [ ] Overlapping file names
+    - [x] Location
+    - [ ] Weather
+    - [x] Date
+    - [ ] Directory
+    - [x] Game ID
+    - [ ] Time of day
+    - [x] Different saves
+  - [ ] Inactive Rules
     - [ ] Location
     - [ ] Weather
     - [ ] Date
-    - [ ] Directory
-    - [ ] Game ID
-    - [ ] Time of day
-    - [x] Different saves
 - [ ] Others
   - [x] Is the date correct after midnight
   - [ ] Bad user input in config
-  - [ ] Warnings for inactive rules
   - [x] Error message for invalid config
