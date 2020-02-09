@@ -35,6 +35,8 @@ namespace DailyScreenshot
         /// Minium time span the game allows (moves in 10 minute increments)
         /// </summary>
         private const int MIN_TIME_INTERVAL = 10;
+        private const int MINUTES_PER_HOUR = 60;
+        private const int MINUTES_TO_ADD_FOR_NEXT_HOUR = 40;
 
         /// <summary>
         /// True if this rule has triggered automatically
@@ -223,7 +225,7 @@ namespace DailyScreenshot
                 modified = true;
 
                 if (StartTime != startTime || EndTime != endTime)
-                    MWarn($"Setting limits on StartTime and Endtime for rule \"{ruleName}\"");
+                    MWarn($"Setting limits on StartTime and EndTime for rule \"{ruleName}\"");
 
                 // if the times are impossible then swap them
                 if (startTime > endTime)
@@ -253,9 +255,12 @@ namespace DailyScreenshot
         private int SetLimits(int time)
         {
             // round to the nearest 10 minutes
-            int val = Math.Max(time + (MIN_TIME_INTERVAL / 2), ModConfig.DEFAULT_START_TIME);
-            val = Math.Min(val, ModConfig.DEFAULT_END_TIME);
-
+            int val = Math.Max(time, ModConfig.DEFAULT_START_TIME); ;
+            if (MINUTES_PER_HOUR <= (val % 100))
+            {
+                val += MINUTES_TO_ADD_FOR_NEXT_HOUR;
+            }
+            val = Math.Min(val + (MIN_TIME_INTERVAL / 2), ModConfig.DEFAULT_END_TIME);
             // Round to the nearest 10 mintues
             return val - (val % MIN_TIME_INTERVAL);
         }
@@ -328,6 +333,7 @@ namespace DailyScreenshot
         /// <returns>true if the time is contained</returns>
         internal bool CheckTime(int time)
         {
+            //MTrace($"Is {time} <= {EndTime} and {time} >= {StartTime} ");
             return time >= StartTime && time <= EndTime;
         }
 

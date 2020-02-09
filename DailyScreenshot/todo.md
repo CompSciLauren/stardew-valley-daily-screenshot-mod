@@ -51,14 +51,14 @@
   - [x] Warp
   - [x] Time change
   - [x] Key press
-- [ ] Warnings
-  - [ ] Overlapping file names
+- [x] Warnings
+  - [x] Overlapping file names
     - [x] [Location](warning_test_files/location_result.txt)
     - [x] [Weather](warning_test_files/weather_result.txt)
     - [x] [Date](warning_test_files/days_result.txt)
-    - [ ] Directory
+    - [x] Directory
     - [x] Game ID
-    - [ ] Time of day
+    - [x] Time of day
     - [x] Different saves
   - [x] Inactive Rules
     - [x] [Location](warning_test_files/location_result.txt)
