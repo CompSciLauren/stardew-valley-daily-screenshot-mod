@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using StardewValley.Menus;
+using System.Diagnostics;
 
 namespace DailyScreenshot
 {
@@ -186,6 +188,7 @@ namespace DailyScreenshot
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+
             if (null != g_dailySS)
             {
                 string message = "Entry called twice - breaking singelton";
@@ -214,12 +217,50 @@ namespace DailyScreenshot
             // path is combined with StardewValley and then Screenshots
             DefaultSSdirectory = new DirectoryInfo(Path.Combine(path, "StardewValley", "Screenshots"));
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+            Helper.Events.Display.MenuChanged += OnMenuChanged;
         }
 
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
+        {
+            GameMenu menu = e.NewMenu as GameMenu;
+            if (null != menu)
+            {
+                OptionsPage oPage = menu.pages[GameMenu.optionsTab] as OptionsPage;
+                if (null != oPage)
+                {
+                    oPage.options.Add(new OptionsElement("DailyScreenshot Mod:"));
+                    oPage.options.Add(new OptionsButton("Show config.json", delegate
+                         {
+                             try
+                             {
+                                 Process.Start(new ProcessStartInfo
+                                 {
+                                     FileName = Path.Combine("Mods", "DailyScreenshot"),
+                                     UseShellExecute = true,
+                                     Verb = "open"
+                                 });
+                             }
+                             catch (Exception)
+                             {
+                             }
+                         }));
+                    // Show a list of rules and allow the user to enable/disable them here
+                    //oPage.options.Add(new OptionsElement("DailyScreenshot Mod Rules:"));
+                }
+            }
+        }
+
+
+        /// <summary>Enum for action taking with the events</summary>
         private enum EventAction
         {
+            /// <summary>Don't change the event listeners</summary>
             None,
+
+            /// <summary>Add a listener to this event</summary>
             Add,
+
+            /// <summary>Remove a listener from this event</summary>
             Remove
         }
 
@@ -478,6 +519,7 @@ namespace DailyScreenshot
         private void TakeScreenshot(ModRule rule)
         {
             string ssPath = rule.GetFileName();
+            Game1.flashAlpha = 1f;
             if (null != ssPath)
             {
                 MTrace($"ssPath = \"{ssPath}\"");
