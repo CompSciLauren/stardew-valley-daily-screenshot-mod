@@ -14,14 +14,16 @@ Releases can be found at the following websites:
 
 ## Features
 
-- A screenshot is automatically taken of your entire farm every day as soon as you leave your house.
+- One screenshot is automatically taken of your entire farm every day as soon as you leave your house.
 - Choose what time the screenshot gets taken.
-- Choose how often a screenshot gets taken.
-- Stores screenshots in the StardewValley/Screenshots folder, with each save file getting its own "FarmName-Screenshots" folder, so you can easily access the screenshots in-game under the "Options" tab in the menu and screenshots from multiple save files will not get mixed up. The file path to the screenshots folder is C:\Users\USERNAME\AppData\Roaming\StardewValley\Screenshots
-- Makes it super easy to gather screenshots to create a GIF that shows how your farm changes over time! There are many GIF makers that can be found online, such as [ezgif GIF maker](https://ezgif.com/maker).  Here is an [example](example.gif).
-- Keeps the screenshots in the correct order to make creating the GIF easier. This is achieved by naming each screenshot with a "year-season-day.png" numerical format. For example, on Year 1, Spring, Day 3, the screenshot would be named "01-01-03.png".
-- Can enable a keyboard shortcut for taking screenshots (set to "None" by default, so you need to specify a key on your keyboard in the Config file for this to work)
-- Custom configuration options! See below.
+- Choose how often a screenshot gets taken (daily, weekly, monthly, etc).
+- Screenshots are sent to your StardewValley/Screenshots folder, with each save file getting its own "FarmName-Screenshots" folder. Screenshots between multiple save files will not get mixed up.
+- Easily access the screenshots in-game by scrolling to the bottom of the "Options" tab in the menu and clicking the "Open Destination Folder" button.
+- Super easy to gather screenshots to create a GIF that shows how your farm changes over time! GIF makers can be found online, such as [ezgif GIF maker](https://ezgif.com/maker).  Here is an [example](example.gif).
+- Keeps the screenshots in the correct order to make creating the GIF easier. This is achieved by naming each screenshot with a "year-season-day.png" numerical format. For example, on Year 1, Winter, Day 3, the screenshot would be named "01-04-03.png".
+- Keyboard shortcut that takes a screenshot when pressed (set to "None" by default).
+- Can choose to disable automatic screenshots for rainy weather days (takes a screenshot every day regardless of weather by default).
+- Custom configuration options, including ability to add multiple custom rules! See below.
 
 ## Installation
 
@@ -92,8 +94,3 @@ Triggers are things that must happen for a screenshot to take place.  All of the
 | StartTime | Earliest point at which to take the picture.  The time cannot be more than EndTime and must be less than 600.  Must be an increment of 10. | int | 600 |
 | EndTime | Last point at which to take the picture. The time cannot be less than StartTime and cannot be more than 2600. Must be an increment of 10. | int | 2600 |
 <!-- markdownlint-enable MD033 -->
-
-## License
-
-[![CC0](http://mirrors.creativecommons.org/presskit/buttons/88x31/svg/cc-zero.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
-This work is licensed under a [Creative Commons Attribution 1.0 International License](http://creativecommons.org/licenses/by/1.0/).
