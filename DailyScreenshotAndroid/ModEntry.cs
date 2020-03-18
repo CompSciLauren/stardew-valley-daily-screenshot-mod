@@ -11,7 +11,7 @@ namespace DailyScreenshot
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod
     {
-        IReflectedMethod takeScreenshot = null;
+        private DirectoryInfo exportDirectory, screenshotsDirectory;
         private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
         int countdownInSeconds = 60;
@@ -21,6 +21,13 @@ namespace DailyScreenshot
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            var stardewValleyRootDirectory = new DirectoryInfo(Constants.ExecutionPath);
+            exportDirectory = stardewValleyRootDirectory.EnumerateDirectories("MapExport").FirstOrDefault();
+            if (exportDirectory == null)
+            {
+                exportDirectory = stardewValleyRootDirectory.CreateSubdirectory("MapExport");
+            }
+
             Helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
         }
 
@@ -30,6 +37,9 @@ namespace DailyScreenshot
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             saveFileCode = Game1.uniqueIDForThisGame;
+            var directoryName = Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode;
+            screenshotsDirectory = exportDirectory.CreateSubdirectory(directoryName);
+
             Helper.Events.Player.Warped += OnWarped;
             Helper.Events.GameLoop.DayStarted += OnDayStarted;
             Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
@@ -46,6 +56,7 @@ namespace DailyScreenshot
 
             EnqueueAction(() => {
                 TakeScreenshot();
+                MoveScreenshotToCorrectFolder("Farm"); // screenshotName
             });
         }
 
@@ -81,10 +92,7 @@ namespace DailyScreenshot
 
             string screenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}";
             Helper.ConsoleCommands.Trigger("export", new[] { "Farm", "all" });
-            Monitor.Log("Screenshot Taken", LogLevel.Debug);
             screenshotTakenToday = true;
-
-            MoveScreenshotToCorrectFolder(screenshotName);
         }
 
         private Queue<Action> _actions = new Queue<Action>();
@@ -136,15 +144,15 @@ namespace DailyScreenshot
         /// <param name="screenshotName">The name of the screenshot file.</param>
         private void MoveScreenshotToCorrectFolder(string screenshotName)
         {
+            screenshotName = "Farm";
             // gather directory and file paths
             string screenshotNameWithExtension = screenshotName + ".png";
-            string stardewValleyScreenshotsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley", "Screenshots");
-            string saveFilePath = Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode;
+            string saveFilePath = screenshotsDirectory.ToString();
 
-            string sourceFile = Path.Combine(stardewValleyScreenshotsDirectory, screenshotNameWithExtension);
-            string destinationFile = Path.Combine(stardewValleyScreenshotsDirectory, saveFilePath, screenshotNameWithExtension);
+            string sourceFile = Path.Combine(exportDirectory.ToString(), screenshotNameWithExtension);
+            string destinationFile = Path.Combine(exportDirectory.ToString(), saveFilePath, screenshotNameWithExtension);
 
-            string saveDirectoryFullPath = Path.Combine(stardewValleyScreenshotsDirectory, saveFilePath);
+            string saveDirectoryFullPath = Path.Combine(exportDirectory.ToString(), saveFilePath);
 
             // create save directory if it doesn't already exist
             if (!File.Exists(saveDirectoryFullPath))
