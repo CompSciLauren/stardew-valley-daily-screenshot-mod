@@ -14,7 +14,7 @@ Releases can be found at the following websites:
 
 For Android users, releases can be found at the following websites:
 - [NexusMods](https://www.nexusmods.com/stardewvalley/mods/4779)
-- [Chucklefish](https://community.playstarbound.com/resources/daily-screenshot-android.5954/)
+- [Chucklefish](https://community.playstarbound.com/resources/daily-screenshot-android.5955/)
 
 ## Features
 
