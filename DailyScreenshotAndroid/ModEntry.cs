@@ -115,7 +115,8 @@ namespace DailyScreenshot
                 string mapScreenshotPath = "Farm.png"; // screenshot name
                 FileInfo mapScreenshot = new FileInfo(Path.Combine(DefaultScreenshotDirectory.FullName, mapScreenshotPath));
                 string newScreenshotNameWithExtension = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}.png";
-                MoveScreenshotToCorrectFolder(mapScreenshot, new FileInfo(Path.Combine(DefaultScreenshotDirectory.FullName, DefaultScreenshotSubdirectory.FullName, newScreenshotNameWithExtension)));
+                MoveScreenshotToCorrectFolder(mapScreenshot, new FileInfo(Path.Combine("//storage//emulated//0//StardewValley//smapi-internal//MapExport//", Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode, newScreenshotNameWithExtension)));
+                // was: Path.Combine(DefaultScreenshotDirectory.FullName, DefaultScreenshotSubdirectory.FullName, newScreenshotNameWithExtension))
                 Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
             }
         }
@@ -179,6 +180,7 @@ namespace DailyScreenshot
         /// <param name="destinationFile">Where to move the file</param>
         private void MoveScreenshotToCorrectFolder(FileInfo sourceFile, FileInfo destinationFile)
         {
+            sourceFile = new FileInfo("/storage/emulated/0/StardewValley/smapi-internal/MapExport/Farm.png");
             MTrace($"Snapshot moving from {sourceFile} to {destinationFile}");
 
             // create save directory if it doesn't already exist

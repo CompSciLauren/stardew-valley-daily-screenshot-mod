@@ -4,7 +4,7 @@
   "Version": "1.0.0",
   "Description": "Automatically takes a daily screenshot of your entire farm.",
   "UniqueID": "CompSciLauren.DailyScreenshotAndroid",
-  "EntryDll": "StardewValleyModTemplate.dll",
+  "EntryDll": "DailyScreenshotAndroid.dll",
   "MinimumApiVersion": "2.10.0",
   "UpdateKeys": [ "Chucklefish:5953" ],
   "Dependencies": [
