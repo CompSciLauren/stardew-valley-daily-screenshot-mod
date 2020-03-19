@@ -18,6 +18,13 @@ namespace DailyScreenshot
         private int countdownInSeconds = 60;
         private ulong saveFileCode;
 
+        /// <summary>
+        /// Helper function for sending error messages
+        /// Always display even if verbose logging is off
+        /// </summary>
+        /// <param name="message">text to send</param>
+        internal void MError(string message) => Monitor.Log(message, LogLevel.Error);
+
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
@@ -182,7 +189,7 @@ namespace DailyScreenshot
             }
             catch (Exception ex)
             {
-                Monitor.Log($"Error moving file '{screenshotNameWithExtension}' into {saveFilePath} folder. Technical details:\n{ex}", LogLevel.Error);
+                MError($"Error moving file '{screenshotNameWithExtension}' to {saveFilePath}. Technical details:\n{ex}");
             }
         }
 
