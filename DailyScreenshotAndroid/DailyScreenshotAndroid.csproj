@@ -7,8 +7,8 @@
     <ProjectGuid>{DD196A2F-C6E1-4FDE-9F05-755114677E16}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>StardewValleyModTemplate</RootNamespace>
-    <AssemblyName>StardewValleyModTemplate</AssemblyName>
+    <RootNamespace>DailyScreenshotAndroid</RootNamespace>
+    <AssemblyName>DailyScreenshotAndroid</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
