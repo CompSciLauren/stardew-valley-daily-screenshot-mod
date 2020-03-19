@@ -14,9 +14,9 @@ namespace DailyScreenshot
         private DirectoryInfo exportDirectory, screenshotsDirectory;
         private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
-        private string theScreenshotName = "null";
-        int countdownInSeconds = 60;
-        ulong saveFileCode;
+        private string displayScreenshotFileName = "null";
+        private int countdownInSeconds = 60;
+        private ulong saveFileCode;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -52,7 +52,7 @@ namespace DailyScreenshot
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             ConvertInGameDateToNumericFormat();
-            theScreenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}.png";
+            displayScreenshotFileName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}.png";
 
             Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
             screenshotTakenToday = false;
@@ -97,7 +97,7 @@ namespace DailyScreenshot
         private void TakeScreenshot()
         {
             Helper.ConsoleCommands.Trigger("export", new[] { "Farm", "all" });
-            Game1.addHUDMessage(new HUDMessage(theScreenshotName, 6));
+            Game1.addHUDMessage(new HUDMessage(displayScreenshotFileName, 6));
             Game1.playSound("cameraNoise");
             screenshotTakenToday = true;
         }
