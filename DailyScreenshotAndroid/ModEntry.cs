@@ -56,7 +56,6 @@ namespace DailyScreenshot
 
             EnqueueAction(() => {
                 TakeScreenshot();
-                MoveScreenshotToCorrectFolder("Farm"); // screenshotName
             });
         }
 
@@ -88,9 +87,6 @@ namespace DailyScreenshot
         /// <summary>Takes a screenshot of the entire farm.</summary>
         private void TakeScreenshot()
         {
-            ConvertInGameDateToNumericFormat();
-
-            string screenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}";
             Helper.ConsoleCommands.Trigger("export", new[] { "Farm", "all" });
             screenshotTakenToday = true;
         }
@@ -144,13 +140,17 @@ namespace DailyScreenshot
         /// <param name="screenshotName">The name of the screenshot file.</param>
         private void MoveScreenshotToCorrectFolder(string screenshotName)
         {
+            ConvertInGameDateToNumericFormat();
+            string newScreenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}";
+            string newScreenshotNameWithExtension = newScreenshotName + ".png";
+
             screenshotName = "Farm";
             // gather directory and file paths
             string screenshotNameWithExtension = screenshotName + ".png";
             string saveFilePath = screenshotsDirectory.ToString();
 
             string sourceFile = Path.Combine(exportDirectory.ToString(), screenshotNameWithExtension);
-            string destinationFile = Path.Combine(exportDirectory.ToString(), saveFilePath, screenshotNameWithExtension);
+            string destinationFile = Path.Combine(exportDirectory.ToString(), saveFilePath, newScreenshotNameWithExtension);
 
             string saveDirectoryFullPath = Path.Combine(exportDirectory.ToString(), saveFilePath);
 
@@ -183,6 +183,7 @@ namespace DailyScreenshot
         {
             screenshotTakenToday = false;
             countdownInSeconds = 60;
+            MoveScreenshotToCorrectFolder("Farm"); // screenshotName
         }
     }
 }
