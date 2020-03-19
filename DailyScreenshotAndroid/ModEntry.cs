@@ -11,12 +11,29 @@ namespace DailyScreenshot
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod
     {
-        private DirectoryInfo exportDirectory, screenshotsDirectory;
         private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
         private string displayScreenshotFileName = "null";
         private int countdownInSeconds = 60;
         private ulong saveFileCode;
+
+        /// <summary>
+        /// Default screenshot directory set in the entry
+        /// </summary>
+        /// <value>Path to the screenshot directory for this platform</value>
+        public DirectoryInfo DefaultScreenshotDirectory { get; private set; }
+
+        /// <summary>
+        /// Default screenshot directory set in the entry
+        /// </summary>
+        /// <value>Path to the screenshot directory for this platform</value>
+        public DirectoryInfo DefaultScreenshotSubdirectory { get; private set; }
+
+        /// <summary>
+        /// Helper function for sending trace messages
+        /// </summary>
+        /// <param name="message">text to send</param>
+        internal void MTrace(string message) => Monitor.Log(message, LogLevel.Trace);
 
         /// <summary>
         /// Helper function for sending error messages
@@ -30,10 +47,10 @@ namespace DailyScreenshot
         public override void Entry(IModHelper helper)
         {
             var stardewValleyRootDirectory = new DirectoryInfo(Constants.ExecutionPath);
-            exportDirectory = stardewValleyRootDirectory.EnumerateDirectories("MapExport").FirstOrDefault();
-            if (exportDirectory == null)
+            DefaultScreenshotDirectory = stardewValleyRootDirectory.EnumerateDirectories("MapExport").FirstOrDefault();
+            if (DefaultScreenshotDirectory == null)
             {
-                exportDirectory = stardewValleyRootDirectory.CreateSubdirectory("MapExport");
+                DefaultScreenshotDirectory = stardewValleyRootDirectory.CreateSubdirectory("MapExport");
             }
 
             Helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
@@ -46,7 +63,7 @@ namespace DailyScreenshot
         {
             saveFileCode = Game1.uniqueIDForThisGame;
             var directoryName = Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode;
-            screenshotsDirectory = exportDirectory.CreateSubdirectory(directoryName);
+            DefaultScreenshotSubdirectory = DefaultScreenshotDirectory.CreateSubdirectory(directoryName);
 
             Helper.Events.Player.Warped += OnWarped;
             Helper.Events.GameLoop.DayStarted += OnDayStarted;
@@ -95,7 +112,10 @@ namespace DailyScreenshot
             }
             if (countdownInSeconds == -1)
             {
-                MoveScreenshotToCorrectFolder("Farm"); // screenshotName
+                string mapScreenshotPath = "Farm.png"; // screenshot name
+                FileInfo mapScreenshot = new FileInfo(Path.Combine(DefaultScreenshotDirectory.FullName, mapScreenshotPath));
+                string newScreenshotNameWithExtension = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}.png";
+                MoveScreenshotToCorrectFolder(mapScreenshot, new FileInfo(Path.Combine(DefaultScreenshotDirectory.FullName, DefaultScreenshotSubdirectory.FullName, newScreenshotNameWithExtension)));
                 Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
             }
         }
@@ -155,41 +175,31 @@ namespace DailyScreenshot
         }
 
         /// <summary>Moves screenshot into StardewValley/Screenshots directory, in the save file folder.</summary>
-        /// <param name="screenshotName">The name of the screenshot file.</param>
-        private void MoveScreenshotToCorrectFolder(string screenshotName)
+        /// <param name="sourceFile">File to move</param>
+        /// <param name="destinationFile">Where to move the file</param>
+        private void MoveScreenshotToCorrectFolder(FileInfo sourceFile, FileInfo destinationFile)
         {
-            string newScreenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}";
-            string newScreenshotNameWithExtension = newScreenshotName + ".png";
-
-            screenshotName = "Farm";
-            // gather directory and file paths
-            string screenshotNameWithExtension = screenshotName + ".png";
-            string saveFilePath = screenshotsDirectory.ToString();
-
-            string sourceFile = Path.Combine(exportDirectory.ToString(), screenshotNameWithExtension);
-            string destinationFile = Path.Combine(exportDirectory.ToString(), saveFilePath, newScreenshotNameWithExtension);
-
-            string saveDirectoryFullPath = Path.Combine(exportDirectory.ToString(), saveFilePath);
+            MTrace($"Snapshot moving from {sourceFile} to {destinationFile}");
 
             // create save directory if it doesn't already exist
-            if (!File.Exists(saveDirectoryFullPath))
+            if (!Directory.Exists(destinationFile.DirectoryName))
             {
-                Directory.CreateDirectory(saveDirectoryFullPath);
+                Directory.CreateDirectory(destinationFile.DirectoryName);
             }
 
             // delete old version of screenshot if one exists
-            if (File.Exists(destinationFile))
+            if (destinationFile.Exists)
             {
-                File.Delete(destinationFile);
+                destinationFile.Delete();
             }
 
             try
             {
-                File.Move(sourceFile, destinationFile);
+                sourceFile.MoveTo(destinationFile.FullName);
             }
             catch (Exception ex)
             {
-                MError($"Error moving file '{screenshotNameWithExtension}' to {saveFilePath}. Technical details:\n{ex}");
+                MError($"Error moving file '{sourceFile.FullName}' to {destinationFile.FullName}. Technical details:\n{ex}");
             }
         }
 
