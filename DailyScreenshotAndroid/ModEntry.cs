@@ -82,6 +82,10 @@ namespace DailyScreenshot
                 while (_actions.Count > 0)
                     _actions.Dequeue().Invoke();
             }
+            if (countdownInSeconds == -1)
+            {
+                MoveScreenshotToCorrectFolder("Farm"); // screenshotName
+            }
         }
 
         /// <summary>Takes a screenshot of the entire farm.</summary>
@@ -183,7 +187,6 @@ namespace DailyScreenshot
         {
             screenshotTakenToday = false;
             countdownInSeconds = 60;
-            MoveScreenshotToCorrectFolder("Farm"); // screenshotName
         }
     }
 }
