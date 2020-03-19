@@ -12,6 +12,10 @@ Releases can be found at the following websites:
 - [CurseForge](https://www.curseforge.com/stardewvalley/mods/daily-screenshot)
 - [ModDrop](https://www.moddrop.com/stardew-valley/mods/677025-daily-screenshot)
 
+For Android users, releases can be found at the following websites:
+- [NexusMods](https://www.nexusmods.com/stardewvalley/mods/4779)
+- [Chucklefish](https://community.playstarbound.com/resources/daily-screenshot-android.5954/)
+
 ## Features
 
 - One screenshot is automatically taken of your entire farm every day as soon as you leave your house.
