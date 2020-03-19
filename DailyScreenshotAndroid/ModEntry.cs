@@ -14,6 +14,7 @@ namespace DailyScreenshot
         private DirectoryInfo exportDirectory, screenshotsDirectory;
         private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
         private bool screenshotTakenToday = false;
+        private string theScreenshotName = "null";
         int countdownInSeconds = 60;
         ulong saveFileCode;
 
@@ -50,6 +51,9 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
+            ConvertInGameDateToNumericFormat();
+            theScreenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}.png";
+
             Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
             screenshotTakenToday = false;
             countdownInSeconds = 60;
@@ -85,6 +89,7 @@ namespace DailyScreenshot
             if (countdownInSeconds == -1)
             {
                 MoveScreenshotToCorrectFolder("Farm"); // screenshotName
+                Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
             }
         }
 
@@ -92,6 +97,8 @@ namespace DailyScreenshot
         private void TakeScreenshot()
         {
             Helper.ConsoleCommands.Trigger("export", new[] { "Farm", "all" });
+            Game1.addHUDMessage(new HUDMessage(theScreenshotName, 6));
+            Game1.playSound("cameraNoise");
             screenshotTakenToday = true;
         }
 
@@ -144,7 +151,6 @@ namespace DailyScreenshot
         /// <param name="screenshotName">The name of the screenshot file.</param>
         private void MoveScreenshotToCorrectFolder(string screenshotName)
         {
-            ConvertInGameDateToNumericFormat();
             string newScreenshotName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}";
             string newScreenshotNameWithExtension = newScreenshotName + ".png";
 
