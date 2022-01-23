@@ -1,6 +1,7 @@
 using System;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Locations;
 
 namespace DailyScreenshot
 {
@@ -174,9 +175,11 @@ namespace DailyScreenshot
             Museum = 1 << 8,
             CommunityCenter = 1 << 10,
             Mountain = 1 << 11,
-            Unknown = 1 << 12,
+            IslandWest = 1 << 12,
+            IslandFarmhouse = 1 << 13,
+            Unknown = 1 << 24,
             Any = Farm | GreenHouse | Farmhouse | Beach | Unknown |
-                Mountain | CommunityCenter | Museum | FarmCave | Cellar | Desert
+                Mountain | CommunityCenter | Museum | FarmCave | Cellar | Desert | IslandWest | IslandFarmhouse
         }
 
         /// <summary>
@@ -278,28 +281,45 @@ namespace DailyScreenshot
         /// <returns>LocationFlags enum of the location</returns>
         public LocationFlags GetLocation()
         {
-            StardewValley.GameLocation location = Game1.currentLocation;
-            if (location is Farm)
-                return LocationFlags.Farm;
-            if (location is StardewValley.Locations.Beach)
-                return LocationFlags.Beach;
-            if (location is StardewValley.Locations.FarmHouse)
-                return LocationFlags.Farmhouse;
-            if (location is StardewValley.Locations.FarmCave)
-                return LocationFlags.FarmCave;
-            if (location is StardewValley.Locations.Cellar)
-                return LocationFlags.Cellar;
-            if (location is StardewValley.Locations.Desert)
-                return LocationFlags.Desert;
-            if (location is StardewValley.Locations.LibraryMuseum)
-                return LocationFlags.Museum;
-            if (location is StardewValley.Locations.CommunityCenter)
-                return LocationFlags.CommunityCenter;
-            if (location is StardewValley.Locations.Mountain)
-                return LocationFlags.Mountain;
-            if (location.IsGreenhouse)
-                return LocationFlags.GreenHouse;
-            return LocationFlags.Unknown;
+            GameLocation location = Game1.currentLocation;
+            LocationFlags flag;
+            switch (location)
+            {
+                case Farm:
+                    flag = LocationFlags.Farm;
+                    break;
+                case FarmHouse:
+                    flag = LocationFlags.Farmhouse;
+                    break;
+                case Beach:
+                    flag = LocationFlags.Beach;
+                    break;
+                case FarmCave:
+                    flag = LocationFlags.FarmCave;
+                    break;
+                case Cellar:
+                    flag = LocationFlags.Cellar;
+                    break;
+                case Desert:
+                    flag = LocationFlags.Desert;
+                    break;
+                case LibraryMuseum:
+                    flag = LocationFlags.Museum;
+                    break;
+                case Mountain:
+                    flag = LocationFlags.Mountain;
+                    break;
+                case IslandWest:
+                    flag = LocationFlags.IslandWest;
+                    break;
+                case IslandFarmHouse:
+                    flag = LocationFlags.IslandFarmhouse;
+                    break;
+                default:
+                    flag = location.IsGreenhouse ? LocationFlags.GreenHouse : LocationFlags.Unknown;
+                    break;
+            }
+            return flag;
         }
         #endregion
 
