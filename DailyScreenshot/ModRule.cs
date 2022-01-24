@@ -136,7 +136,7 @@ namespace DailyScreenshot
             if (AddFilenamePart(FileNameFlags.Location,
                                 sep,
                                 ref sb,
-                                Trigger.GetLocation()))
+                                ModTrigger.GetLocation()))
                 sep = Path.DirectorySeparatorChar;
             if ('-' == sep)
                 sep = Path.DirectorySeparatorChar;

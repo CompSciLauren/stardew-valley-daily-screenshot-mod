@@ -1,3 +1,22 @@
 ﻿{
-  "test":  "Test",
+  "GmcmNotFound": "Generic Mod Config Menu (https://www.nexusmods.com/stardewvalley/mods/5098) not found. This mod supports GMCM configuration but it is not installed, so integration disabled.",
+  "GmcmVersionMessage": "Please update Generic Mod Config Menu (https://www.nexusmods.com/stardewvalley/mods/5098) to at least version {{version}} (Current version: {{currentversion}}). GMCM integration disabled.",
+
+  // GMCM Translations:
+  "config.EffectControl": "Effect control",
+  "config.EffectControl.tooltip": "Toggle auditory and visual effects as well as notifications.",
+  "config.AuditoryEffects": "Auditory Effects",
+  "config.AuditoryEffects.tooltip": "Toggles if a camera sound plays whenever a screenshot was taken.",
+  "config.VisualEffects": "Visual Effects",
+  "config.VisualEffects.tooltip": "Toggles if the screen flashes whenever a screenshot was taken.",
+  "config.Notification": "Notifications",
+  "config.Notification.tooltip": "Toggles if a notification is displayed whenever a screenshot was taken.",
+
+  "config.Disclaimer": "!!!DISCLAIMER!!!",
+  "config.Disclaimer.paragraph": "This \"Generic Mod Config Menu\" integration does not include all possible mod configurations! To configure the screenshot rules edit the config.json file located at your Mods folder. For this purpose, read the config section on the respective download page. Changing and saving the settings shown here \nwill NOT override/reset your set screenshot rules.",
+
+  //Warnings:
+  "warning.unnamed_rule": "Updating unnamed rule to be \"{{rule}}\"",
+  "warning.rule_overlap": "Rules \"{{rule_one}}\" and \"{{rule_two}}\" can over write one another.",
+  "warning.save_overlap": "Rule \"{{rule}}\" can overwrite files if you load different saves"
 }

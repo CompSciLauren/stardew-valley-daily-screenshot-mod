@@ -188,6 +188,7 @@ namespace DailyScreenshot
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
 
             if (null != g_dailySS)
             {
@@ -222,11 +223,9 @@ namespace DailyScreenshot
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            GameMenu menu = e.NewMenu as GameMenu;
-            if (null != menu)
+            if (e.NewMenu is GameMenu menu)
             {
-                OptionsPage oPage = menu.pages[GameMenu.optionsTab] as OptionsPage;
-                if (null != oPage)
+                if (menu.pages[GameMenu.optionsTab] is OptionsPage oPage)
                 {
                     oPage.options.Add(new OptionsElement("DailyScreenshot Mod:"));
                     oPage.options.Add(new OptionsButton("Show config.json", delegate
@@ -372,10 +371,10 @@ namespace DailyScreenshot
         /// </summary>
         private void ReportLoadingError()
         {
-            List<string> text = new List<string>() { FailedToLoadMessage };
-            StardewValley.Menus.DialogueBox box = new StardewValley.Menus.DialogueBox(text);
-            StardewValley.Game1.activeClickableMenu = box;
-            StardewValley.Game1.dialogueUp = true;
+            List<string> text = new() { FailedToLoadMessage };
+            DialogueBox box = new(text);
+            Game1.activeClickableMenu = box;
+            Game1.dialogueUp = true;
             box.finishTyping();
         }
 
@@ -384,57 +383,59 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            // add Generic Mod Config Menu integration
-            var gmcmApi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
-            if (gmcmApi != null)
-            {
-                gmcmApi.RegisterModConfig(ModManifest, () => m_config = new ModConfig(), () => Helper.WriteConfig(m_config));
-                gmcmApi.RegisterLabel(ModManifest, "Effect control", "Toggel auditory and visual effects as well as notifications.");
-
-                gmcmApi.RegisterSimpleOption(
-                    ModManifest,
-                    "Auditory effects",
-                    "Toggles if a camera sound plays whenever a screenshot was taken.",
-                    () => m_config.auditoryEffects,
-                    (bool val) => m_config.auditoryEffects = val
-                );
-
-                gmcmApi.RegisterSimpleOption(
-                    ModManifest,
-                    "Visual effects",
-                    "Toggles if the screen flashes whenever a screenshot was taken.",
-                    () => m_config.visualEffects,
-                    (bool val) => m_config.visualEffects = val
-                );
-
-                gmcmApi.RegisterSimpleOption(
-                    ModManifest,
-                    "Notifications",
-                    "Toggles if a notification is displayed whenever a screenshot was taken.",
-                    () => m_config.screenshotNotifications,
-                    (bool val) => m_config.screenshotNotifications = val
-                );
-
-
-                gmcmApi.RegisterLabel(
-                    ModManifest, 
-                    "!!!DISCLAIMER!!! (Hover to reveal)",
-                    "This \"Generic Mod Config Menu\" integration does not \ninclude all possible mod configurations!\n"
-                    + "To configure the screenshot rules edit the config.json \nfile located at your Mods folder.\n"
-                    + "For this purpose, read the config section on the \nrespective download page.\n\n"
-                    + "Note, that using the default button below will reset \nthe entire config file (including the screenshot rules)!\n"
-                    + "Changing and saving the settings shown here \nwill NOT override/reset your set screenshot rules."
-                );
-
-                MInfo("Added \"DailyScreenshot\" config menu with \"Generic Mod Config Menu\".");
-            }
-            else {
-                MInfo("This mod supports the \"Generic Mod Config Menu\" mod but it is not installed!");
-            }
-
             // Move this to OnDayStart and only register what is needed
             Helper.Events.GameLoop.DayStarted += OnDayStarted;
             Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
+
+            // add Generic Mod Config Menu integration
+            IModInfo gmcm = this.Helper.ModRegistry.Get("spacechase0.GenericModConfigMenu");
+            if (gmcm is null)
+            {
+                this.Monitor.Log(I18n.GmcmNotFound(), LogLevel.Debug);
+                return;
+            }
+            if (gmcm.Manifest.Version.IsOlderThan("1.8.0"))
+            {
+                this.Monitor.Log(I18n.GmcmVersionMessage(version: "1.8.0", currentversion: gmcm.Manifest.Version), LogLevel.Info);
+                return;
+            }
+
+            var gmcmApi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            if (gmcmApi != null)
+            {
+                gmcmApi.Register(ModManifest, m_config.Reset, () => Helper.WriteConfig(m_config));
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_EffectControl, I18n.Config_EffectControl_Tooltip);
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.auditoryEffects,
+                    setValue: (bool val) => m_config.auditoryEffects = val,
+                    name: I18n.Config_AuditoryEffects,
+                    tooltip: I18n.Config_AuditoryEffects_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.visualEffects,
+                    setValue: (bool val) => m_config.visualEffects = val,
+                    name: I18n.Config_VisualEffects,
+                    tooltip: I18n.Config_VisualEffects_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.screenshotNotifications,
+                    setValue: (bool val) => m_config.screenshotNotifications = val,
+                    name: I18n.Config_Notification,
+                    tooltip: I18n.Config_Notification_Tooltip
+                );
+
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Disclaimer);
+
+                gmcmApi.AddParagraph(ModManifest, I18n.Config_Disclaimer_Paragraph);
+
+                MInfo("Added \"DailyScreenshot\" config menu with \"Generic Mod Config Menu\".");
+            }
         }
 
         /// <summary>
@@ -452,7 +453,7 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            if (e.Button.TryGetKeyboard(out Keys k))
+            if (e.Button.TryGetKeyboard(out Keys _))
             {
                 RunTriggers(KeyRules, e.Button);
             }

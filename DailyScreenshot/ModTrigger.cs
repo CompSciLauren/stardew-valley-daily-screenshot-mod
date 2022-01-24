@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.Contracts;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
@@ -279,47 +280,24 @@ namespace DailyScreenshot
         /// Finds the user's current location
         /// </summary>
         /// <returns>LocationFlags enum of the location</returns>
-        public LocationFlags GetLocation()
+        [Pure]
+        public static LocationFlags GetLocation()
         {
             GameLocation location = Game1.currentLocation;
-            LocationFlags flag;
-            switch (location)
+            return location switch
             {
-                case Farm:
-                    flag = LocationFlags.Farm;
-                    break;
-                case FarmHouse:
-                    flag = LocationFlags.Farmhouse;
-                    break;
-                case Beach:
-                    flag = LocationFlags.Beach;
-                    break;
-                case FarmCave:
-                    flag = LocationFlags.FarmCave;
-                    break;
-                case Cellar:
-                    flag = LocationFlags.Cellar;
-                    break;
-                case Desert:
-                    flag = LocationFlags.Desert;
-                    break;
-                case LibraryMuseum:
-                    flag = LocationFlags.Museum;
-                    break;
-                case Mountain:
-                    flag = LocationFlags.Mountain;
-                    break;
-                case IslandWest:
-                    flag = LocationFlags.IslandWest;
-                    break;
-                case IslandFarmHouse:
-                    flag = LocationFlags.IslandFarmhouse;
-                    break;
-                default:
-                    flag = location.IsGreenhouse ? LocationFlags.GreenHouse : LocationFlags.Unknown;
-                    break;
-            }
-            return flag;
+                Farm => LocationFlags.Farm,
+                FarmHouse => LocationFlags.Farmhouse,
+                Beach => LocationFlags.Beach,
+                FarmCave => LocationFlags.FarmCave,
+                Cellar => LocationFlags.Cellar,
+                Desert => LocationFlags.Desert,
+                LibraryMuseum => LocationFlags.Museum,
+                Mountain => LocationFlags.Mountain,
+                IslandWest => LocationFlags.IslandWest,
+                IslandFarmHouse => LocationFlags.IslandFarmhouse,
+                _ => location.IsGreenhouse ? LocationFlags.GreenHouse : LocationFlags.Unknown,
+            };
         }
         #endregion
 
