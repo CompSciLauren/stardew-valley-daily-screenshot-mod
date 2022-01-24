@@ -180,7 +180,8 @@ namespace DailyScreenshot
             IslandFieldOffice = 1 << 14,
             Unknown = 1 << 24,
             Any = Farm | GreenHouse | Farmhouse | Beach | Unknown |
-                Mountain | CommunityCenter | Museum | FarmCave | Cellar | Desert | IslandWest | IslandFarmhouse,
+                Mountain | CommunityCenter | Museum | FarmCave | Cellar | Desert | 
+                IslandWest | IslandFarmhouse | IslandFieldOffice,
         }
 
         /// <summary>
