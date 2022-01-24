@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.Contracts;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
@@ -178,9 +177,10 @@ namespace DailyScreenshot
             Mountain = 1 << 11,
             IslandWest = 1 << 12,
             IslandFarmhouse = 1 << 13,
+            IslandFieldOffice = 1 << 14,
             Unknown = 1 << 24,
             Any = Farm | GreenHouse | Farmhouse | Beach | Unknown |
-                Mountain | CommunityCenter | Museum | FarmCave | Cellar | Desert | IslandWest | IslandFarmhouse
+                Mountain | CommunityCenter | Museum | FarmCave | Cellar | Desert | IslandWest | IslandFarmhouse,
         }
 
         /// <summary>
@@ -280,7 +280,6 @@ namespace DailyScreenshot
         /// Finds the user's current location
         /// </summary>
         /// <returns>LocationFlags enum of the location</returns>
-        [Pure]
         public static LocationFlags GetLocation()
         {
             GameLocation location = Game1.currentLocation;
@@ -296,6 +295,7 @@ namespace DailyScreenshot
                 Mountain => LocationFlags.Mountain,
                 IslandWest => LocationFlags.IslandWest,
                 IslandFarmHouse => LocationFlags.IslandFarmhouse,
+                IslandFieldOffice => LocationFlags.IslandFieldOffice,
                 _ => location.IsGreenhouse ? LocationFlags.GreenHouse : LocationFlags.Unknown,
             };
         }
