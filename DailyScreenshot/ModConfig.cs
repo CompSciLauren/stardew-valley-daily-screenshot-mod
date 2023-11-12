@@ -196,6 +196,11 @@ namespace DailyScreenshot
         /// <summary>
         /// Earliest point at which to take the picture.
         /// </summary>
+        public SButton shortcutKey = SButton.None;
+
+        /// <summary>
+        /// Earliest point at which to take the picture.
+        /// </summary>
         public int startTime = 600;
 
         /// <summary>

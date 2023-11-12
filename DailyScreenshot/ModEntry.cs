@@ -660,6 +660,16 @@ namespace DailyScreenshot
 
                 gmcmApi.AddPage(ModManifest, "Time");
 
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Time_Header_Title, I18n.Config_Time_Header_Tooltip);
+
+                gmcmApi.AddKeybind(
+                    ModManifest,
+                    getValue: () => m_config.shortcutKey,
+                    setValue: (SButton val) => m_config.shortcutKey = val,
+                    name: I18n.Config_Time_ShortcutKey_Title,
+                    tooltip: I18n.Config_Time_ShortcutKey_Tooltip
+                );
+
                 gmcmApi.AddNumberOption(
                     mod: ModManifest,
                     getValue: () => m_config.startTime,
