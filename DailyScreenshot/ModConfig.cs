@@ -69,6 +69,36 @@ namespace DailyScreenshot
         public bool screenshotNotifications = true;
 
         /// <summary>
+        /// Configurable toggle for allowing screenshots when weather is any.
+        /// </summary>
+        public bool weatherAny = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when weather is sunny.
+        /// </summary>
+        public bool weatherSunny = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when weather is rainy.
+        /// </summary>
+        public bool weatherRainy = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when weather is windy.
+        /// </summary>
+        public bool weatherWindy = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when weather is stormy.
+        /// </summary>
+        public bool weatherStormy = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when weather is snowy.
+        /// </summary>
+        public bool weatherSnowy = true;
+
+        /// <summary>
         /// Rules loaded from the config file
         /// </summary>
         public List<ModRule> SnapshotRules { get; set; } = new List<ModRule>();

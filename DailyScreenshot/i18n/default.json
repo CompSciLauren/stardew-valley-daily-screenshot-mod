@@ -1,22 +1,31 @@
 ﻿{
   "GmcmNotFound": "Generic Mod Config Menu (https://www.nexusmods.com/stardewvalley/mods/5098) not found. This mod supports GMCM configuration but it is not installed, so integration disabled.",
   "GmcmVersionMessage": "Please update Generic Mod Config Menu (https://www.nexusmods.com/stardewvalley/mods/5098) to at least version {{version}} (Current version: {{currentversion}}). GMCM integration disabled.",
-
-  // GMCM Translations:
-  "config.EffectControl": "Effect control",
-  "config.EffectControl.tooltip": "Toggle auditory and visual effects as well as notifications.",
-  "config.AuditoryEffects": "Auditory Effects",
-  "config.AuditoryEffects.tooltip": "Toggles if a camera sound plays whenever a screenshot is taken.",
-  "config.VisualEffects": "Visual Effects",
-  "config.VisualEffects.tooltip": "Toggles if the screen flashes whenever a screenshot is taken.",
-  "config.Notification": "Notifications",
-  "config.Notification.tooltip": "Toggles if a notification is displayed whenever a screenshot is taken.",
-
-  "config.Disclaimer": "!!!DISCLAIMER!!!",
-  "config.Disclaimer.paragraph": "This \"Generic Mod Config Menu\" integration does not include all possible mod configurations! To configure the screenshot rules edit the config.json file located at your Mods folder. For this purpose, read the config section on the respective download page. Changing and saving the settings shown here \nwill NOT override/reset your set screenshot rules.",
-
-  //Warnings:
-  "warning.unnamed_rule": "Updating unnamed rule to be \"{{rule}}\"",
-  "warning.rule_overlap": "Rules \"{{rule_one}}\" and \"{{rule_two}}\" can over write one another.",
-  "warning.save_overlap": "Rule \"{{rule}}\" can overwrite files if you load different saves"
+  "Config.Effects.Header.title": "Effect controls",
+  "Config.Effects.Header.tooltip": "Toggle auditory and visual effects as well as notifications.",
+  "Config.Effects.Auditory.title": "Auditory Effects",
+  "Config.Effects.Auditory.tooltip": "Toggles if a camera sound plays whenever a screenshot is taken.",
+  "Config.Effects.Visual.title": "Visual Effects",
+  "Config.Effects.Visual.tooltip": "Toggles if the screen flashes whenever a screenshot is taken.",
+  "Config.Effects.Notification.title": "Notifications",
+  "Config.Effects.Notification.tooltip": "Toggles if a notification is displayed whenever a screenshot is taken.",
+  "Config.Weather.Header.title": "Weather",
+  "Config.Weather.Header.tooltip": "Customize weather rules that determine when a screenshot can be taken.",
+  "Config.Weather.Any.Title": "Any",
+  "Config.Weather.Any.Tooltip" : "Toggles if any weather is acceptable for screenshots.",
+  "Config.Weather.Sunny.Title": "Sunny",
+  "Config.Weather.Sunny.Tooltip" : "Toggles if screenshots can be taken in sunny weather.",
+  "Config.Weather.Rainy.Title": "Rainy",
+  "Config.Weather.Rainy.Tooltip" : "Toggles if screenshots can be taken in rainy weather.",
+  "Config.Weather.Windy.Title": "Windy",
+  "Config.Weather.Windy.Tooltip" : "Toggles if screenshots can be taken in windy weather.",
+  "Config.Weather.Stormy.Title": "Stormy",
+  "Config.Weather.Stormy.Tooltip" : "Toggles if screenshots can be taken in stormy weather.",
+  "Config.Weather.Snowy.Title": "Snowy",
+  "Config.Weather.Snowy.Tooltip" : "Toggles if screenshots can be taken in snowy weather.",
+  "Config.Disclaimer": "!!!DISCLAIMER!!!",
+  "Config.Disclaimer.paragraph": "This \"Generic Mod Config Menu\" integration does not include all possible mod configurations! To configure the screenshot rules edit the config.json file located at your Mods folder. For this purpose, read the config section on the respective download page. Changing and saving the settings shown here \nwill NOT override/reset your set screenshot rules.",
+  "Warning.unnamed_rule": "Updating unnamed rule to be \"{{rule}}\"",
+  "Warning.rule_overlap": "Rules \"{{rule_one}}\" and \"{{rule_two}}\" can over write one another.",
+  "Warning.save_overlap": "Rule \"{{rule}}\" can overwrite files if you load different saves"
 }

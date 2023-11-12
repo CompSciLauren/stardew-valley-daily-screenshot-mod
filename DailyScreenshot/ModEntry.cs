@@ -404,30 +404,80 @@ namespace DailyScreenshot
             if (gmcmApi != null)
             {
                 gmcmApi.Register(ModManifest, m_config.Reset, () => Helper.WriteConfig(m_config));
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_EffectControl, I18n.Config_EffectControl_Tooltip);
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Effects_Header_Title, I18n.Config_Effects_Header_Tooltip);
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
                     getValue: () => m_config.auditoryEffects,
                     setValue: (bool val) => m_config.auditoryEffects = val,
-                    name: I18n.Config_AuditoryEffects,
-                    tooltip: I18n.Config_AuditoryEffects_Tooltip
+                    name: I18n.Config_Effects_Auditory_Title,
+                    tooltip: I18n.Config_Effects_Auditory_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
                     getValue: () => m_config.visualEffects,
                     setValue: (bool val) => m_config.visualEffects = val,
-                    name: I18n.Config_VisualEffects,
-                    tooltip: I18n.Config_VisualEffects_Tooltip
+                    name: I18n.Config_Effects_Visual_Title,
+                    tooltip: I18n.Config_Effects_Visual_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
                     getValue: () => m_config.screenshotNotifications,
                     setValue: (bool val) => m_config.screenshotNotifications = val,
-                    name: I18n.Config_Notification,
-                    tooltip: I18n.Config_Notification_Tooltip
+                    name: I18n.Config_Effects_Notification_Title,
+                    tooltip: I18n.Config_Effects_Notification_Tooltip
+                );
+
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Weather_Header_Title, I18n.Config_Weather_Header_Tooltip);
+                
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.weatherAny,
+                    setValue: (bool val) => m_config.weatherAny = val,
+                    name: I18n.Config_Weather_Any_Title,
+                    tooltip: I18n.Config_Weather_Any_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.weatherSunny,
+                    setValue: (bool val) => m_config.weatherSunny = val,
+                    name: I18n.Config_Weather_Sunny_Title,
+                    tooltip: I18n.Config_Weather_Sunny_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.weatherRainy,
+                    setValue: (bool val) => m_config.weatherRainy = val,
+                    name: I18n.Config_Weather_Rainy_Title,
+                    tooltip: I18n.Config_Weather_Rainy_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.weatherWindy,
+                    setValue: (bool val) => m_config.weatherWindy = val,
+                    name: I18n.Config_Weather_Windy_Title,
+                    tooltip: I18n.Config_Weather_Windy_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.weatherStormy,
+                    setValue: (bool val) => m_config.weatherStormy = val,
+                    name: I18n.Config_Weather_Stormy_Title,
+                    tooltip: I18n.Config_Weather_Stormy_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.weatherSnowy,
+                    setValue: (bool val) => m_config.weatherSnowy = val,
+                    name: I18n.Config_Weather_Snowy_Title,
+                    tooltip: I18n.Config_Weather_Snowy_Tooltip
                 );
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Disclaimer);
