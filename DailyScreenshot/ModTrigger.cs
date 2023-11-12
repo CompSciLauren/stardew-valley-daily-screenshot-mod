@@ -1,6 +1,7 @@
 using System;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Locations;
 
 namespace DailyScreenshot
 {
@@ -174,9 +175,13 @@ namespace DailyScreenshot
             Museum = 1 << 8,
             CommunityCenter = 1 << 10,
             Mountain = 1 << 11,
-            Unknown = 1 << 12,
+            IslandWest = 1 << 12,
+            IslandFarmhouse = 1 << 13,
+            IslandFieldOffice = 1 << 14,
+            Unknown = 1 << 24,
             Any = Farm | GreenHouse | Farmhouse | Beach | Unknown |
-                Mountain | CommunityCenter | Museum | FarmCave | Cellar | Desert
+                Mountain | CommunityCenter | Museum | FarmCave | Cellar | Desert | 
+                IslandWest | IslandFarmhouse | IslandFieldOffice,
         }
 
         /// <summary>
@@ -276,30 +281,24 @@ namespace DailyScreenshot
         /// Finds the user's current location
         /// </summary>
         /// <returns>LocationFlags enum of the location</returns>
-        public LocationFlags GetLocation()
+        public static LocationFlags GetLocation()
         {
-            StardewValley.GameLocation location = Game1.currentLocation;
-            if (location is Farm)
-                return LocationFlags.Farm;
-            if (location is StardewValley.Locations.Beach)
-                return LocationFlags.Beach;
-            if (location is StardewValley.Locations.FarmHouse)
-                return LocationFlags.Farmhouse;
-            if (location is StardewValley.Locations.FarmCave)
-                return LocationFlags.FarmCave;
-            if (location is StardewValley.Locations.Cellar)
-                return LocationFlags.Cellar;
-            if (location is StardewValley.Locations.Desert)
-                return LocationFlags.Desert;
-            if (location is StardewValley.Locations.LibraryMuseum)
-                return LocationFlags.Museum;
-            if (location is StardewValley.Locations.CommunityCenter)
-                return LocationFlags.CommunityCenter;
-            if (location is StardewValley.Locations.Mountain)
-                return LocationFlags.Mountain;
-            if (location.IsGreenhouse)
-                return LocationFlags.GreenHouse;
-            return LocationFlags.Unknown;
+            GameLocation location = Game1.currentLocation;
+            return location switch
+            {
+                Farm => LocationFlags.Farm,
+                FarmHouse => LocationFlags.Farmhouse,
+                Beach => LocationFlags.Beach,
+                FarmCave => LocationFlags.FarmCave,
+                Cellar => LocationFlags.Cellar,
+                Desert => LocationFlags.Desert,
+                LibraryMuseum => LocationFlags.Museum,
+                Mountain => LocationFlags.Mountain,
+                IslandWest => LocationFlags.IslandWest,
+                IslandFarmHouse => LocationFlags.IslandFarmhouse,
+                IslandFieldOffice => LocationFlags.IslandFieldOffice,
+                _ => location.IsGreenhouse ? LocationFlags.GreenHouse : LocationFlags.Unknown,
+            };
         }
         #endregion
 

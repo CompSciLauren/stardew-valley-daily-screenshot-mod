@@ -120,11 +120,11 @@ namespace DailyScreenshot
             int secondsSinceEpoch = (int)t.TotalSeconds;
             int milliseconds = DateTime.UtcNow.Millisecond;
             char sep = Path.DirectorySeparatorChar;
-            StringBuilder sb = new StringBuilder("." + Path.DirectorySeparatorChar);
+            StringBuilder sb = new("." + Path.DirectorySeparatorChar);
             if (AddFilenamePart(FileNameFlags.FarmName,
                                 sep,
                                 ref sb,
-                                Game1.player.farmName + "-Farm-Screenshots"))
+                                Game1.player.farmName.Value + "-Farm-Screenshots"))
                 sep = '-';
             if (AddFilenamePart(FileNameFlags.GameID,
                                 sep,
@@ -136,7 +136,7 @@ namespace DailyScreenshot
             if (AddFilenamePart(FileNameFlags.Location,
                                 sep,
                                 ref sb,
-                                Trigger.GetLocation()))
+                                ModTrigger.GetLocation()))
                 sep = Path.DirectorySeparatorChar;
             if ('-' == sep)
                 sep = Path.DirectorySeparatorChar;
@@ -150,7 +150,7 @@ namespace DailyScreenshot
             if (AddFilenamePart(FileNameFlags.PlayerName,
                                 sep,
                                 ref sb,
-                                Game1.player.name))
+                                Game1.player.Name))
                 sep = '-';
             if (AddFilenamePart(FileNameFlags.Date,
                                 sep,
@@ -333,8 +333,7 @@ namespace DailyScreenshot
         {
             if (obj == null) return 1;
 
-            ModRule otherRule = obj as ModRule;
-            if (otherRule != null)
+            if (obj is ModRule otherRule)
             {
                 if (ModConfig.DEFAULT_STRING != Directory)
                 {

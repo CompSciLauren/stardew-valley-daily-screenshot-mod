@@ -97,6 +97,13 @@ namespace DailyScreenshot
             SnapshotRules[0].Name = m_launchGuid;
         }
 
+        public void Reset()
+        {
+            auditoryEffects = true;
+            visualEffects = true;
+            screenshotNotifications = true;
+        }
+
         private T GetOldData<T>(IDictionary<string, JToken> oldDatDict, string key, T defaultValue)
         {
             if (oldDatDict.TryGetValue(key, out JToken value))
@@ -215,7 +222,7 @@ namespace DailyScreenshot
                 {
                     cnt++;
                     rule.Name = $"Unnamed Rule {cnt}";
-                    MWarn($"Updating unnamed rule to be \"{rule.Name}\"");
+                    MWarn(I18n.Warning_UnnamedRule(rule.Name));
                     RulesModified = true;
                 }
                 if (rule.ValidateUserInput())
@@ -233,7 +240,7 @@ namespace DailyScreenshot
                         {
                             if (SnapshotRules[i].FileNamesCanOverlap(SnapshotRules[j]))
                             {
-                                MWarn($"Rules \"{SnapshotRules[i].Name}\" and \"{SnapshotRules[j].Name}\" can over write one another.");
+                                MWarn(I18n.Warning_RuleOverlap(SnapshotRules[i].Name, SnapshotRules[j].Name));
                             }
                         }
                     }
@@ -244,7 +251,7 @@ namespace DailyScreenshot
                     ModRule.FileNameFlags.None ==
                         (SnapshotRules[i].FileName & ModRule.FileNameFlags.UniqueID))
                 {
-                    MWarn($"Rule \"{SnapshotRules[i].Name}\" can overwrite files if you load different saves");
+                    MWarn(I18n.Warning_SaveOverlap(SnapshotRules[i].Name));
                 }
             }
         }
