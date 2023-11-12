@@ -404,6 +404,7 @@ namespace DailyScreenshot
             if (gmcmApi != null)
             {
                 gmcmApi.Register(ModManifest, m_config.Reset, () => Helper.WriteConfig(m_config));
+
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Effects_Header_Title, I18n.Config_Effects_Header_Tooltip);
 
                 gmcmApi.AddBoolOption(
@@ -429,6 +430,14 @@ namespace DailyScreenshot
                     name: I18n.Config_Effects_Notification_Title,
                     tooltip: I18n.Config_Effects_Notification_Tooltip
                 );
+
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Disclaimer);
+
+                gmcmApi.AddParagraph(ModManifest, I18n.Config_Disclaimer_Paragraph);
+
+                gmcmApi.AddPageLink(ModManifest, "Weather", () => "Next Page");
+
+                gmcmApi.AddPage(ModManifest, "Weather");
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Weather_Header_Title, I18n.Config_Weather_Header_Tooltip);
                 
@@ -479,6 +488,12 @@ namespace DailyScreenshot
                     name: I18n.Config_Weather_Snowy_Title,
                     tooltip: I18n.Config_Weather_Snowy_Tooltip
                 );
+
+                gmcmApi.AddPageLink(ModManifest, "", () => "Previous Page");
+
+                gmcmApi.AddPageLink(ModManifest, "Location", () => "Next Page");
+
+                gmcmApi.AddPage(ModManifest, "Location");
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Location_Header_Title, I18n.Config_Location_Header_Tooltip);
 
@@ -602,9 +617,7 @@ namespace DailyScreenshot
                     tooltip: I18n.Config_Location_Unknown_Tooltip
                 );
 
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Disclaimer);
-
-                gmcmApi.AddParagraph(ModManifest, I18n.Config_Disclaimer_Paragraph);
+                gmcmApi.AddPageLink(ModManifest, "Weather", () => "Previous Page");
 
                 MInfo("Added \"DailyScreenshot\" config menu with \"Generic Mod Config Menu\".");
             }
