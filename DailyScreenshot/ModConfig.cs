@@ -54,6 +54,26 @@ namespace DailyScreenshot
         public const int DEFAULT_END_TIME = 2600;
 
         /// <summary>
+        /// Zoom to use (reduce map to 1/4 of original size)
+        /// </summary>
+        public string snapshotRuleName = "Main Snapshot";
+
+        /// <summary>
+        /// Zoom to use (reduce map to 1/4 of original size)
+        /// </summary>
+        public float zoomLevel = 0.25f;
+
+        /// <summary>
+        /// Zoom to use (reduce map to 1/4 of original size)
+        /// </summary>
+        public string snapshotDirectory = "Default";
+
+        /// <summary>
+        /// Zoom to use (reduce map to 1/4 of original size)
+        /// </summary>
+        public string snapshotFileName = "Default";
+
+        /// <summary>
         /// Configurable toggle for auditory effects when taking screenshot.
         /// </summary>
         public bool auditoryEffects = true;

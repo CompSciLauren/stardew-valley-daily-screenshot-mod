@@ -405,6 +405,43 @@ namespace DailyScreenshot
             {
                 gmcmApi.Register(ModManifest, m_config.Reset, () => Helper.WriteConfig(m_config));
 
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_MainSettings_Header_Title, I18n.Config_MainSettings_Header_Tooltip);
+
+                gmcmApi.AddTextOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.snapshotRuleName,
+                    setValue: (string val) => m_config.snapshotRuleName = val,
+                    name: I18n.Config_MainSettings_SnapshotRuleName_Title,
+                    tooltip: I18n.Config_MainSettings_SnapshotRuleName_Tooltip
+                );
+
+                gmcmApi.AddNumberOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.zoomLevel,
+                    setValue: (float val) => m_config.zoomLevel = val,
+                    name: I18n.Config_MainSettings_ZoomLevel_Title,
+                    tooltip: I18n.Config_MainSettings_ZoomLevel_Tooltip,
+                    min: 0.01f,
+                    max: 1,
+                    interval: 0.01f
+                );
+
+                gmcmApi.AddTextOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.snapshotDirectory,
+                    setValue: (string val) => m_config.snapshotDirectory = val,
+                    name: I18n.Config_MainSettings_SnapshotDirectory_Title,
+                    tooltip: I18n.Config_MainSettings_SnapshotDirectory_Tooltip
+                );
+
+                gmcmApi.AddTextOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.snapshotFileName,
+                    setValue: (string val) => m_config.snapshotFileName = val,
+                    name: I18n.Config_MainSettings_SnapshotFileName_Title,
+                    tooltip: I18n.Config_MainSettings_SnapshotFileName_Tooltip
+                );
+
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Effects_Header_Title, I18n.Config_Effects_Header_Tooltip);
 
                 gmcmApi.AddBoolOption(
