@@ -656,6 +656,34 @@ namespace DailyScreenshot
 
                 gmcmApi.AddPageLink(ModManifest, "Weather", () => "Previous Page");
 
+                gmcmApi.AddPageLink(ModManifest, "Time", () => "Next Page");
+
+                gmcmApi.AddPage(ModManifest, "Time");
+
+                gmcmApi.AddNumberOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.startTime,
+                    setValue: (int val) => m_config.startTime = val,
+                    name: I18n.Config_Time_StartTime_Title,
+                    tooltip: I18n.Config_Time_StartTime_Tooltip,
+                    min: 600,
+                    max: 2590,
+                    interval: 10
+                );
+
+                gmcmApi.AddNumberOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.endTime,
+                    setValue: (int val) => m_config.endTime = val,
+                    name: I18n.Config_Time_EndTime_Title,
+                    tooltip: I18n.Config_Time_EndTime_Tooltip,
+                    min: 610,
+                    max: 2600,
+                    interval: 10
+                );
+                
+                gmcmApi.AddPageLink(ModManifest, "Location", () => "Previous Page");
+
                 MInfo("Added \"DailyScreenshot\" config menu with \"Generic Mod Config Menu\".");
             }
         }

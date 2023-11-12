@@ -194,6 +194,16 @@ namespace DailyScreenshot
         public bool locationUnknown = true;
 
         /// <summary>
+        /// Earliest point at which to take the picture.
+        /// </summary>
+        public int startTime = 600;
+
+        /// <summary>
+        /// Last point at which to take the picture.
+        /// </summary>
+        public int endTime = 2600;
+
+        /// <summary>
         /// Rules loaded from the config file
         /// </summary>
         public List<ModRule> SnapshotRules { get; set; } = new List<ModRule>();
