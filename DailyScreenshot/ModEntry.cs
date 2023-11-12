@@ -405,6 +405,32 @@ namespace DailyScreenshot
             {
                 gmcmApi.Register(ModManifest, m_config.Reset, () => Helper.WriteConfig(m_config));
 
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Effects_Header_Title, I18n.Config_Effects_Header_Tooltip);
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.auditoryEffects,
+                    setValue: (bool val) => m_config.auditoryEffects = val,
+                    name: I18n.Config_Effects_Auditory_Title,
+                    tooltip: I18n.Config_Effects_Auditory_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.visualEffects,
+                    setValue: (bool val) => m_config.visualEffects = val,
+                    name: I18n.Config_Effects_Visual_Title,
+                    tooltip: I18n.Config_Effects_Visual_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.screenshotNotifications,
+                    setValue: (bool val) => m_config.screenshotNotifications = val,
+                    name: I18n.Config_Effects_Notification_Title,
+                    tooltip: I18n.Config_Effects_Notification_Tooltip
+                );
+
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_MainSettings_Header_Title, I18n.Config_MainSettings_Header_Tooltip);
 
                 gmcmApi.AddTextOption(
@@ -440,32 +466,6 @@ namespace DailyScreenshot
                     setValue: (string val) => m_config.snapshotFileName = val,
                     name: I18n.Config_MainSettings_SnapshotFileName_Title,
                     tooltip: I18n.Config_MainSettings_SnapshotFileName_Tooltip
-                );
-
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Effects_Header_Title, I18n.Config_Effects_Header_Tooltip);
-
-                gmcmApi.AddBoolOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.auditoryEffects,
-                    setValue: (bool val) => m_config.auditoryEffects = val,
-                    name: I18n.Config_Effects_Auditory_Title,
-                    tooltip: I18n.Config_Effects_Auditory_Tooltip
-                );
-
-                gmcmApi.AddBoolOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.visualEffects,
-                    setValue: (bool val) => m_config.visualEffects = val,
-                    name: I18n.Config_Effects_Visual_Title,
-                    tooltip: I18n.Config_Effects_Visual_Tooltip
-                );
-
-                gmcmApi.AddBoolOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.screenshotNotifications,
-                    setValue: (bool val) => m_config.screenshotNotifications = val,
-                    name: I18n.Config_Effects_Notification_Title,
-                    tooltip: I18n.Config_Effects_Notification_Tooltip
                 );
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Disclaimer);
