@@ -480,6 +480,128 @@ namespace DailyScreenshot
                     tooltip: I18n.Config_Weather_Snowy_Tooltip
                 );
 
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Location_Header_Title, I18n.Config_Location_Header_Tooltip);
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationAny,
+                    setValue: (bool val) => m_config.locationAny = val,
+                    name: I18n.Config_Location_Any_Title,
+                    tooltip: I18n.Config_Location_Any_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationFarm,
+                    setValue: (bool val) => m_config.locationFarm = val,
+                    name: I18n.Config_Location_Farm_Title,
+                    tooltip: I18n.Config_Location_Farm_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationFarmhouse,
+                    setValue: (bool val) => m_config.locationFarmhouse = val,
+                    name: I18n.Config_Location_Farmhouse_Title,
+                    tooltip: I18n.Config_Location_Farmhouse_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationGreenhouse,
+                    setValue: (bool val) => m_config.locationGreenhouse = val,
+                    name: I18n.Config_Location_Greenhouse_Title,
+                    tooltip: I18n.Config_Location_Greenhouse_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationBeach,
+                    setValue: (bool val) => m_config.locationBeach = val,
+                    name: I18n.Config_Location_Beach_Title,
+                    tooltip: I18n.Config_Location_Beach_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationFarmCave,
+                    setValue: (bool val) => m_config.locationFarmCave = val,
+                    name: I18n.Config_Location_FarmCave_Title,
+                    tooltip: I18n.Config_Location_FarmCave_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationCellar,
+                    setValue: (bool val) => m_config.locationCellar = val,
+                    name: I18n.Config_Location_Cellar_Title,
+                    tooltip: I18n.Config_Location_Cellar_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationDesert,
+                    setValue: (bool val) => m_config.locationDesert = val,
+                    name: I18n.Config_Location_Desert_Title,
+                    tooltip: I18n.Config_Location_Desert_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationMuseum,
+                    setValue: (bool val) => m_config.locationMuseum = val,
+                    name: I18n.Config_Location_Museum_Title,
+                    tooltip: I18n.Config_Location_Museum_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationCommunityCenter,
+                    setValue: (bool val) => m_config.locationCommunityCenter = val,
+                    name: I18n.Config_Location_CommunityCenter_Title,
+                    tooltip: I18n.Config_Location_CommunityCenter_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationMountain,
+                    setValue: (bool val) => m_config.locationMountain = val,
+                    name: I18n.Config_Location_Mountain_Title,
+                    tooltip: I18n.Config_Location_Mountain_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationIslandWest,
+                    setValue: (bool val) => m_config.locationIslandWest = val,
+                    name: I18n.Config_Location_IslandWest_Title,
+                    tooltip: I18n.Config_Location_IslandWest_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationIslandFarmhouse,
+                    setValue: (bool val) => m_config.locationIslandFarmhouse = val,
+                    name: I18n.Config_Location_IslandFarmhouse_Title,
+                    tooltip: I18n.Config_Location_IslandFarmhouse_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationIslandFieldOffice,
+                    setValue: (bool val) => m_config.locationIslandFieldOffice = val,
+                    name: I18n.Config_Location_IslandFieldOffice_Title,
+                    tooltip: I18n.Config_Location_IslandFieldOffice_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.locationUnknown,
+                    setValue: (bool val) => m_config.locationUnknown = val,
+                    name: I18n.Config_Location_Unknown_Title,
+                    tooltip: I18n.Config_Location_Unknown_Tooltip
+                );
+
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Disclaimer);
 
                 gmcmApi.AddParagraph(ModManifest, I18n.Config_Disclaimer_Paragraph);

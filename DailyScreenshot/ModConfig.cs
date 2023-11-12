@@ -99,6 +99,81 @@ namespace DailyScreenshot
         public bool weatherSnowy = true;
 
         /// <summary>
+        /// Configurable toggle for allowing screenshots when location is any.
+        /// </summary>
+        public bool locationAny = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is Farm.
+        /// </summary>
+        public bool locationFarm = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is Farmhouse.
+        /// </summary>
+        public bool locationFarmhouse = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is Greenhouse.
+        /// </summary>
+        public bool locationGreenhouse = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is Beach.
+        /// </summary>
+        public bool locationBeach = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is FarmCave.
+        /// </summary>
+        public bool locationFarmCave = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is Cellar.
+        /// </summary>
+        public bool locationCellar = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is Desert.
+        /// </summary>
+        public bool locationDesert = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is Museum.
+        /// </summary>
+        public bool locationMuseum = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is CommunityCenter.
+        /// </summary>
+        public bool locationCommunityCenter = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is Mountain.
+        /// </summary>
+        public bool locationMountain = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is IslandWest.
+        /// </summary>
+        public bool locationIslandWest = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is IslandFarmhouse.
+        /// </summary>
+        public bool locationIslandFarmhouse = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is IslandFieldOffice.
+        /// </summary>
+        public bool locationIslandFieldOffice = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when location is Unknown.
+        /// </summary>
+        public bool locationUnknown = true;
+
+        /// <summary>
         /// Rules loaded from the config file
         /// </summary>
         public List<ModRule> SnapshotRules { get; set; } = new List<ModRule>();
