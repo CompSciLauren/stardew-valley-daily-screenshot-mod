@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
+using System.Linq;
 
 namespace DailyScreenshot
 {
@@ -462,6 +463,81 @@ namespace DailyScreenshot
             auditoryEffects = true;
             visualEffects = true;
             screenshotNotifications = true;
+
+            ModEntry.g_dailySS.ResetMainSnapshotRule();
+
+            // snapshotRuleName = "Main Snapshot";
+            // zoomLevel = 0.25f;
+            // snapshotDirectory = "Default";
+            // snapshotFileName = "Default";
+            // daysDaily = true;
+            // daysAnyDay = true;
+            // daysAnySeason = true;
+            // daysSpring = true;
+            // daysSummer = true;
+            // daysFall = true;
+            // daysWinter = true;
+            // daysFirstDayOfTheMonth = true;
+            // daysLastDayOfTheMonth = true;
+            // daysSundays = true;
+            // daysMondays = true;
+            // daysTuesdays = true;
+            // daysWednesdays = true;
+            // daysThursdays = true;
+            // daysFridays = true;
+            // daysSaturdays = true;
+            // daysDay1 = true;
+            // daysDay2 = true;
+            // daysDay3 = true;
+            // daysDay4 = true;
+            // daysDay5 = true;
+            // daysDay6 = true;
+            // daysDay7 = true;
+            // daysDay8 = true;
+            // daysDay9 = true;
+            // daysDay10 = true;
+            // daysDay11 = true;
+            // daysDay12 = true;
+            // daysDay13 = true;
+            // daysDay14 = true;
+            // daysDay15 = true;
+            // daysDay16 = true;
+            // daysDay17 = true;
+            // daysDay18 = true;
+            // daysDay19 = true;
+            // daysDay20 = true;
+            // daysDay21 = true;
+            // daysDay22 = true;
+            // daysDay23 = true;
+            // daysDay24 = true;
+            // daysDay25 = true;
+            // daysDay26 = true;
+            // daysDay27 = true;
+            // daysDay28 = true;
+            // weatherAny = true;
+            // weatherSunny = true;
+            // weatherRainy = true;
+            // weatherWindy = true;
+            // weatherStormy = true;
+            // weatherSnowy = true;
+            // locationAny = true;
+            // locationFarm = true;
+            // locationFarmhouse = true;
+            // locationGreenhouse = true;
+            // locationBeach = true;
+            // locationFarmCave = true;
+            // locationCellar = true;
+            // locationDesert = true;
+            // locationMuseum = true;
+            // locationCommunityCenter = true;
+            // locationMountain = true;
+            // locationIslandWest = true;
+            // locationIslandFarmhouse = true;
+            // locationIslandFieldOffice = true;
+            // locationUnknown = true;
+            // shortcutKey = SButton.None;
+            // startTime = 600;
+            // endTime = 2600;
         }
 
         private T GetOldData<T>(IDictionary<string, JToken> oldDatDict, string key, T defaultValue)

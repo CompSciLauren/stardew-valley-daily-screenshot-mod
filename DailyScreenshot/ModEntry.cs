@@ -8,6 +8,7 @@ using System.IO;
 using System.Threading;
 using StardewValley.Menus;
 using System.Diagnostics;
+using static DailyScreenshot.ModTrigger;
 
 namespace DailyScreenshot
 {
@@ -1372,6 +1373,49 @@ namespace DailyScreenshot
                 m_ssActions.Clear();
 
             m_ssCntDwnTicks = 0;
+        }
+
+        /// <summary>
+        /// Resets the Main Snapshot rule
+        /// </summary>
+        public void ResetMainSnapshotRule()
+        {
+            bool ruleFound = false;
+            foreach (ModRule rule in m_config.SnapshotRules)
+            {
+                if (string.Equals(rule.Name, "Main Snapshot"))
+                {
+                    rule.ZoomLevel = 0.25f;
+                    rule.Directory = "Default";
+                    rule.FileName = ModRule.FileNameFlags.Default;
+                    rule.Trigger.Days = DateFlags.Daily;
+                    rule.Trigger.Weather = WeatherFlags.Any;
+                    rule.Trigger.Location = LocationFlags.Farm;
+                    rule.Trigger.Key = SButton.None;
+                    rule.Trigger.StartTime = 600;
+                    rule.Trigger.EndTime = 2600;
+
+                    ruleFound = true;
+                    break;
+                }
+            }
+            
+            if (ruleFound == false)
+            {
+                ModRule newRule = new ModRule();
+                newRule.Name = "Main Snapshot";
+                newRule.ZoomLevel = 0.25f;
+                newRule.Directory = "Default";
+                newRule.FileName = ModRule.FileNameFlags.Default;
+                newRule.Trigger.Days = DateFlags.Daily;
+                newRule.Trigger.Weather = WeatherFlags.Any;
+                newRule.Trigger.Location = LocationFlags.Farm;
+                newRule.Trigger.Key = SButton.None;
+                newRule.Trigger.StartTime = 600;
+                newRule.Trigger.EndTime = 2600;
+
+                m_config.SnapshotRules.Add(newRule);
+            }
         }
     }
 }
