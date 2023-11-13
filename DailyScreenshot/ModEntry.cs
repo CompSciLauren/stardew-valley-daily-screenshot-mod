@@ -472,6 +472,374 @@ namespace DailyScreenshot
 
                 gmcmApi.AddParagraph(ModManifest, I18n.Config_Disclaimer_Paragraph);
 
+                gmcmApi.AddPageLink(ModManifest, "Days (1)", () => "Next Page");
+
+                gmcmApi.AddPage(ModManifest, "Days (1)");
+
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Days_Header1_Title, I18n.Config_Days_Header1_Tooltip);
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDaily,
+                    setValue: (bool val) => m_config.daysDaily = val,
+                    name: I18n.Config_Days_Daily_Title,
+                    tooltip: I18n.Config_Days_Daily_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysAnyDay,
+                    setValue: (bool val) => m_config.daysAnyDay = val,
+                    name: I18n.Config_Days_AnyDay_Title,
+                    tooltip: I18n.Config_Days_AnyDay_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysAnySeason,
+                    setValue: (bool val) => m_config.daysAnySeason = val,
+                    name: I18n.Config_Days_AnySeason_Title,
+                    tooltip: I18n.Config_Days_AnySeason_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysSpring,
+                    setValue: (bool val) => m_config.daysSpring = val,
+                    name: I18n.Config_Days_Spring_Title,
+                    tooltip: I18n.Config_Days_Spring_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysSummer,
+                    setValue: (bool val) => m_config.daysSummer = val,
+                    name: I18n.Config_Days_Summer_Title,
+                    tooltip: I18n.Config_Days_Summer_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysFall,
+                    setValue: (bool val) => m_config.daysFall = val,
+                    name: I18n.Config_Days_Fall_Title,
+                    tooltip: I18n.Config_Days_Fall_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysWinter,
+                    setValue: (bool val) => m_config.daysWinter = val,
+                    name: I18n.Config_Days_Winter_Title,
+                    tooltip: I18n.Config_Days_Winter_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysFirstDayOfTheMonth,
+                    setValue: (bool val) => m_config.daysFirstDayOfTheMonth = val,
+                    name: I18n.Config_Days_FirstDayOfTheMonth_Title,
+                    tooltip: I18n.Config_Days_FirstDayOfTheMonth_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysLastDayOfTheMonth,
+                    setValue: (bool val) => m_config.daysLastDayOfTheMonth = val,
+                    name: I18n.Config_Days_LastDayOfTheMonth_Title,
+                    tooltip: I18n.Config_Days_LastDayOfTheMonth_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysSundays,
+                    setValue: (bool val) => m_config.daysSundays = val,
+                    name: I18n.Config_Days_Sundays_Title,
+                    tooltip: I18n.Config_Days_Sundays_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysMondays,
+                    setValue: (bool val) => m_config.daysMondays = val,
+                    name: I18n.Config_Days_Mondays_Title,
+                    tooltip: I18n.Config_Days_Mondays_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysTuesdays,
+                    setValue: (bool val) => m_config.daysTuesdays = val,
+                    name: I18n.Config_Days_Tuesdays_Title,
+                    tooltip: I18n.Config_Days_Tuesdays_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysWednesdays,
+                    setValue: (bool val) => m_config.daysWednesdays = val,
+                    name: I18n.Config_Days_Wednesdays_Title,
+                    tooltip: I18n.Config_Days_Wednesdays_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysThursdays,
+                    setValue: (bool val) => m_config.daysThursdays = val,
+                    name: I18n.Config_Days_Thursdays_Title,
+                    tooltip: I18n.Config_Days_Thursdays_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysFridays,
+                    setValue: (bool val) => m_config.daysFridays = val,
+                    name: I18n.Config_Days_Fridays_Title,
+                    tooltip: I18n.Config_Days_Fridays_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysSaturdays,
+                    setValue: (bool val) => m_config.daysSaturdays = val,
+                    name: I18n.Config_Days_Saturdays_Title,
+                    tooltip: I18n.Config_Days_Saturdays_Tooltip
+                );
+
+                gmcmApi.AddPageLink(ModManifest, "", () => "Previous Page");
+
+                gmcmApi.AddPageLink(ModManifest, "Days (2)", () => "Next Page");
+
+                gmcmApi.AddPage(ModManifest, "Days (2)");
+
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Days_Header2_Title, I18n.Config_Days_Header2_Tooltip);
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay1,
+                    setValue: (bool val) => m_config.daysDay1 = val,
+                    name: I18n.Config_Days_Day1_Title,
+                    tooltip: I18n.Config_Days_Day1_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay2,
+                    setValue: (bool val) => m_config.daysDay2 = val,
+                    name: I18n.Config_Days_Day2_Title,
+                    tooltip: I18n.Config_Days_Day2_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay3,
+                    setValue: (bool val) => m_config.daysDay3 = val,
+                    name: I18n.Config_Days_Day3_Title,
+                    tooltip: I18n.Config_Days_Day3_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay4,
+                    setValue: (bool val) => m_config.daysDay4 = val,
+                    name: I18n.Config_Days_Day4_Title,
+                    tooltip: I18n.Config_Days_Day4_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay5,
+                    setValue: (bool val) => m_config.daysDay5 = val,
+                    name: I18n.Config_Days_Day5_Title,
+                    tooltip: I18n.Config_Days_Day5_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay6,
+                    setValue: (bool val) => m_config.daysDay6 = val,
+                    name: I18n.Config_Days_Day6_Title,
+                    tooltip: I18n.Config_Days_Day6_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay7,
+                    setValue: (bool val) => m_config.daysDay7 = val,
+                    name: I18n.Config_Days_Day7_Title,
+                    tooltip: I18n.Config_Days_Day7_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay8,
+                    setValue: (bool val) => m_config.daysDay8 = val,
+                    name: I18n.Config_Days_Day8_Title,
+                    tooltip: I18n.Config_Days_Day8_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay9,
+                    setValue: (bool val) => m_config.daysDay9 = val,
+                    name: I18n.Config_Days_Day9_Title,
+                    tooltip: I18n.Config_Days_Day9_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay10,
+                    setValue: (bool val) => m_config.daysDay10 = val,
+                    name: I18n.Config_Days_Day10_Title,
+                    tooltip: I18n.Config_Days_Day10_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay11,
+                    setValue: (bool val) => m_config.daysDay11 = val,
+                    name: I18n.Config_Days_Day11_Title,
+                    tooltip: I18n.Config_Days_Day11_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay12,
+                    setValue: (bool val) => m_config.daysDay12 = val,
+                    name: I18n.Config_Days_Day12_Title,
+                    tooltip: I18n.Config_Days_Day12_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay13,
+                    setValue: (bool val) => m_config.daysDay13 = val,
+                    name: I18n.Config_Days_Day13_Title,
+                    tooltip: I18n.Config_Days_Day13_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay14,
+                    setValue: (bool val) => m_config.daysDay14 = val,
+                    name: I18n.Config_Days_Day14_Title,
+                    tooltip: I18n.Config_Days_Day14_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay15,
+                    setValue: (bool val) => m_config.daysDay15 = val,
+                    name: I18n.Config_Days_Day15_Title,
+                    tooltip: I18n.Config_Days_Day15_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay16,
+                    setValue: (bool val) => m_config.daysDay16 = val,
+                    name: I18n.Config_Days_Day16_Title,
+                    tooltip: I18n.Config_Days_Day16_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay17,
+                    setValue: (bool val) => m_config.daysDay17 = val,
+                    name: I18n.Config_Days_Day17_Title,
+                    tooltip: I18n.Config_Days_Day17_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay18,
+                    setValue: (bool val) => m_config.daysDay18 = val,
+                    name: I18n.Config_Days_Day18_Title,
+                    tooltip: I18n.Config_Days_Day18_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay19,
+                    setValue: (bool val) => m_config.daysDay19 = val,
+                    name: I18n.Config_Days_Day19_Title,
+                    tooltip: I18n.Config_Days_Day19_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay20,
+                    setValue: (bool val) => m_config.daysDay20 = val,
+                    name: I18n.Config_Days_Day20_Title,
+                    tooltip: I18n.Config_Days_Day20_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay21,
+                    setValue: (bool val) => m_config.daysDay21 = val,
+                    name: I18n.Config_Days_Day21_Title,
+                    tooltip: I18n.Config_Days_Day21_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay22,
+                    setValue: (bool val) => m_config.daysDay22 = val,
+                    name: I18n.Config_Days_Day22_Title,
+                    tooltip: I18n.Config_Days_Day22_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay23,
+                    setValue: (bool val) => m_config.daysDay23 = val,
+                    name: I18n.Config_Days_Day23_Title,
+                    tooltip: I18n.Config_Days_Day23_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay24,
+                    setValue: (bool val) => m_config.daysDay24 = val,
+                    name: I18n.Config_Days_Day24_Title,
+                    tooltip: I18n.Config_Days_Day24_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay25,
+                    setValue: (bool val) => m_config.daysDay25 = val,
+                    name: I18n.Config_Days_Day25_Title,
+                    tooltip: I18n.Config_Days_Day25_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay26,
+                    setValue: (bool val) => m_config.daysDay26 = val,
+                    name: I18n.Config_Days_Day26_Title,
+                    tooltip: I18n.Config_Days_Day26_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay27,
+                    setValue: (bool val) => m_config.daysDay27 = val,
+                    name: I18n.Config_Days_Day27_Title,
+                    tooltip: I18n.Config_Days_Day27_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.daysDay28,
+                    setValue: (bool val) => m_config.daysDay28 = val,
+                    name: I18n.Config_Days_Day28_Title,
+                    tooltip: I18n.Config_Days_Day28_Tooltip
+                );
+
+                gmcmApi.AddPageLink(ModManifest, "Days (1)", () => "Previous Page");
+
                 gmcmApi.AddPageLink(ModManifest, "Weather", () => "Next Page");
 
                 gmcmApi.AddPage(ModManifest, "Weather");
@@ -526,7 +894,7 @@ namespace DailyScreenshot
                     tooltip: I18n.Config_Weather_Snowy_Tooltip
                 );
 
-                gmcmApi.AddPageLink(ModManifest, "", () => "Previous Page");
+                gmcmApi.AddPageLink(ModManifest, "Days (2)", () => "Previous Page");
 
                 gmcmApi.AddPageLink(ModManifest, "Location", () => "Next Page");
 

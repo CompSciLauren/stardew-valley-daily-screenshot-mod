@@ -89,6 +89,226 @@ namespace DailyScreenshot
         public bool screenshotNotifications = true;
 
         /// <summary>
+        /// Configurable toggle for allowing screenshots daily.
+        /// </summary>
+        public bool daysDaily = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when day is AnyDay.
+        /// </summary>
+        public bool daysAnyDay = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when day is AnySeason.
+        /// </summary>
+        public bool daysAnySeason = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when season is Spring.
+        /// </summary>
+        public bool daysSpring = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when season is Summer.
+        /// </summary>
+        public bool daysSummer = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when season is Fall.
+        /// </summary>
+        public bool daysFall = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots when season is winter.
+        /// </summary>
+        public bool daysWinter = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on first day of the month.
+        /// </summary>
+        public bool daysFirstDayOfTheMonth = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on last day of the month.
+        /// </summary>
+        public bool daysLastDayOfTheMonth = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Sundays.
+        /// </summary>
+        public bool daysSundays = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Mondays.
+        /// </summary>
+        public bool daysMondays = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Tuesdays.
+        /// </summary>
+        public bool daysTuesdays = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Wednesdays.
+        /// </summary>
+        public bool daysWednesdays = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Thursdays.
+        /// </summary>
+        public bool daysThursdays = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Fridays.
+        /// </summary>
+        public bool daysFridays = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Saturdays.
+        /// </summary>
+        public bool daysSaturdays = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day1.
+        /// </summary>
+        public bool daysDay1 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day2.
+        /// </summary>
+        public bool daysDay2 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day3.
+        /// </summary>
+        public bool daysDay3 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day4.
+        /// </summary>
+        public bool daysDay4 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day5.
+        /// </summary>
+        public bool daysDay5 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day6.
+        /// </summary>
+        public bool daysDay6 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day7.
+        /// </summary>
+        public bool daysDay7 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day8.
+        /// </summary>
+        public bool daysDay8 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day9.
+        /// </summary>
+        public bool daysDay9 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day10.
+        /// </summary>
+        public bool daysDay10 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day11.
+        /// </summary>
+        public bool daysDay11 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day12.
+        /// </summary>
+        public bool daysDay12 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day13.
+        /// </summary>
+        public bool daysDay13 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day14.
+        /// </summary>
+        public bool daysDay14 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day15.
+        /// </summary>
+        public bool daysDay15 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day16.
+        /// </summary>
+        public bool daysDay16 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day17.
+        /// </summary>
+        public bool daysDay17 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day18.
+        /// </summary>
+        public bool daysDay18 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day19.
+        /// </summary>
+        public bool daysDay19 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day20.
+        /// </summary>
+        public bool daysDay20 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day21.
+        /// </summary>
+        public bool daysDay21 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day22.
+        /// </summary>
+        public bool daysDay22 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day23.
+        /// </summary>
+        public bool daysDay23 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day24.
+        /// </summary>
+        public bool daysDay24 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day25.
+        /// </summary>
+        public bool daysDay25 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day26.
+        /// </summary>
+        public bool daysDay26 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day27.
+        /// </summary>
+        public bool daysDay27 = true;
+
+        /// <summary>
+        /// Configurable toggle for allowing screenshots on Day28.
+        /// </summary>
+        public bool daysDay28 = true;
+
+        /// <summary>
         /// Configurable toggle for allowing screenshots when weather is any.
         /// </summary>
         public bool weatherAny = true;
