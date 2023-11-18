@@ -9,6 +9,7 @@ using System.Threading;
 using StardewValley.Menus;
 using System.Diagnostics;
 using static DailyScreenshot.ModTrigger;
+using static DailyScreenshot.ModConfigTypeConversion;
 
 namespace DailyScreenshot
 {
@@ -436,16 +437,16 @@ namespace DailyScreenshot
 
                 gmcmApi.AddTextOption(
                     mod: ModManifest,
-                    getValue: () => m_config.snapshotRuleName,
-                    setValue: (string val) => m_config.snapshotRuleName = val,
+                    getValue: () => m_config.SnapshotRules[0].Name,
+                    setValue: (string val) => m_config.SnapshotRules[0].Name = val,
                     name: I18n.Config_MainSettings_SnapshotRuleName_Title,
                     tooltip: I18n.Config_MainSettings_SnapshotRuleName_Tooltip
                 );
 
                 gmcmApi.AddNumberOption(
                     mod: ModManifest,
-                    getValue: () => m_config.zoomLevel,
-                    setValue: (float val) => m_config.zoomLevel = val,
+                    getValue: () => m_config.SnapshotRules[0].ZoomLevel,
+                    setValue: (float val) => m_config.SnapshotRules[0].ZoomLevel = val,
                     name: I18n.Config_MainSettings_ZoomLevel_Title,
                     tooltip: I18n.Config_MainSettings_ZoomLevel_Tooltip,
                     min: 0.01f,
@@ -455,23 +456,85 @@ namespace DailyScreenshot
 
                 gmcmApi.AddTextOption(
                     mod: ModManifest,
-                    getValue: () => m_config.snapshotDirectory,
-                    setValue: (string val) => m_config.snapshotDirectory = val,
+                    getValue: () => m_config.SnapshotRules[0].Directory,
+                    setValue: (string val) => m_config.SnapshotRules[0].Directory = val,
                     name: I18n.Config_MainSettings_SnapshotDirectory_Title,
                     tooltip: I18n.Config_MainSettings_SnapshotDirectory_Tooltip
                 );
 
-                gmcmApi.AddTextOption(
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_FileNameParts_Header1_Title, I18n.Config_FileNameParts_Header1_Tooltip);
+
+                gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.snapshotFileName,
-                    setValue: (string val) => m_config.snapshotFileName = val,
-                    name: I18n.Config_MainSettings_SnapshotFileName_Title,
-                    tooltip: I18n.Config_MainSettings_SnapshotFileName_Tooltip
+                    getValue: () => ModConfigTypeConversion.IsFileNameConditionEnabled(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.Default),
+                    setValue: (bool val) => m_config.SnapshotRules[0].FileName = ModConfigTypeConversion.UpdateFileNameCondition(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.Default, val),
+                    name: I18n.Config_FileNameParts_Default_Title,
+                    tooltip: I18n.Config_FileNameParts_Default_Tooltip
                 );
 
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Disclaimer);
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => ModConfigTypeConversion.IsFileNameConditionEnabled(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.Date),
+                    setValue: (bool val) => m_config.SnapshotRules[0].FileName = ModConfigTypeConversion.UpdateFileNameCondition(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.Date, val),
+                    name: I18n.Config_FileNameParts_Date_Title,
+                    tooltip: I18n.Config_FileNameParts_Date_Tooltip
+                );
 
-                gmcmApi.AddParagraph(ModManifest, I18n.Config_Disclaimer_Paragraph);
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => ModConfigTypeConversion.IsFileNameConditionEnabled(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.FarmName),
+                    setValue: (bool val) => m_config.SnapshotRules[0].FileName = ModConfigTypeConversion.UpdateFileNameCondition(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.FarmName, val),
+                    name: I18n.Config_FileNameParts_FarmName_Title,
+                    tooltip: I18n.Config_FileNameParts_FarmName_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => ModConfigTypeConversion.IsFileNameConditionEnabled(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.GameID),
+                    setValue: (bool val) => m_config.SnapshotRules[0].FileName = ModConfigTypeConversion.UpdateFileNameCondition(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.GameID, val),
+                    name: I18n.Config_FileNameParts_GameID_Title,
+                    tooltip: I18n.Config_FileNameParts_GameID_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => ModConfigTypeConversion.IsFileNameConditionEnabled(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.Location),
+                    setValue: (bool val) => m_config.SnapshotRules[0].FileName = ModConfigTypeConversion.UpdateFileNameCondition(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.Location, val),
+                    name: I18n.Config_FileNameParts_Location_Title,
+                    tooltip: I18n.Config_FileNameParts_Location_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => ModConfigTypeConversion.IsFileNameConditionEnabled(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.Weather),
+                    setValue: (bool val) => m_config.SnapshotRules[0].FileName = ModConfigTypeConversion.UpdateFileNameCondition(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.Weather, val),
+                    name: I18n.Config_FileNameParts_Weather_Title,
+                    tooltip: I18n.Config_FileNameParts_Weather_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => ModConfigTypeConversion.IsFileNameConditionEnabled(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.PlayerName),
+                    setValue: (bool val) => m_config.SnapshotRules[0].FileName = ModConfigTypeConversion.UpdateFileNameCondition(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.PlayerName, val),
+                    name: I18n.Config_FileNameParts_PlayerName_Title,
+                    tooltip: I18n.Config_FileNameParts_PlayerName_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => ModConfigTypeConversion.IsFileNameConditionEnabled(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.Time),
+                    setValue: (bool val) => m_config.SnapshotRules[0].FileName = ModConfigTypeConversion.UpdateFileNameCondition(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.Time, val),
+                    name: I18n.Config_FileNameParts_Time_Title,
+                    tooltip: I18n.Config_FileNameParts_Time_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => ModConfigTypeConversion.IsFileNameConditionEnabled(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.UniqueID),
+                    setValue: (bool val) => m_config.SnapshotRules[0].FileName = ModConfigTypeConversion.UpdateFileNameCondition(m_config.SnapshotRules[0].FileName, ModRule.FileNameFlags.UniqueID, val),
+                    name: I18n.Config_FileNameParts_UniqueID_Title,
+                    tooltip: I18n.Config_FileNameParts_UniqueID_Tooltip
+                );
 
                 gmcmApi.AddPageLink(ModManifest, "Days (1)", () => "Next Page");
 
@@ -481,128 +544,128 @@ namespace DailyScreenshot
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDaily,
-                    setValue: (bool val) => m_config.daysDaily = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Daily),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Daily, val),
                     name: I18n.Config_Days_Daily_Title,
                     tooltip: I18n.Config_Days_Daily_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysAnyDay,
-                    setValue: (bool val) => m_config.daysAnyDay = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.AnyDay),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.AnyDay, val),
                     name: I18n.Config_Days_AnyDay_Title,
                     tooltip: I18n.Config_Days_AnyDay_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysAnySeason,
-                    setValue: (bool val) => m_config.daysAnySeason = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.AnySeason),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.AnySeason, val),
                     name: I18n.Config_Days_AnySeason_Title,
                     tooltip: I18n.Config_Days_AnySeason_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysSpring,
-                    setValue: (bool val) => m_config.daysSpring = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Spring),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Spring, val),
                     name: I18n.Config_Days_Spring_Title,
                     tooltip: I18n.Config_Days_Spring_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysSummer,
-                    setValue: (bool val) => m_config.daysSummer = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Summer),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Summer, val),
                     name: I18n.Config_Days_Summer_Title,
                     tooltip: I18n.Config_Days_Summer_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysFall,
-                    setValue: (bool val) => m_config.daysFall = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Fall),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Fall, val),
                     name: I18n.Config_Days_Fall_Title,
                     tooltip: I18n.Config_Days_Fall_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysWinter,
-                    setValue: (bool val) => m_config.daysWinter = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Winter),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Winter, val),
                     name: I18n.Config_Days_Winter_Title,
                     tooltip: I18n.Config_Days_Winter_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysFirstDayOfTheMonth,
-                    setValue: (bool val) => m_config.daysFirstDayOfTheMonth = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.FirstDayOfTheMonth),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.FirstDayOfTheMonth, val),
                     name: I18n.Config_Days_FirstDayOfTheMonth_Title,
                     tooltip: I18n.Config_Days_FirstDayOfTheMonth_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysLastDayOfTheMonth,
-                    setValue: (bool val) => m_config.daysLastDayOfTheMonth = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.LastDayOfTheMonth),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.LastDayOfTheMonth, val),
                     name: I18n.Config_Days_LastDayOfTheMonth_Title,
                     tooltip: I18n.Config_Days_LastDayOfTheMonth_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysSundays,
-                    setValue: (bool val) => m_config.daysSundays = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Sundays),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Sundays, val),
                     name: I18n.Config_Days_Sundays_Title,
                     tooltip: I18n.Config_Days_Sundays_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysMondays,
-                    setValue: (bool val) => m_config.daysMondays = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Mondays),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Mondays, val),
                     name: I18n.Config_Days_Mondays_Title,
                     tooltip: I18n.Config_Days_Mondays_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysTuesdays,
-                    setValue: (bool val) => m_config.daysTuesdays = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Tuesdays),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Tuesdays, val),
                     name: I18n.Config_Days_Tuesdays_Title,
                     tooltip: I18n.Config_Days_Tuesdays_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysWednesdays,
-                    setValue: (bool val) => m_config.daysWednesdays = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Wednesdays),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Wednesdays, val),
                     name: I18n.Config_Days_Wednesdays_Title,
                     tooltip: I18n.Config_Days_Wednesdays_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysThursdays,
-                    setValue: (bool val) => m_config.daysThursdays = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Thursdays),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Thursdays, val),
                     name: I18n.Config_Days_Thursdays_Title,
                     tooltip: I18n.Config_Days_Thursdays_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysFridays,
-                    setValue: (bool val) => m_config.daysFridays = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Fridays),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Fridays, val),
                     name: I18n.Config_Days_Fridays_Title,
                     tooltip: I18n.Config_Days_Fridays_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysSaturdays,
-                    setValue: (bool val) => m_config.daysSaturdays = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Saturdays),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Saturdays, val),
                     name: I18n.Config_Days_Saturdays_Title,
                     tooltip: I18n.Config_Days_Saturdays_Tooltip
                 );
@@ -617,224 +680,224 @@ namespace DailyScreenshot
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay1,
-                    setValue: (bool val) => m_config.daysDay1 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_1),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_1, val),
                     name: I18n.Config_Days_Day1_Title,
                     tooltip: I18n.Config_Days_Day1_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay2,
-                    setValue: (bool val) => m_config.daysDay2 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_2),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_2, val),
                     name: I18n.Config_Days_Day2_Title,
                     tooltip: I18n.Config_Days_Day2_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay3,
-                    setValue: (bool val) => m_config.daysDay3 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_3),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_3, val),
                     name: I18n.Config_Days_Day3_Title,
                     tooltip: I18n.Config_Days_Day3_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay4,
-                    setValue: (bool val) => m_config.daysDay4 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_4),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_4, val),
                     name: I18n.Config_Days_Day4_Title,
                     tooltip: I18n.Config_Days_Day4_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay5,
-                    setValue: (bool val) => m_config.daysDay5 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_5),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_5, val),
                     name: I18n.Config_Days_Day5_Title,
                     tooltip: I18n.Config_Days_Day5_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay6,
-                    setValue: (bool val) => m_config.daysDay6 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_6),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_6, val),
                     name: I18n.Config_Days_Day6_Title,
                     tooltip: I18n.Config_Days_Day6_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay7,
-                    setValue: (bool val) => m_config.daysDay7 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_7),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_7, val),
                     name: I18n.Config_Days_Day7_Title,
                     tooltip: I18n.Config_Days_Day7_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay8,
-                    setValue: (bool val) => m_config.daysDay8 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_8),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_8, val),
                     name: I18n.Config_Days_Day8_Title,
                     tooltip: I18n.Config_Days_Day8_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay9,
-                    setValue: (bool val) => m_config.daysDay9 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_9),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_9, val),
                     name: I18n.Config_Days_Day9_Title,
                     tooltip: I18n.Config_Days_Day9_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay10,
-                    setValue: (bool val) => m_config.daysDay10 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_10),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_10, val),
                     name: I18n.Config_Days_Day10_Title,
                     tooltip: I18n.Config_Days_Day10_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay11,
-                    setValue: (bool val) => m_config.daysDay11 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_11),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_11, val),
                     name: I18n.Config_Days_Day11_Title,
                     tooltip: I18n.Config_Days_Day11_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay12,
-                    setValue: (bool val) => m_config.daysDay12 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_12),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_12, val),
                     name: I18n.Config_Days_Day12_Title,
                     tooltip: I18n.Config_Days_Day12_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay13,
-                    setValue: (bool val) => m_config.daysDay13 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_13),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_13, val),
                     name: I18n.Config_Days_Day13_Title,
                     tooltip: I18n.Config_Days_Day13_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay14,
-                    setValue: (bool val) => m_config.daysDay14 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_14),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_14, val),
                     name: I18n.Config_Days_Day14_Title,
                     tooltip: I18n.Config_Days_Day14_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay15,
-                    setValue: (bool val) => m_config.daysDay15 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_15),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_15, val),
                     name: I18n.Config_Days_Day15_Title,
                     tooltip: I18n.Config_Days_Day15_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.daysDay16,
-                    setValue: (bool val) => m_config.daysDay16 = val,
-                    name: I18n.Config_Days_Day16_Title,
-                    tooltip: I18n.Config_Days_Day16_Tooltip
-                );
+    mod: ModManifest,
+    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_16),
+    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_16, val),
+    name: I18n.Config_Days_Day16_Title,
+    tooltip: I18n.Config_Days_Day16_Tooltip
+);
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay17,
-                    setValue: (bool val) => m_config.daysDay17 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_17),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_17, val),
                     name: I18n.Config_Days_Day17_Title,
                     tooltip: I18n.Config_Days_Day17_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay18,
-                    setValue: (bool val) => m_config.daysDay18 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_18),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_18, val),
                     name: I18n.Config_Days_Day18_Title,
                     tooltip: I18n.Config_Days_Day18_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay19,
-                    setValue: (bool val) => m_config.daysDay19 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_19),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_19, val),
                     name: I18n.Config_Days_Day19_Title,
                     tooltip: I18n.Config_Days_Day19_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay20,
-                    setValue: (bool val) => m_config.daysDay20 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_20),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_20, val),
                     name: I18n.Config_Days_Day20_Title,
                     tooltip: I18n.Config_Days_Day20_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay21,
-                    setValue: (bool val) => m_config.daysDay21 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_21),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_21, val),
                     name: I18n.Config_Days_Day21_Title,
                     tooltip: I18n.Config_Days_Day21_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay22,
-                    setValue: (bool val) => m_config.daysDay22 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_22),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_22, val),
                     name: I18n.Config_Days_Day22_Title,
                     tooltip: I18n.Config_Days_Day22_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay23,
-                    setValue: (bool val) => m_config.daysDay23 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_23),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_23, val),
                     name: I18n.Config_Days_Day23_Title,
                     tooltip: I18n.Config_Days_Day23_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay24,
-                    setValue: (bool val) => m_config.daysDay24 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_24),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_24, val),
                     name: I18n.Config_Days_Day24_Title,
                     tooltip: I18n.Config_Days_Day24_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay25,
-                    setValue: (bool val) => m_config.daysDay25 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_25),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_25, val),
                     name: I18n.Config_Days_Day25_Title,
                     tooltip: I18n.Config_Days_Day25_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay26,
-                    setValue: (bool val) => m_config.daysDay26 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_26),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_26, val),
                     name: I18n.Config_Days_Day26_Title,
                     tooltip: I18n.Config_Days_Day26_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay27,
-                    setValue: (bool val) => m_config.daysDay27 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_27),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_27, val),
                     name: I18n.Config_Days_Day27_Title,
                     tooltip: I18n.Config_Days_Day27_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.daysDay28,
-                    setValue: (bool val) => m_config.daysDay28 = val,
+                    getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_28),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, DateFlags.Day_28, val),
                     name: I18n.Config_Days_Day28_Title,
                     tooltip: I18n.Config_Days_Day28_Tooltip
                 );
@@ -849,48 +912,50 @@ namespace DailyScreenshot
                 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.weatherAny,
-                    setValue: (bool val) => m_config.weatherAny = val,
+                    getValue: () => (ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Sunny) && ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Rainy) && ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Windy) && ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Stormy) && ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Snowy)),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Weather = ModConfigTypeConversion.UpdateWeatherCondition(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Any, val),
                     name: I18n.Config_Weather_Any_Title,
                     tooltip: I18n.Config_Weather_Any_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.weatherSunny,
-                    setValue: (bool val) => m_config.weatherSunny = val,
+                    getValue: () => ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Sunny),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Weather = ModConfigTypeConversion.UpdateWeatherCondition(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Sunny, val),
                     name: I18n.Config_Weather_Sunny_Title,
                     tooltip: I18n.Config_Weather_Sunny_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.weatherRainy,
-                    setValue: (bool val) => m_config.weatherRainy = val,
+                    getValue: () => ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Rainy),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Weather = ModConfigTypeConversion.UpdateWeatherCondition(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Rainy, val),
                     name: I18n.Config_Weather_Rainy_Title,
                     tooltip: I18n.Config_Weather_Rainy_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.weatherWindy,
-                    setValue: (bool val) => m_config.weatherWindy = val,
+                    getValue: () => ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Windy),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Weather = ModConfigTypeConversion.UpdateWeatherCondition(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Windy, val),
                     name: I18n.Config_Weather_Windy_Title,
                     tooltip: I18n.Config_Weather_Windy_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.weatherStormy,
-                    setValue: (bool val) => m_config.weatherStormy = val,
+                    getValue: () => ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Stormy),
+                    setValue: (bool val) => {
+                        m_config.SnapshotRules[0].Trigger.Weather = ModConfigTypeConversion.UpdateWeatherCondition(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Stormy, val);
+                    },
                     name: I18n.Config_Weather_Stormy_Title,
                     tooltip: I18n.Config_Weather_Stormy_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.weatherSnowy,
-                    setValue: (bool val) => m_config.weatherSnowy = val,
+                    getValue: () => ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Snowy),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Weather = ModConfigTypeConversion.UpdateWeatherCondition(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Snowy, val),
                     name: I18n.Config_Weather_Snowy_Title,
                     tooltip: I18n.Config_Weather_Snowy_Tooltip
                 );
@@ -905,120 +970,135 @@ namespace DailyScreenshot
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationAny,
-                    setValue: (bool val) => m_config.locationAny = val,
+                    getValue: () => (
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Farm) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Farmhouse) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.GreenHouse) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Beach) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.FarmCave) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Cellar) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Desert) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Museum) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.CommunityCenter) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Mountain) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.IslandWest) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.IslandFarmhouse) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.IslandFieldOffice) &&
+                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Unknown)
+                    ),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Any, val),
                     name: I18n.Config_Location_Any_Title,
                     tooltip: I18n.Config_Location_Any_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationFarm,
-                    setValue: (bool val) => m_config.locationFarm = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Farm),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Farm, val),
                     name: I18n.Config_Location_Farm_Title,
                     tooltip: I18n.Config_Location_Farm_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationFarmhouse,
-                    setValue: (bool val) => m_config.locationFarmhouse = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Farmhouse),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Farmhouse, val),
                     name: I18n.Config_Location_Farmhouse_Title,
                     tooltip: I18n.Config_Location_Farmhouse_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationGreenhouse,
-                    setValue: (bool val) => m_config.locationGreenhouse = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.GreenHouse),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.GreenHouse, val),
                     name: I18n.Config_Location_Greenhouse_Title,
                     tooltip: I18n.Config_Location_Greenhouse_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationBeach,
-                    setValue: (bool val) => m_config.locationBeach = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Beach),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Beach, val),
                     name: I18n.Config_Location_Beach_Title,
                     tooltip: I18n.Config_Location_Beach_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationFarmCave,
-                    setValue: (bool val) => m_config.locationFarmCave = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.FarmCave),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.FarmCave, val),
                     name: I18n.Config_Location_FarmCave_Title,
                     tooltip: I18n.Config_Location_FarmCave_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationCellar,
-                    setValue: (bool val) => m_config.locationCellar = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Cellar),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Cellar, val),
                     name: I18n.Config_Location_Cellar_Title,
                     tooltip: I18n.Config_Location_Cellar_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationDesert,
-                    setValue: (bool val) => m_config.locationDesert = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Desert),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Desert, val),
                     name: I18n.Config_Location_Desert_Title,
                     tooltip: I18n.Config_Location_Desert_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationMuseum,
-                    setValue: (bool val) => m_config.locationMuseum = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Museum),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Museum, val),
                     name: I18n.Config_Location_Museum_Title,
                     tooltip: I18n.Config_Location_Museum_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationCommunityCenter,
-                    setValue: (bool val) => m_config.locationCommunityCenter = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.CommunityCenter),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.CommunityCenter, val),
                     name: I18n.Config_Location_CommunityCenter_Title,
                     tooltip: I18n.Config_Location_CommunityCenter_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationMountain,
-                    setValue: (bool val) => m_config.locationMountain = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Mountain),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Mountain, val),
                     name: I18n.Config_Location_Mountain_Title,
                     tooltip: I18n.Config_Location_Mountain_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationIslandWest,
-                    setValue: (bool val) => m_config.locationIslandWest = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.IslandWest),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.IslandWest, val),
                     name: I18n.Config_Location_IslandWest_Title,
                     tooltip: I18n.Config_Location_IslandWest_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationIslandFarmhouse,
-                    setValue: (bool val) => m_config.locationIslandFarmhouse = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.IslandFarmhouse),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.IslandFarmhouse, val),
                     name: I18n.Config_Location_IslandFarmhouse_Title,
                     tooltip: I18n.Config_Location_IslandFarmhouse_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationIslandFieldOffice,
-                    setValue: (bool val) => m_config.locationIslandFieldOffice = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.IslandFieldOffice),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.IslandFieldOffice, val),
                     name: I18n.Config_Location_IslandFieldOffice_Title,
                     tooltip: I18n.Config_Location_IslandFieldOffice_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.locationUnknown,
-                    setValue: (bool val) => m_config.locationUnknown = val,
+                    getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Unknown),
+                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Unknown, val),
                     name: I18n.Config_Location_Unknown_Title,
                     tooltip: I18n.Config_Location_Unknown_Tooltip
                 );
@@ -1033,16 +1113,16 @@ namespace DailyScreenshot
 
                 gmcmApi.AddKeybind(
                     ModManifest,
-                    getValue: () => m_config.shortcutKey,
-                    setValue: (SButton val) => m_config.shortcutKey = val,
+                    getValue: () => m_config.SnapshotRules[0].Trigger.Key,
+                    setValue: (SButton val) => m_config.SnapshotRules[0].Trigger.Key = val,
                     name: I18n.Config_Time_ShortcutKey_Title,
                     tooltip: I18n.Config_Time_ShortcutKey_Tooltip
                 );
 
                 gmcmApi.AddNumberOption(
                     mod: ModManifest,
-                    getValue: () => m_config.startTime,
-                    setValue: (int val) => m_config.startTime = val,
+                    getValue: () => m_config.SnapshotRules[0].Trigger.StartTime,
+                    setValue: (int val) => m_config.SnapshotRules[0].Trigger.StartTime = val,
                     name: I18n.Config_Time_StartTime_Title,
                     tooltip: I18n.Config_Time_StartTime_Tooltip,
                     min: 600,
@@ -1052,8 +1132,8 @@ namespace DailyScreenshot
 
                 gmcmApi.AddNumberOption(
                     mod: ModManifest,
-                    getValue: () => m_config.endTime,
-                    setValue: (int val) => m_config.endTime = val,
+                    getValue: () => m_config.SnapshotRules[0].Trigger.EndTime,
+                    setValue: (int val) => m_config.SnapshotRules[0].Trigger.EndTime = val,
                     name: I18n.Config_Time_EndTime_Title,
                     tooltip: I18n.Config_Time_EndTime_Tooltip,
                     min: 610,
@@ -1380,30 +1460,10 @@ namespace DailyScreenshot
         /// </summary>
         public void ResetMainSnapshotRule()
         {
-            bool ruleFound = false;
-            foreach (ModRule rule in m_config.SnapshotRules)
-            {
-                if (string.Equals(rule.Name, "Main Snapshot"))
-                {
-                    rule.ZoomLevel = 0.25f;
-                    rule.Directory = "Default";
-                    rule.FileName = ModRule.FileNameFlags.Default;
-                    rule.Trigger.Days = DateFlags.Daily;
-                    rule.Trigger.Weather = WeatherFlags.Any;
-                    rule.Trigger.Location = LocationFlags.Farm;
-                    rule.Trigger.Key = SButton.None;
-                    rule.Trigger.StartTime = 600;
-                    rule.Trigger.EndTime = 2600;
-
-                    ruleFound = true;
-                    break;
-                }
-            }
-            
-            if (ruleFound == false)
+            if (m_config.SnapshotRules.Count == 0)
             {
                 ModRule newRule = new ModRule();
-                newRule.Name = "Main Snapshot";
+                newRule.Name = "Unnamed Rule 1";
                 newRule.ZoomLevel = 0.25f;
                 newRule.Directory = "Default";
                 newRule.FileName = ModRule.FileNameFlags.Default;
@@ -1415,7 +1475,19 @@ namespace DailyScreenshot
                 newRule.Trigger.EndTime = 2600;
 
                 m_config.SnapshotRules.Add(newRule);
+                return;
             }
+
+            m_config.SnapshotRules[0].Name = "Unnamed Rule 1";
+            m_config.SnapshotRules[0].ZoomLevel = 0.25f;
+            m_config.SnapshotRules[0].Directory = "Default";
+            m_config.SnapshotRules[0].FileName = ModRule.FileNameFlags.Default;
+            m_config.SnapshotRules[0].Trigger.Days = DateFlags.Daily;
+            m_config.SnapshotRules[0].Trigger.Weather = WeatherFlags.Any;
+            m_config.SnapshotRules[0].Trigger.Location = LocationFlags.Farm;
+            m_config.SnapshotRules[0].Trigger.Key = SButton.None;
+            m_config.SnapshotRules[0].Trigger.StartTime = 600;
+            m_config.SnapshotRules[0].Trigger.EndTime = 2600;
         }
     }
 }

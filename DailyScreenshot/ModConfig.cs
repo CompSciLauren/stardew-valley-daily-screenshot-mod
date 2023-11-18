@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
 using System.Linq;
+using static DailyScreenshot.ModTrigger;
 
 namespace DailyScreenshot
 {
@@ -45,6 +46,11 @@ namespace DailyScreenshot
         public const float DEFAULT_ZOOM = 0.25f;
 
         /// <summary>
+        /// Key shortcut for taking screenshot
+        /// </summary>
+        public static SButton DEFAULT_KEY = SButton.None;
+
+        /// <summary>
         /// Start of the day in Stardew Valley (6 am)
         /// </summary>
         public const int DEFAULT_START_TIME = 600;
@@ -53,26 +59,6 @@ namespace DailyScreenshot
         /// End of the day in Stardew Valley (2 am)
         /// </summary>
         public const int DEFAULT_END_TIME = 2600;
-
-        /// <summary>
-        /// Zoom to use (reduce map to 1/4 of original size)
-        /// </summary>
-        public string snapshotRuleName = "Main Snapshot";
-
-        /// <summary>
-        /// Zoom to use (reduce map to 1/4 of original size)
-        /// </summary>
-        public float zoomLevel = 0.25f;
-
-        /// <summary>
-        /// Zoom to use (reduce map to 1/4 of original size)
-        /// </summary>
-        public string snapshotDirectory = "Default";
-
-        /// <summary>
-        /// Zoom to use (reduce map to 1/4 of original size)
-        /// </summary>
-        public string snapshotFileName = "Default";
 
         /// <summary>
         /// Configurable toggle for auditory effects when taking screenshot.
@@ -90,349 +76,28 @@ namespace DailyScreenshot
         public bool screenshotNotifications = true;
 
         /// <summary>
-        /// Configurable toggle for allowing screenshots daily.
-        /// </summary>
-        public bool daysDaily = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when day is AnyDay.
-        /// </summary>
-        public bool daysAnyDay = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when day is AnySeason.
-        /// </summary>
-        public bool daysAnySeason = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when season is Spring.
-        /// </summary>
-        public bool daysSpring = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when season is Summer.
-        /// </summary>
-        public bool daysSummer = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when season is Fall.
-        /// </summary>
-        public bool daysFall = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when season is winter.
-        /// </summary>
-        public bool daysWinter = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on first day of the month.
-        /// </summary>
-        public bool daysFirstDayOfTheMonth = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on last day of the month.
-        /// </summary>
-        public bool daysLastDayOfTheMonth = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Sundays.
-        /// </summary>
-        public bool daysSundays = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Mondays.
-        /// </summary>
-        public bool daysMondays = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Tuesdays.
-        /// </summary>
-        public bool daysTuesdays = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Wednesdays.
-        /// </summary>
-        public bool daysWednesdays = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Thursdays.
-        /// </summary>
-        public bool daysThursdays = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Fridays.
-        /// </summary>
-        public bool daysFridays = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Saturdays.
-        /// </summary>
-        public bool daysSaturdays = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day1.
-        /// </summary>
-        public bool daysDay1 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day2.
-        /// </summary>
-        public bool daysDay2 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day3.
-        /// </summary>
-        public bool daysDay3 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day4.
-        /// </summary>
-        public bool daysDay4 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day5.
-        /// </summary>
-        public bool daysDay5 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day6.
-        /// </summary>
-        public bool daysDay6 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day7.
-        /// </summary>
-        public bool daysDay7 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day8.
-        /// </summary>
-        public bool daysDay8 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day9.
-        /// </summary>
-        public bool daysDay9 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day10.
-        /// </summary>
-        public bool daysDay10 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day11.
-        /// </summary>
-        public bool daysDay11 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day12.
-        /// </summary>
-        public bool daysDay12 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day13.
-        /// </summary>
-        public bool daysDay13 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day14.
-        /// </summary>
-        public bool daysDay14 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day15.
-        /// </summary>
-        public bool daysDay15 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day16.
-        /// </summary>
-        public bool daysDay16 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day17.
-        /// </summary>
-        public bool daysDay17 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day18.
-        /// </summary>
-        public bool daysDay18 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day19.
-        /// </summary>
-        public bool daysDay19 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day20.
-        /// </summary>
-        public bool daysDay20 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day21.
-        /// </summary>
-        public bool daysDay21 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day22.
-        /// </summary>
-        public bool daysDay22 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day23.
-        /// </summary>
-        public bool daysDay23 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day24.
-        /// </summary>
-        public bool daysDay24 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day25.
-        /// </summary>
-        public bool daysDay25 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day26.
-        /// </summary>
-        public bool daysDay26 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day27.
-        /// </summary>
-        public bool daysDay27 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots on Day28.
-        /// </summary>
-        public bool daysDay28 = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when weather is any.
-        /// </summary>
-        public bool weatherAny = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when weather is sunny.
-        /// </summary>
-        public bool weatherSunny = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when weather is rainy.
-        /// </summary>
-        public bool weatherRainy = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when weather is windy.
-        /// </summary>
-        public bool weatherWindy = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when weather is stormy.
-        /// </summary>
-        public bool weatherStormy = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when weather is snowy.
-        /// </summary>
-        public bool weatherSnowy = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is any.
-        /// </summary>
-        public bool locationAny = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is Farm.
-        /// </summary>
-        public bool locationFarm = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is Farmhouse.
-        /// </summary>
-        public bool locationFarmhouse = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is Greenhouse.
-        /// </summary>
-        public bool locationGreenhouse = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is Beach.
-        /// </summary>
-        public bool locationBeach = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is FarmCave.
-        /// </summary>
-        public bool locationFarmCave = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is Cellar.
-        /// </summary>
-        public bool locationCellar = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is Desert.
-        /// </summary>
-        public bool locationDesert = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is Museum.
-        /// </summary>
-        public bool locationMuseum = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is CommunityCenter.
-        /// </summary>
-        public bool locationCommunityCenter = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is Mountain.
-        /// </summary>
-        public bool locationMountain = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is IslandWest.
-        /// </summary>
-        public bool locationIslandWest = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is IslandFarmhouse.
-        /// </summary>
-        public bool locationIslandFarmhouse = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is IslandFieldOffice.
-        /// </summary>
-        public bool locationIslandFieldOffice = true;
-
-        /// <summary>
-        /// Configurable toggle for allowing screenshots when location is Unknown.
-        /// </summary>
-        public bool locationUnknown = true;
-
-        /// <summary>
-        /// Earliest point at which to take the picture.
-        /// </summary>
-        public SButton shortcutKey = SButton.None;
-
-        /// <summary>
-        /// Earliest point at which to take the picture.
-        /// </summary>
-        public int startTime = 600;
-
-        /// <summary>
-        /// Last point at which to take the picture.
-        /// </summary>
-        public int endTime = 2600;
-
-        /// <summary>
         /// Rules loaded from the config file
         /// </summary>
-        public List<ModRule> SnapshotRules { get; set; } = new List<ModRule>();
+        public List<ModRule> SnapshotRules { get; set; } = new List<ModRule>
+        {
+            new ModRule
+            {
+                // Set the properties of the default ModRule
+                Name = "Unnamed Rule 1",
+                ZoomLevel = 0.25f, // Zoom to use (reduce map to 1/4 of original size)
+                Directory = "Default",
+                FileName = ModRule.FileNameFlags.Default,
+                Trigger =
+                {
+                    Days = DateFlags.Daily,
+                    Weather = WeatherFlags.Any,
+                    Location = LocationFlags.Farm,
+                    Key = SButton.None,
+                    StartTime = 600, // Earliest point at which to take the picture.
+                    EndTime = 2600 // Last point at which to take the picture.
+                }
+            }
+        };
 
         // Place to put json that doesn't match properties here
         // This can be used to upgrade the config file
@@ -465,79 +130,6 @@ namespace DailyScreenshot
             screenshotNotifications = true;
 
             ModEntry.g_dailySS.ResetMainSnapshotRule();
-
-            // snapshotRuleName = "Main Snapshot";
-            // zoomLevel = 0.25f;
-            // snapshotDirectory = "Default";
-            // snapshotFileName = "Default";
-            // daysDaily = true;
-            // daysAnyDay = true;
-            // daysAnySeason = true;
-            // daysSpring = true;
-            // daysSummer = true;
-            // daysFall = true;
-            // daysWinter = true;
-            // daysFirstDayOfTheMonth = true;
-            // daysLastDayOfTheMonth = true;
-            // daysSundays = true;
-            // daysMondays = true;
-            // daysTuesdays = true;
-            // daysWednesdays = true;
-            // daysThursdays = true;
-            // daysFridays = true;
-            // daysSaturdays = true;
-            // daysDay1 = true;
-            // daysDay2 = true;
-            // daysDay3 = true;
-            // daysDay4 = true;
-            // daysDay5 = true;
-            // daysDay6 = true;
-            // daysDay7 = true;
-            // daysDay8 = true;
-            // daysDay9 = true;
-            // daysDay10 = true;
-            // daysDay11 = true;
-            // daysDay12 = true;
-            // daysDay13 = true;
-            // daysDay14 = true;
-            // daysDay15 = true;
-            // daysDay16 = true;
-            // daysDay17 = true;
-            // daysDay18 = true;
-            // daysDay19 = true;
-            // daysDay20 = true;
-            // daysDay21 = true;
-            // daysDay22 = true;
-            // daysDay23 = true;
-            // daysDay24 = true;
-            // daysDay25 = true;
-            // daysDay26 = true;
-            // daysDay27 = true;
-            // daysDay28 = true;
-            // weatherAny = true;
-            // weatherSunny = true;
-            // weatherRainy = true;
-            // weatherWindy = true;
-            // weatherStormy = true;
-            // weatherSnowy = true;
-            // locationAny = true;
-            // locationFarm = true;
-            // locationFarmhouse = true;
-            // locationGreenhouse = true;
-            // locationBeach = true;
-            // locationFarmCave = true;
-            // locationCellar = true;
-            // locationDesert = true;
-            // locationMuseum = true;
-            // locationCommunityCenter = true;
-            // locationMountain = true;
-            // locationIslandWest = true;
-            // locationIslandFarmhouse = true;
-            // locationIslandFieldOffice = true;
-            // locationUnknown = true;
-            // shortcutKey = SButton.None;
-            // startTime = 600;
-            // endTime = 2600;
         }
 
         private T GetOldData<T>(IDictionary<string, JToken> oldDatDict, string key, T defaultValue)
