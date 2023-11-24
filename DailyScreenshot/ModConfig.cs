@@ -36,6 +36,11 @@ namespace DailyScreenshot
         private string m_launchGuid;
 
         /// <summary>
+        /// String to use to indicate a default name
+        /// </summary>
+        public static string DEFAULT_NAME = "Unnamed Rule 1";
+
+        /// <summary>
         /// String to use to indicate a default value
         /// </summary>
         public static string DEFAULT_STRING = "Default";
@@ -82,22 +87,47 @@ namespace DailyScreenshot
         {
             new ModRule
             {
-                // Set the properties of the default ModRule
-                Name = "Unnamed Rule 1",
-                ZoomLevel = 0.25f, // Zoom to use (reduce map to 1/4 of original size)
-                Directory = "Default",
+                // Set the default properties of the SnapshotRules
+                Name = DEFAULT_NAME,
+                ZoomLevel = DEFAULT_ZOOM,
+                Directory = DEFAULT_STRING,
                 FileName = ModRule.FileNameFlags.Default,
                 Trigger =
                 {
                     Days = DateFlags.Daily,
                     Weather = WeatherFlags.Any,
                     Location = LocationFlags.Farm,
-                    Key = SButton.None,
-                    StartTime = 600, // Earliest point at which to take the picture.
-                    EndTime = 2600 // Last point at which to take the picture.
+                    Key = DEFAULT_KEY,
+                    StartTime = DEFAULT_START_TIME,
+                    EndTime = DEFAULT_END_TIME
                 }
             }
         };
+
+        /// <summary>
+        /// Default settings for a set of rules in SnapshotRules
+        /// </summary>
+        public static ModRule CreateDefaultSnapshotRule()
+        {
+            ModRule newRule = new ModRule
+            {
+                Name = DEFAULT_NAME,
+                ZoomLevel = DEFAULT_ZOOM,
+                Directory = DEFAULT_STRING,
+                FileName = ModRule.FileNameFlags.Default,
+                Trigger =
+                {
+                    Days = DateFlags.Daily,
+                    Weather = WeatherFlags.Any,
+                    Location = LocationFlags.Farm,
+                    Key = DEFAULT_KEY,
+                    StartTime = DEFAULT_START_TIME,
+                    EndTime = DEFAULT_END_TIME
+                }
+            };
+
+            return newRule;
+        }
 
         // Place to put json that doesn't match properties here
         // This can be used to upgrade the config file
