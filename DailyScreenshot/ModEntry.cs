@@ -9,7 +9,6 @@ using System.Threading;
 using StardewValley.Menus;
 using System.Diagnostics;
 using static DailyScreenshot.ModTrigger;
-using StardewValley.Monsters;
 
 namespace DailyScreenshot
 {
@@ -414,30 +413,34 @@ namespace DailyScreenshot
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_About_Header_Title);
 
-                gmcmApi.AddParagraph(ModManifest, I18n.Config_About_Description);
+                gmcmApi.AddParagraph(ModManifest, I18n.Config_About_Description1);
+
+                gmcmApi.AddParagraph(ModManifest, I18n.Config_About_Description2);
+
+                gmcmApi.AddParagraph(ModManifest, I18n.Config_About_Description3);
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Effects_Header_Title, I18n.Config_Effects_Header_Tooltip);
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.auditoryEffects,
-                    setValue: (bool val) => m_config.auditoryEffects = val,
+                    getValue: () => m_config.AuditoryEffects,
+                    setValue: (bool val) => m_config.AuditoryEffects = val,
                     name: I18n.Config_Effects_Auditory_Title,
                     tooltip: I18n.Config_Effects_Auditory_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.visualEffects,
-                    setValue: (bool val) => m_config.visualEffects = val,
+                    getValue: () => m_config.VisualEffects,
+                    setValue: (bool val) => m_config.VisualEffects = val,
                     name: I18n.Config_Effects_Visual_Title,
                     tooltip: I18n.Config_Effects_Visual_Tooltip
                 );
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
-                    getValue: () => m_config.screenshotNotifications,
-                    setValue: (bool val) => m_config.screenshotNotifications = val,
+                    getValue: () => m_config.ScreenshotNotifications,
+                    setValue: (bool val) => m_config.ScreenshotNotifications = val,
                     name: I18n.Config_Effects_Notification_Title,
                     tooltip: I18n.Config_Effects_Notification_Tooltip
                 );
@@ -496,8 +499,6 @@ namespace DailyScreenshot
                 AddDateConditionOption(gmcmApi, DateFlags.Summer);
                 AddDateConditionOption(gmcmApi, DateFlags.Fall);
                 AddDateConditionOption(gmcmApi, DateFlags.Winter);
-                AddDateConditionOption(gmcmApi, DateFlags.FirstDayOfTheMonth);
-                AddDateConditionOption(gmcmApi, DateFlags.LastDayOfTheMonth);
                 AddDateConditionOption(gmcmApi, DateFlags.Sundays);
                 AddDateConditionOption(gmcmApi, DateFlags.Mondays);
                 AddDateConditionOption(gmcmApi, DateFlags.Tuesdays);
@@ -550,21 +551,8 @@ namespace DailyScreenshot
                 gmcmApi.AddPage(ModManifest, "Weather");
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Weather_Header_Title, I18n.Config_Weather_Header_Tooltip);
-                
-                gmcmApi.AddBoolOption(
-                    mod: ModManifest,
-                    getValue: () => (
-                        ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Sunny) &&
-                        ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Rainy) &&
-                        ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Windy) &&
-                        ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Stormy) &&
-                        ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Snowy)
-                    ),
-                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Weather = ModConfigTypeConversion.UpdateWeatherCondition(m_config.SnapshotRules[0].Trigger.Weather, WeatherFlags.Any, val),
-                    name: I18n.Config_Weather_Any_Title,
-                    tooltip: I18n.Config_Weather_Any_Tooltip
-                );
 
+                AddWeatherConditionOption(gmcmApi, WeatherFlags.Any);
                 AddWeatherConditionOption(gmcmApi, WeatherFlags.Sunny);
                 AddWeatherConditionOption(gmcmApi, WeatherFlags.Rainy);
                 AddWeatherConditionOption(gmcmApi, WeatherFlags.Windy);
@@ -579,29 +567,7 @@ namespace DailyScreenshot
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Location_Header_Title, I18n.Config_Location_Header_Tooltip);
 
-                gmcmApi.AddBoolOption(
-                    mod: ModManifest,
-                    getValue: () => (
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Farm) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Farmhouse) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.GreenHouse) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Beach) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.FarmCave) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Cellar) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Desert) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Museum) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.CommunityCenter) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Mountain) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.IslandWest) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.IslandFarmhouse) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.IslandFieldOffice) &&
-                        ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Unknown)
-                    ),
-                    setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, LocationFlags.Any, val),
-                    name: I18n.Config_Location_Any_Title,
-                    tooltip: I18n.Config_Location_Any_Tooltip
-                );
-
+                AddLocationConditionOption(gmcmApi, LocationFlags.Any);
                 AddLocationConditionOption(gmcmApi, LocationFlags.Farm);
                 AddLocationConditionOption(gmcmApi, LocationFlags.Farmhouse);
                 AddLocationConditionOption(gmcmApi, LocationFlags.GreenHouse);
@@ -727,7 +693,7 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnWarped(object sender, WarpedEventArgs e)
         {
-            // if we enqueued a screen shot and warped before
+            // if we enqueued a screenshot and warped before
             // the timeout, reset the timeout
             lock (this)
             {
@@ -792,7 +758,7 @@ namespace DailyScreenshot
         {
             string ssPath = rule.GetFileName();
 
-            if (m_config.visualEffects)
+            if (m_config.VisualEffects)
             {
                 Game1.flashAlpha = 1f;
             }
@@ -811,7 +777,7 @@ namespace DailyScreenshot
             FileInfo mapScreenshot = new FileInfo(Path.Combine(DefaultSSdirectory.FullName, mapScreenshotPath));
             MTrace($"Snapshot saved to {mapScreenshot.FullName}");
 
-            if (m_config.auditoryEffects)
+            if (m_config.AuditoryEffects)
             {
                 Game1.playSound("cameraNoise");
             }
@@ -834,7 +800,7 @@ namespace DailyScreenshot
         // Adding space based on user feedback
         private void DisplayRuleHUD(ModRule rule)
         {
-            if (m_config.screenshotNotifications)
+            if (m_config.ScreenshotNotifications)
             {
                 Game1.addHUDMessage(
                     new HUDMessage(" " + rule.Name, HUDMessage.screenshot_type)
@@ -857,7 +823,7 @@ namespace DailyScreenshot
         }
 
         /// <summary>
-        /// Queue of screen shot actions to take when the timeout expires
+        /// Queue of screenshot actions to take when the timeout expires
         /// </summary>
         private Queue<Action> m_ssActions = new Queue<Action>();
 
@@ -994,8 +960,8 @@ namespace DailyScreenshot
         {
             api.AddBoolOption(
                 mod: ModManifest,
-                getValue: () => ModConfigTypeConversion.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, weatherFlag),
-                setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Weather = ModConfigTypeConversion.UpdateWeatherCondition(m_config.SnapshotRules[0].Trigger.Weather, weatherFlag, val),
+                getValue: () => ModConfigHelper.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, weatherFlag),
+                setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Weather = ModConfigHelper.UpdateWeatherCondition(m_config.SnapshotRules[0].Trigger.Weather, weatherFlag, val),
                 name: () => Helper.Translation.Get($"Config.Weather.{weatherFlag}.Title"),
                 tooltip: () => Helper.Translation.Get($"Config.Weather.{weatherFlag}.Tooltip")
             );
@@ -1010,8 +976,8 @@ namespace DailyScreenshot
         {
             api.AddBoolOption(
                 mod: ModManifest,
-                getValue: () => ModConfigTypeConversion.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, locationFlag),
-                setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigTypeConversion.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, locationFlag, val),
+                getValue: () => ModConfigHelper.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, locationFlag),
+                setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigHelper.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, locationFlag, val),
                 name: () => Helper.Translation.Get($"Config.Location.{locationFlag}.Title"),
                 tooltip: () => Helper.Translation.Get($"Config.Location.{locationFlag}.Tooltip")
             );
@@ -1026,8 +992,8 @@ namespace DailyScreenshot
         {
             api.AddBoolOption(
                 mod: ModManifest,
-                getValue: () => ModConfigTypeConversion.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, dateFlag),
-                setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigTypeConversion.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, dateFlag, val),
+                getValue: () => ModConfigHelper.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, dateFlag),
+                setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigHelper.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, dateFlag, val),
                 name: () => Helper.Translation.Get($"Config.Days.{dateFlag}.Title"),
                 tooltip: () => Helper.Translation.Get($"Config.Days.{dateFlag}.Tooltip")
             );
@@ -1042,8 +1008,8 @@ namespace DailyScreenshot
         {
             api.AddBoolOption(
                 mod: ModManifest,
-                getValue: () => ModConfigTypeConversion.IsFileNameConditionEnabled(m_config.SnapshotRules[0].FileName, fileNameFlag),
-                setValue: (bool val) => m_config.SnapshotRules[0].FileName = ModConfigTypeConversion.UpdateFileNameCondition(m_config.SnapshotRules[0].FileName, fileNameFlag, val),
+                getValue: () => ModConfigHelper.IsFileNameConditionEnabled(m_config.SnapshotRules[0].FileName, fileNameFlag),
+                setValue: (bool val) => m_config.SnapshotRules[0].FileName = ModConfigHelper.UpdateFileNameCondition(m_config.SnapshotRules[0].FileName, fileNameFlag, val),
                 name: () => Helper.Translation.Get($"Config.FileNameParts.{fileNameFlag}.Title"),
                 tooltip: () => Helper.Translation.Get($"Config.FileNameParts.{fileNameFlag}.Tooltip")
             );

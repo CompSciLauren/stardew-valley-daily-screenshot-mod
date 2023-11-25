@@ -1,16 +1,10 @@
-using StardewModdingAPI;
-using System;
-using System.Collections.Generic;
-
 namespace DailyScreenshot
 {
 
     /// <summary>
-    /// User specified rule.  Use with caution, data is 
-    /// not validated during construction.  Call 
-    /// ValidateUserInput before using values
+    /// Helper methods for checking and updating settings in the Config.
     /// </summary>
-    public class ModConfigTypeConversion
+    public class ModConfigHelper
     {
         /// <summary>
         /// Checks if a specific weather condition is present in the WeatherFlags
@@ -20,10 +14,6 @@ namespace DailyScreenshot
         /// <returns>True if the weather condition is present, otherwise false</returns>
         public static bool IsWeatherConditionEnabled(ModTrigger.WeatherFlags weather, ModTrigger.WeatherFlags targetWeather)
         {
-            // If the Any flag is set, it includes all weather conditions
-            // if ((weather & ModTrigger.WeatherFlags.Any) != 0)
-            //     return true;
-
             // Check if the specific weather condition is present
             return (weather & targetWeather) != 0;
         }

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
-using System.Linq;
 using static DailyScreenshot.ModTrigger;
 
 namespace DailyScreenshot
@@ -68,40 +67,24 @@ namespace DailyScreenshot
         /// <summary>
         /// Configurable toggle for auditory effects when taking screenshot.
         /// </summary>
-        public bool auditoryEffects = true;
+        public bool AuditoryEffects = true;
 
         /// <summary>
         /// Configurable toggle for visual effects when taking screenshot.
         /// </summary>
-        public bool visualEffects = true;
+        public bool VisualEffects = true;
 
         /// <summary>
         /// Configurable toggle for ingame notifications when taking screenshot.
         /// </summary>
-        public bool screenshotNotifications = true;
+        public bool ScreenshotNotifications = true;
 
         /// <summary>
         /// Rules loaded from the config file
         /// </summary>
         public List<ModRule> SnapshotRules { get; set; } = new List<ModRule>
         {
-            new ModRule
-            {
-                // Set the default properties of the SnapshotRules
-                Name = DEFAULT_NAME,
-                ZoomLevel = DEFAULT_ZOOM,
-                Directory = DEFAULT_STRING,
-                FileName = ModRule.FileNameFlags.Default,
-                Trigger =
-                {
-                    Days = DateFlags.Daily,
-                    Weather = WeatherFlags.Any,
-                    Location = LocationFlags.Farm,
-                    Key = DEFAULT_KEY,
-                    StartTime = DEFAULT_START_TIME,
-                    EndTime = DEFAULT_END_TIME
-                }
-            }
+            CreateDefaultSnapshotRule()
         };
 
         /// <summary>
@@ -155,9 +138,10 @@ namespace DailyScreenshot
 
         public void Reset()
         {
-            auditoryEffects = true;
-            visualEffects = true;
-            screenshotNotifications = true;
+            // global settings
+            AuditoryEffects = true;
+            VisualEffects = true;
+            ScreenshotNotifications = true;
 
             ModEntry.g_dailySS.ResetMainSnapshotRule();
         }
