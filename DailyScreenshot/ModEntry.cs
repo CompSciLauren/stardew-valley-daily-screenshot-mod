@@ -511,7 +511,8 @@ namespace DailyScreenshot
 
                 gmcmApi.AddPageLink(ModManifest, "Days (Seasons and Weekdays)", () => "Days (Seasons and Weekdays)");
 
-                gmcmApi.AddPageLink(ModManifest, "Days (Days of the Month)", () => "Days (Days of the Month)");
+                // NOTE on Days of the Monthh Code: <-- Search for this text to see explanation on why this is commented out.
+                // gmcmApi.AddPageLink(ModManifest, "Days (Days of the Month)", () => "Days (Days of the Month)");
 
                 gmcmApi.AddPageLink(ModManifest, "Weather", () => "Weather");
         
@@ -534,6 +535,8 @@ namespace DailyScreenshot
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Days_Header1_Title, I18n.Config_Days_Header1_Tooltip);
 
+                gmcmApi.AddParagraph(ModManifest, I18n.Config_Days_Header1_Description);
+
                 AddDateConditionOption(gmcmApi, DateFlags.Spring);
                 AddDateConditionOption(gmcmApi, DateFlags.Summer);
                 AddDateConditionOption(gmcmApi, DateFlags.Fall);
@@ -546,38 +549,43 @@ namespace DailyScreenshot
                 AddDateConditionOption(gmcmApi, DateFlags.Saturdays);
                 AddDateConditionOption(gmcmApi, DateFlags.Sundays);
 
-                gmcmApi.AddPage(ModManifest, "Days (Days of the Month)");
+                // NOTE on Days of the Monthh Code: This code is commented out but not removed because it may or may not
+                // be added soon. It is left out for now due to a bug with updating weekdays
+                // and then clicking more than one time on any save button on the UI.
+                // If users want to modify the config down to the specific days, they will need
+                // to do so from the config.json file directly for now.
+                // gmcmApi.AddPage(ModManifest, "Days (Days of the Month)");
 
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Days_Header2_Title, I18n.Config_Days_Header2_Tooltip);
+                // gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Days_Header2_Title, I18n.Config_Days_Header2_Tooltip);
 
-                AddDateConditionOption(gmcmApi, DateFlags.Day_01);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_02);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_03);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_04);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_05);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_06);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_07);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_08);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_09);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_10);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_11);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_12);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_13);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_14);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_15);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_16);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_17);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_18);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_19);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_20);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_21);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_22);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_23);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_24);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_25);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_26);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_27);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_28);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_01);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_02);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_03);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_04);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_05);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_06);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_07);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_08);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_09);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_10);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_11);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_12);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_13);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_14);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_15);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_16);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_17);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_18);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_19);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_20);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_21);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_22);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_23);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_24);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_25);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_26);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_27);
+                // AddDateConditionOption(gmcmApi, DateFlags.Day_28);
 
                 gmcmApi.AddPage(ModManifest, "Weather");
 
