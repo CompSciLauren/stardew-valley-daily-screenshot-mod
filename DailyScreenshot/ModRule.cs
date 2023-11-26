@@ -3,8 +3,6 @@ using System.Text;
 using System.IO;
 using StardewValley;
 using System.Globalization;
-using StardewModdingAPI;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace DailyScreenshot

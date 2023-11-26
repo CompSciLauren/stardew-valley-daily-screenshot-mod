@@ -1,2 +1,4 @@
-- Lauren Stephenson [@CompSciLauren]
+- Lauren Vu [@CompSciLauren]
 - Scott Atkins [@kins-dev]
+- f3wer [@f3wer]
+- Atravita Mods [@atravita-mods]

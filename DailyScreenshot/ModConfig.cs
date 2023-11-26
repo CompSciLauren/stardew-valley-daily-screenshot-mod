@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
+using static DailyScreenshot.ModTrigger;
 
 namespace DailyScreenshot
 {
@@ -34,6 +35,11 @@ namespace DailyScreenshot
         private string m_launchGuid;
 
         /// <summary>
+        /// String to use to indicate a default name
+        /// </summary>
+        public static string DEFAULT_NAME = "Unnamed Rule 1";
+
+        /// <summary>
         /// String to use to indicate a default value
         /// </summary>
         public static string DEFAULT_STRING = "Default";
@@ -42,6 +48,11 @@ namespace DailyScreenshot
         /// Zoom to use (reduce map to 1/4 of original size)
         /// </summary>
         public const float DEFAULT_ZOOM = 0.25f;
+
+        /// <summary>
+        /// Key shortcut for taking screenshot
+        /// </summary>
+        public static SButton DEFAULT_KEY = SButton.None;
 
         /// <summary>
         /// Start of the day in Stardew Valley (6 am)
@@ -56,22 +67,50 @@ namespace DailyScreenshot
         /// <summary>
         /// Configurable toggle for auditory effects when taking screenshot.
         /// </summary>
-        public bool auditoryEffects = true;
+        public bool AuditoryEffects = true;
 
         /// <summary>
         /// Configurable toggle for visual effects when taking screenshot.
         /// </summary>
-        public bool visualEffects = true;
+        public bool VisualEffects = true;
 
         /// <summary>
-        /// Configurable toggle for ingame notifications when taking screenshot.
+        /// Configurable toggle for ingame screenshot notifications when taking screenshot.
         /// </summary>
-        public bool screenshotNotifications = true;
+        public bool ScreenshotNotifications = true;
 
         /// <summary>
         /// Rules loaded from the config file
         /// </summary>
-        public List<ModRule> SnapshotRules { get; set; } = new List<ModRule>();
+        public List<ModRule> SnapshotRules { get; set; } = new List<ModRule>
+        {
+            CreateDefaultSnapshotRule()
+        };
+
+        /// <summary>
+        /// Default settings for a set of rules in SnapshotRules
+        /// </summary>
+        public static ModRule CreateDefaultSnapshotRule()
+        {
+            ModRule newRule = new ModRule
+            {
+                Name = DEFAULT_NAME,
+                ZoomLevel = DEFAULT_ZOOM,
+                Directory = DEFAULT_STRING,
+                FileName = ModRule.FileNameFlags.Default,
+                Trigger =
+                {
+                    Days = DateFlags.Daily,
+                    Weather = WeatherFlags.Any,
+                    Location = LocationFlags.Farm,
+                    Key = DEFAULT_KEY,
+                    StartTime = DEFAULT_START_TIME,
+                    EndTime = DEFAULT_END_TIME
+                }
+            };
+
+            return newRule;
+        }
 
         // Place to put json that doesn't match properties here
         // This can be used to upgrade the config file
@@ -99,9 +138,12 @@ namespace DailyScreenshot
 
         public void Reset()
         {
-            auditoryEffects = true;
-            visualEffects = true;
-            screenshotNotifications = true;
+            // global settings
+            AuditoryEffects = true;
+            VisualEffects = true;
+            ScreenshotNotifications = true;
+
+            ModEntry.g_dailySS.ResetMainSnapshotRule();
         }
 
         private T GetOldData<T>(IDictionary<string, JToken> oldDatDict, string key, T defaultValue)
