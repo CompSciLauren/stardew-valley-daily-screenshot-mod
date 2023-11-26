@@ -499,13 +499,13 @@ namespace DailyScreenshot
                 AddDateConditionOption(gmcmApi, DateFlags.Summer);
                 AddDateConditionOption(gmcmApi, DateFlags.Fall);
                 AddDateConditionOption(gmcmApi, DateFlags.Winter);
-                AddDateConditionOption(gmcmApi, DateFlags.Sundays);
                 AddDateConditionOption(gmcmApi, DateFlags.Mondays);
                 AddDateConditionOption(gmcmApi, DateFlags.Tuesdays);
                 AddDateConditionOption(gmcmApi, DateFlags.Wednesdays);
                 AddDateConditionOption(gmcmApi, DateFlags.Thursdays);
                 AddDateConditionOption(gmcmApi, DateFlags.Fridays);
                 AddDateConditionOption(gmcmApi, DateFlags.Saturdays);
+                AddDateConditionOption(gmcmApi, DateFlags.Sundays);
 
                 gmcmApi.AddPageLink(ModManifest, "", () => "Previous Page");
 
