@@ -75,7 +75,7 @@ namespace DailyScreenshot
         public bool VisualEffects = true;
 
         /// <summary>
-        /// Configurable toggle for ingame notifications when taking screenshot.
+        /// Configurable toggle for ingame screenshot notifications when taking screenshot.
         /// </summary>
         public bool ScreenshotNotifications = true;
 
