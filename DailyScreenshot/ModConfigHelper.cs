@@ -1,3 +1,5 @@
+using static DailyScreenshot.ModTrigger;
+
 namespace DailyScreenshot
 {
 
@@ -18,6 +20,13 @@ namespace DailyScreenshot
             return (weather & targetWeather) != 0;
         }
 
+        /// <summary>
+        /// Updates weather with the new value for targetWeather.
+        /// </summary>
+        /// <param name="weather">WeatherFlags to check</param>
+        /// <param name="targetWeather">The weather condition to check for</param>
+        /// <param name="val">What the new value should be</param>
+        /// <returns>Updated value for weather</returns>
         public static ModTrigger.WeatherFlags UpdateWeatherCondition(ModTrigger.WeatherFlags weather, ModTrigger.WeatherFlags targetWeather, bool val)
         {
             if (val)
@@ -46,6 +55,13 @@ namespace DailyScreenshot
             return (location & targetLocation) != 0;
         }
 
+        /// <summary>
+        /// Updates location with the new value for targetLocation.
+        /// </summary>
+        /// <param name="location">LocationFlags to check</param>
+        /// <param name="targetLocation">The location condition to check for</param>
+        /// <param name="val">What the new value should be</param>
+        /// <returns>Updated value for location</returns>
         public static ModTrigger.LocationFlags UpdateLocationCondition(ModTrigger.LocationFlags location, ModTrigger.LocationFlags targetLocation, bool val)
         {
             if (val)
@@ -74,8 +90,37 @@ namespace DailyScreenshot
             return (date & targetDate) != 0;
         }
 
+        /// <summary>
+        /// Checks whether the new value for the date condition is actually a new value or if it's the same as what's already present in the config.
+        /// </summary>
+        /// <param name="date">DateFlags to check</param>
+        /// <param name="targetDate">The date condition to check for</param>
+        /// <param name="val">What the new value should be</param>
+        /// <returns>True if date condition is already set, otherwise false</returns>
+        public static bool IsDateConditionAlreadySet(ModTrigger.DateFlags date, ModTrigger.DateFlags targetDate, bool val)
+        {
+            if (val)
+            {
+                // If trying to set the date to true, check if it's already true
+                return (date & targetDate) != 0;
+            }
+            else
+            {
+                // If trying to set the date to false, check if it's already false
+                return (date & targetDate) == 0;
+            }
+        }
+
+        /// <summary>
+        /// Updates date with the new value for targetDate.
+        /// </summary>
+        /// <param name="date">DateFlags to check</param>
+        /// <param name="targetDate">The date condition to check for</param>
+        /// <param name="val">What the new value should be</param>
+        /// <returns>Updated value for date</returns>
         public static ModTrigger.DateFlags UpdateDateCondition(ModTrigger.DateFlags date, ModTrigger.DateFlags targetDate, bool val)
         {
+            // If updating a specific day or other flags, proceed as before
             if (val)
             {
                 // If targetDate is true, add it to date
@@ -102,6 +147,13 @@ namespace DailyScreenshot
             return (fileName & targetFileName) != 0;
         }
 
+        /// <summary>
+        /// Updates fileName with the new value for targetFileName.
+        /// </summary>
+        /// <param name="fileName">FileNameFlags to check</param>
+        /// <param name="targetFileName">The fileName condition to check for</param>
+        /// <param name="val">What the new value should be</param>
+        /// <returns>Updated value for fileName</returns>
         public static ModRule.FileNameFlags UpdateFileNameCondition(ModRule.FileNameFlags fileName, ModRule.FileNameFlags targetFileName, bool val)
         {
             if (val)

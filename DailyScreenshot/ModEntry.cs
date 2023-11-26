@@ -9,6 +9,7 @@ using System.Threading;
 using StardewValley.Menus;
 using System.Diagnostics;
 using static DailyScreenshot.ModTrigger;
+using StardewModdingAPI.Utilities;
 
 namespace DailyScreenshot
 {
@@ -54,6 +55,8 @@ namespace DailyScreenshot
         /// The mod configuration from the player.
         /// </summary>
         private ModConfig m_config;
+
+        private DateFlags staleDays;
 
         /// <summary>
         /// Screenshot countdown ticks (make sure the world is rendered)
@@ -474,9 +477,50 @@ namespace DailyScreenshot
                     tooltip: I18n.Config_MainSettings_SnapshotDirectory_Tooltip
                 );
 
+                gmcmApi.AddKeybind(
+                    ModManifest,
+                    getValue: () => m_config.SnapshotRules[0].Trigger.Key,
+                    setValue: (SButton val) => m_config.SnapshotRules[0].Trigger.Key = val,
+                    name: I18n.Config_MainSettings_ShortcutKey_Title,
+                    tooltip: I18n.Config_MainSettings_ShortcutKey_Tooltip
+                );
+
+                gmcmApi.AddNumberOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.SnapshotRules[0].Trigger.StartTime,
+                    setValue: (int val) => m_config.SnapshotRules[0].Trigger.StartTime = val,
+                    name: I18n.Config_MainSettings_StartTime_Title,
+                    tooltip: I18n.Config_MainSettings_StartTime_Tooltip,
+                    min: 600,
+                    max: 2590,
+                    interval: 10
+                );
+
+                gmcmApi.AddNumberOption(
+                    mod: ModManifest,
+                    getValue: () => m_config.SnapshotRules[0].Trigger.EndTime,
+                    setValue: (int val) => m_config.SnapshotRules[0].Trigger.EndTime = val,
+                    name: I18n.Config_MainSettings_EndTime_Title,
+                    tooltip: I18n.Config_MainSettings_EndTime_Tooltip,
+                    min: 610,
+                    max: 2600,
+                    interval: 10
+                );
+
+                gmcmApi.AddPageLink(ModManifest, "FileName", () => "FileName");
+
+                gmcmApi.AddPageLink(ModManifest, "Days (Seasons and Weekdays)", () => "Days (Seasons and Weekdays)");
+
+                gmcmApi.AddPageLink(ModManifest, "Days (Days of the Month)", () => "Days (Days of the Month)");
+
+                gmcmApi.AddPageLink(ModManifest, "Weather", () => "Weather");
+        
+                gmcmApi.AddPageLink(ModManifest, "Location", () => "Location");
+
+                gmcmApi.AddPage(ModManifest, "FileName");
+
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_FileNameParts_Header1_Title, I18n.Config_FileNameParts_Header1_Tooltip);
 
-                AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.Default);
                 AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.Date);
                 AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.FarmName);
                 AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.GameID);
@@ -486,15 +530,10 @@ namespace DailyScreenshot
                 AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.Time);
                 AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.UniqueID);
 
-                gmcmApi.AddPageLink(ModManifest, "Days (1)", () => "Next Page");
-
-                gmcmApi.AddPage(ModManifest, "Days (1)");
+                gmcmApi.AddPage(ModManifest, "Days (Seasons and Weekdays)");
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Days_Header1_Title, I18n.Config_Days_Header1_Tooltip);
 
-                AddDateConditionOption(gmcmApi, DateFlags.Daily);
-                AddDateConditionOption(gmcmApi, DateFlags.AnyDay);
-                AddDateConditionOption(gmcmApi, DateFlags.AnySeason);
                 AddDateConditionOption(gmcmApi, DateFlags.Spring);
                 AddDateConditionOption(gmcmApi, DateFlags.Summer);
                 AddDateConditionOption(gmcmApi, DateFlags.Fall);
@@ -507,11 +546,7 @@ namespace DailyScreenshot
                 AddDateConditionOption(gmcmApi, DateFlags.Saturdays);
                 AddDateConditionOption(gmcmApi, DateFlags.Sundays);
 
-                gmcmApi.AddPageLink(ModManifest, "", () => "Previous Page");
-
-                gmcmApi.AddPageLink(ModManifest, "Days (2)", () => "Next Page");
-
-                gmcmApi.AddPage(ModManifest, "Days (2)");
+                gmcmApi.AddPage(ModManifest, "Days (Days of the Month)");
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Days_Header2_Title, I18n.Config_Days_Header2_Tooltip);
 
@@ -544,30 +579,20 @@ namespace DailyScreenshot
                 AddDateConditionOption(gmcmApi, DateFlags.Day_27);
                 AddDateConditionOption(gmcmApi, DateFlags.Day_28);
 
-                gmcmApi.AddPageLink(ModManifest, "Days (1)", () => "Previous Page");
-
-                gmcmApi.AddPageLink(ModManifest, "Weather", () => "Next Page");
-
                 gmcmApi.AddPage(ModManifest, "Weather");
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Weather_Header_Title, I18n.Config_Weather_Header_Tooltip);
 
-                AddWeatherConditionOption(gmcmApi, WeatherFlags.Any);
                 AddWeatherConditionOption(gmcmApi, WeatherFlags.Sunny);
                 AddWeatherConditionOption(gmcmApi, WeatherFlags.Rainy);
                 AddWeatherConditionOption(gmcmApi, WeatherFlags.Windy);
                 AddWeatherConditionOption(gmcmApi, WeatherFlags.Stormy);
                 AddWeatherConditionOption(gmcmApi, WeatherFlags.Snowy);
 
-                gmcmApi.AddPageLink(ModManifest, "Days (2)", () => "Previous Page");
-
-                gmcmApi.AddPageLink(ModManifest, "Location", () => "Next Page");
-
                 gmcmApi.AddPage(ModManifest, "Location");
 
                 gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Location_Header_Title, I18n.Config_Location_Header_Tooltip);
 
-                AddLocationConditionOption(gmcmApi, LocationFlags.Any);
                 AddLocationConditionOption(gmcmApi, LocationFlags.Farm);
                 AddLocationConditionOption(gmcmApi, LocationFlags.Farmhouse);
                 AddLocationConditionOption(gmcmApi, LocationFlags.GreenHouse);
@@ -582,46 +607,6 @@ namespace DailyScreenshot
                 AddLocationConditionOption(gmcmApi, LocationFlags.IslandFarmhouse);
                 AddLocationConditionOption(gmcmApi, LocationFlags.IslandFieldOffice);
                 AddLocationConditionOption(gmcmApi, LocationFlags.Unknown);
-
-                gmcmApi.AddPageLink(ModManifest, "Weather", () => "Previous Page");
-
-                gmcmApi.AddPageLink(ModManifest, "Time", () => "Next Page");
-
-                gmcmApi.AddPage(ModManifest, "Time");
-
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Time_Header_Title, I18n.Config_Time_Header_Tooltip);
-
-                gmcmApi.AddKeybind(
-                    ModManifest,
-                    getValue: () => m_config.SnapshotRules[0].Trigger.Key,
-                    setValue: (SButton val) => m_config.SnapshotRules[0].Trigger.Key = val,
-                    name: I18n.Config_Time_ShortcutKey_Title,
-                    tooltip: I18n.Config_Time_ShortcutKey_Tooltip
-                );
-
-                gmcmApi.AddNumberOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.SnapshotRules[0].Trigger.StartTime,
-                    setValue: (int val) => m_config.SnapshotRules[0].Trigger.StartTime = val,
-                    name: I18n.Config_Time_StartTime_Title,
-                    tooltip: I18n.Config_Time_StartTime_Tooltip,
-                    min: 600,
-                    max: 2590,
-                    interval: 10
-                );
-
-                gmcmApi.AddNumberOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.SnapshotRules[0].Trigger.EndTime,
-                    setValue: (int val) => m_config.SnapshotRules[0].Trigger.EndTime = val,
-                    name: I18n.Config_Time_EndTime_Title,
-                    tooltip: I18n.Config_Time_EndTime_Tooltip,
-                    min: 610,
-                    max: 2600,
-                    interval: 10
-                );
-                
-                gmcmApi.AddPageLink(ModManifest, "Location", () => "Previous Page");
 
                 MInfo("Added \"DailyScreenshot\" config menu with \"Generic Mod Config Menu\".");
             }
@@ -984,6 +969,27 @@ namespace DailyScreenshot
         }
 
         /// <summary>
+        /// This retrieves the value of the Days triggers in the config *before* it has changed due to UI Config updating.
+        /// If we were to directly check the m_config Days value each time, it would cause undesired behavior
+        /// with which values actually get updated and it will not work as the user intended based on the settings they updated.
+        /// Note: This isn't a great solution and could use refactoring, but it seems to work well enough as a solution for now.
+        /// </summary>
+        /// <param name="currentDateFlag">The current date flag potentially being updated</param>
+        /// <returns></returns>
+        DateFlags getCurrentDaysPriorToUpdate(DateFlags currentDateFlag)
+        {
+            // the first date flag that gets updated each time
+            if (currentDateFlag == DateFlags.Spring)
+            {
+                staleDays = m_config.SnapshotRules[0].Trigger.Days;
+                return staleDays;
+            }
+
+            // otherwise must be one of the DateFlags in-between first and last
+            return staleDays;
+        }
+
+        /// <summary>
         /// Adds a Date condition to the Config.
         /// </summary>
         /// <param name="api">The GenericModConfigMenu API</param>
@@ -993,7 +999,12 @@ namespace DailyScreenshot
             api.AddBoolOption(
                 mod: ModManifest,
                 getValue: () => ModConfigHelper.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, dateFlag),
-                setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigHelper.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, dateFlag, val),
+                setValue: (bool val) => {
+                    if (!ModConfigHelper.IsDateConditionAlreadySet(getCurrentDaysPriorToUpdate(dateFlag), dateFlag, val))
+                    {
+                       m_config.SnapshotRules[0].Trigger.Days = ModConfigHelper.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, dateFlag, val);
+                    }
+                },
                 name: () => Helper.Translation.Get($"Config.Days.{dateFlag}.Title"),
                 tooltip: () => Helper.Translation.Get($"Config.Days.{dateFlag}.Tooltip")
             );
