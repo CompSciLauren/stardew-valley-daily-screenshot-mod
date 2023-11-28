@@ -24,12 +24,15 @@ This mainly just tracks whatever I happen to be doing, and not really used for t
 4. Create PR, `DS-123` --> `master` // after completed test, can merge into production-ready branch
 5. Merge `master` back into `development` branch // after doing the release is finished
 
+Note: Once a story is merged to `master` branch, GitHub Issue is closed, since it will be included in the next release.
+
 ## Doing the Release
 
 Here are the steps for the release. Note the file used for the release is found in the project bin folder, looks like `DailyScreenshot 3.0.0.zip`.
 
 - [x] All code changes intended to be released are merged to `master` branch
     - [x] Includes correct version in [manifest.json](./DailyScreenshot/manifest.json) file. (Follows [semver](https://semver.org/) versioning standard)
+- [x] GitHub Issues that are addressed by PRs merged to `master` are closed.
 - [x] Draft a new Nexus Article with release notes
 - [x] [Publish a New GitHub Release](https://github.com/CompSciLauren/stardew-valley-daily-screenshot-mod/releases/new)
 - [x] Publish new version on Nexus
@@ -39,7 +42,6 @@ Here are the steps for the release. Note the file used for the release is found 
     - [x] [Chucklefish](https://community.playstarbound.com/resources/daily-screenshot.5907/)
     - [x] [CurseForge](https://www.curseforge.com/stardewvalley/mods/daily-screenshot)
     - [x] [ModDrop](https://www.moddrop.com/stardew-valley/mods/677025-daily-screenshot)
-- [x] Close out GitHub Issues that are now released
 - [x] Respond to any related Nexus bug reports and comments
 - [x] Add a comment about the release to SDV Discord in #modded-farmers channel
     - [x] Remember to include a picture (can use main cover photo from Nexus site)
