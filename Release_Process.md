@@ -22,6 +22,7 @@ This mainly just tracks whatever I happen to be doing, and not really used for t
 2. Add the code changes. Commit messages are structured like "DS-123 Add the thing" (message should be accurate high level description of the changes in the commit)
 3. Merge branch, `DS-123` --> `development` // merge into dev branch for testing
 4. Create PR, `DS-123` --> `master` // after completed test, can merge into production-ready branch
+5. Merge `master` back into `development` branch // after doing the release is finished
 
 ## Doing the Release
 
@@ -43,3 +44,4 @@ Here are the steps for the release. Note the file used for the release is found 
 - [x] Add a comment about the release to SDV Discord in #modded-farmers channel
     - [x] Remember to include a picture (can use main cover photo from Nexus site)
 - [x] Right click the comment --> Apps --> Publish, to have it be posted in #mod-showcase channel
+- [x] Merge `master` back into `development` branch
