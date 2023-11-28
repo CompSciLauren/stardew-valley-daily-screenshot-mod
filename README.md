@@ -24,7 +24,7 @@ For Android users, releases can be found at the following websites:
 - Screenshots are sent to your StardewValley/Screenshots folder, with each save file getting its own "FarmName-Screenshots" folder. Screenshots between multiple save files will not get mixed up.
 - Easily access the screenshots in-game by scrolling to the bottom of the "Options" tab in the menu and clicking the "Open Destination Folder" button.
 - Super easy to gather screenshots to create a GIF that shows how your farm changes over time! GIF makers can be found online, such as [ezgif GIF maker](https://ezgif.com/maker).  Here is an [example](example.gif).
-- Keeps the screenshots in the correct order to make creating the GIF easier. This is achieved by naming each screenshot with a "year-season-day.png" numerical format. For example, on Year 1, Winter, Day 3, the screenshot would be named "01-04-03.png". This is configurable.
+- Keeps the screenshots in the correct order to make creating the GIF easier. This is achieved by naming each screenshot with a "year-season-day.png" numerical format. For example, on Year 1, Winter, Day 3, the screenshot would be named "01-04-03.png".
 - Keyboard shortcut that takes a screenshot when pressed (set to "None" by default).
 - Can choose to disable automatic screenshots for certain weather conditions, like rainy days (takes a screenshot every day regardless of weather by default).
 - Custom configuration options, including ability to add multiple custom rules! See below.
@@ -33,8 +33,9 @@ For Android users, releases can be found at the following websites:
 ## Installation
 
 1. [Install the latest version of SMAPI](https://smapi.io/).
-1. Download this mod and unzip it into Stardew Valley/Mods.
-1. Run the game using SMAPI.
+2. Optionally, download [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098) and unzip it into Stardew Valley/Mods.
+3. Download this mod and unzip it into Stardew Valley/Mods.
+4. Run the game using SMAPI.
 
 ## Compatibility
 
@@ -105,3 +106,9 @@ Triggers are things that must happen for a screenshot to take place.  All of the
 | StartTime | Earliest point at which to take the picture.  The time cannot be more than EndTime and must be less than 600.  Must be an increment of 10. | int | 600 |
 | EndTime | Last point at which to take the picture. The time cannot be less than StartTime and cannot be more than 2600. Must be an increment of 10. | int | 2600 |
 <!-- markdownlint-enable MD033 -->
+
+## Contributors
+
+Thank you so much to everyone who has contributed to this mod! You can find them at [Contributors.md](./CONTRIBUTORS.md).
+
+If you're interested in contributing, please see [Contributing.md](./CONTRIBUTING.md). Thanks!

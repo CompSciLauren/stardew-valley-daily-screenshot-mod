@@ -1,8 +1,10 @@
 # Testing
 
-Here are the testing strategies available/recommended for this mod.
+Here are the testing strategies available/recommended for this mod. Please feel free to use your best judgement depending on what changes you've added and how extensive they are.
 
 ## warning_test_files
+
+This is a manual set of tests that involves running the game and comparing the console output to some expected result files. You can expect this process to take around 10 minutes.
 
 See the [how_to_test.md](./warning_test_files/how_to_test.md) guide for how to use these tests.
 
@@ -14,7 +16,7 @@ It would be nice to have unit tests and these will hopefully be added in the fut
 
 This is the primary method of testing.
 
-In general, should make sure to test anything specific that was changed.
+In general, should make sure that the mod generally works as expected and make sure to test anything specific that was changed.
 
 Below are some general examples of Happy-Path and Unhappy-Path test cases.
 
@@ -227,12 +229,8 @@ Should see an output like this:
 ``` bash
 [SMAPI] Launching mods...
 [Daily Screenshot] Updating unnamed rule to be "Unnamed Rule 1"
-[Daily Screenshot] Updating unnamed rule to be "Unnamed Rule 2"
-[Daily Screenshot] Rules "Unnamed Rule 1" and "Unnamed Rule 2" can over write one another.
 [SMAPI] Mods loaded and ready!
 ```
-
-Not ideal that it creates 2 rules, but this is an edge case and doesn't seem detrimental, though hopefully can be resolved at a future date.
 
 ### Unhappy-Path Config Testing - 3
 
@@ -244,9 +242,5 @@ Should see an output like this:
 ``` bash
 [SMAPI] Launching mods...
 [Daily Screenshot] Updating unnamed rule to be "Unnamed Rule 1"
-[Daily Screenshot] Updating unnamed rule to be "Unnamed Rule 2"
-[Daily Screenshot] Rules "Unnamed Rule 1" and "Unnamed Rule 2" can over write one another.
 [SMAPI] Mods loaded and ready!
 ```
-
-Not ideal that it creates 2 rules, but this is an edge case and doesn't seem detrimental, though hopefully can be resolved at a future date.
