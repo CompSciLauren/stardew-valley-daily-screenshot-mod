@@ -139,14 +139,14 @@ Thank you so much to everyone who has contributed to this mod!
         <a href="https://github.com/atravita-mods">
             <img src="https://avatars.githubusercontent.com/u/94934860?v=4" width="100;" alt="atravita-mods"/>
             <br />
-            <sub><b>Null</b></sub>
+            <sub><b>Atravita-Mods</b></sub>
         </a>
     </td>
     <td align="center">
         <a href="https://github.com/f3wer">
             <img src="https://avatars.githubusercontent.com/u/49698802?v=4" width="100;" alt="f3wer"/>
             <br />
-            <sub><b>Null</b></sub>
+            <sub><b>f3wer</b></sub>
         </a>
     </td>
     <td align="center">
