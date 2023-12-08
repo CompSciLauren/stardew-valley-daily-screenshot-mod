@@ -146,7 +146,7 @@ Thank you so much to everyone who has contributed to this mod!
         <a href="https://github.com/f3wer">
             <img src="https://avatars.githubusercontent.com/u/49698802?v=4" width="100;" alt="f3wer"/>
             <br />
-            <sub><b>f3wer</b></sub>
+            <sub><b>F3wer</b></sub>
         </a>
     </td>
     <td align="center">
