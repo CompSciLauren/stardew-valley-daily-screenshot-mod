@@ -47,7 +47,7 @@ For Android users, releases can be found at the following websites:
 
 > Note: Older configuration files (from prior to v2.0) will automatically be upgraded to the newer format.
 
-You can add as many rules as you would like.  The config file looks like:
+You can add as many rules as you would like. The config file looks like:
 
 ``` json
 {
@@ -86,6 +86,8 @@ You can add as many rules as you would like.  The config file looks like:
   ]
 }
 ```
+
+For more examples of ways to customize the config.json file, see the [Examples](https://github.com/CompSciLauren/stardew-valley-daily-screenshot-mod/wiki/Examples-for-config.json-file) from the GitHub Wiki!
 
 Triggers are things that must happen for a screenshot to take place.  All of the items must be true.  Automatic screenshots (without a key press) happen at most once a day.
 
