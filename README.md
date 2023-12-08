@@ -112,6 +112,51 @@ Triggers are things that must happen for a screenshot to take place.  All of the
 Thank you so much to everyone who has contributed to this mod!
 
 <!-- readme: contributors -start -->
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/CompSciLauren">
+            <img src="https://avatars.githubusercontent.com/u/25672237?v=4" width="100;" alt="CompSciLauren"/>
+            <br />
+            <sub><b>Lauren Vu</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/kins-dev">
+            <img src="https://avatars.githubusercontent.com/u/48720687?v=4" width="100;" alt="kins-dev"/>
+            <br />
+            <sub><b>Scott Atkins</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/dv297">
+            <img src="https://avatars.githubusercontent.com/u/5365325?v=4" width="100;" alt="dv297"/>
+            <br />
+            <sub><b>Daniel Vu</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/atravita-mods">
+            <img src="https://avatars.githubusercontent.com/u/94934860?v=4" width="100;" alt="atravita-mods"/>
+            <br />
+            <sub><b>Null</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/f3wer">
+            <img src="https://avatars.githubusercontent.com/u/49698802?v=4" width="100;" alt="f3wer"/>
+            <br />
+            <sub><b>Null</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/vahtos">
+            <img src="https://avatars.githubusercontent.com/u/30844190?v=4" width="100;" alt="vahtos"/>
+            <br />
+            <sub><b>Glen Adams</b></sub>
+        </a>
+    </td></tr>
+</table>
 <!-- readme: contributors -end -->
 
 If you're interested in contributing, please see [Contributing.md](./CONTRIBUTING.md). Thanks!
