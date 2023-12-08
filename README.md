@@ -109,6 +109,9 @@ Triggers are things that must happen for a screenshot to take place.  All of the
 
 ## Contributors
 
-Thank you so much to everyone who has contributed to this mod! You can find them at [Contributors.md](./CONTRIBUTORS.md).
+Thank you so much to everyone who has contributed to this mod!
+
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->
 
 If you're interested in contributing, please see [Contributing.md](./CONTRIBUTING.md). Thanks!
