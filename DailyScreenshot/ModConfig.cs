@@ -82,10 +82,7 @@ namespace DailyScreenshot
         /// <summary>
         /// Rules loaded from the config file
         /// </summary>
-        public List<ModRule> SnapshotRules { get; set; } = new List<ModRule>
-        {
-            CreateDefaultSnapshotRule()
-        };
+        public List<ModRule> SnapshotRules { get; set; } = new List<ModRule>();
 
         /// <summary>
         /// Default settings for a set of rules in SnapshotRules
@@ -132,7 +129,7 @@ namespace DailyScreenshot
         public ModConfig()
         {
             m_launchGuid = Guid.NewGuid().ToString();
-            SnapshotRules.Add(new ModRule());
+            SnapshotRules.Add(CreateDefaultSnapshotRule());
             SnapshotRules[0].Name = m_launchGuid;
         }
 
