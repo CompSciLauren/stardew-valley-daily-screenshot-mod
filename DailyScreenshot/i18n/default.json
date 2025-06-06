@@ -27,6 +27,7 @@
   "Config.MainSettings.StartTime.tooltip": "Earliest time the screenshot can be taken. Must be less than End Time. TIP: Number values represent in-game clock times. Some examples: 600 is 6:00 AM, 930 is 9:30 AM, 1200 is 12:00 PM, 1400 is 2:00 PM, etc.",
   "Config.MainSettings.EndTime.title": "End Time",
   "Config.MainSettings.EndTime.tooltip": "Latest time the screenshot can be taken. Must be more than Start Time.",
+  "Config.FileName.Header1.title": "FileName",
   "Config.FileNameParts.Header1.title": "Snapshot File Name",
   "Config.FileNameParts.Header1.tooltip": "Determines what the file name of each screenshot will be.",
   "Config.FileNameParts.Default.title": "Default",
