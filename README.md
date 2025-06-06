@@ -163,15 +163,20 @@ Thank you so much to everyone who has contributed to this mod!
             <br />
             <sub><b>Glen Adams</b></sub>
         </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/FabLeKebab">
-            <img src="https://avatars.githubusercontent.com/u/109556581?v=4" width="100;" alt="vahtos"/>
-            <br />
-            <sub><b>Fabien</b></sub>
-        </a>
     </td></tr>
 </table>
 <!-- readme: collaborators,contributors -end -->
+<table>
+    <tr>
+        <td align="center">
+            <a href="https://github.com/FabLeKebab">
+                <img src="https://avatars.githubusercontent.com/u/109556581?v=4" width="100;" alt="FabLeKebab"/>
+                <br />
+                <sub><b>Fabien</b></sub>
+            </a>
+        </td>
+    </tr>
+</table>
+
 
 If you're interested in contributing, please see [Contributing.md](./CONTRIBUTING.md). Thanks!
