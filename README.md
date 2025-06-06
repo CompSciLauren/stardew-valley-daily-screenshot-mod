@@ -161,13 +161,6 @@ Thank you so much to everyone who has contributed to this mod!
         <a href="https://github.com/vahtos">
             <img src="https://avatars.githubusercontent.com/u/30844190?v=4" width="100;" alt="vahtos"/>
             <br />
-            <sub><b>Glen Adams</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/FabLeKebab">
-            <img src="https://avatars.githubusercontent.com/u/109556581?v=4" width="100;" alt="vahtos"/>
-            <br />
             <sub><b>Fabien</b></sub>
         </a>
     </td></tr>
