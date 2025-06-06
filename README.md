@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD041 -->
 ![logo](./Images/FeatureImage.png)
 <!-- markdownlint-enable MD041 -->
-# Daily Screenshot v3.1.0
+# Daily Screenshot v3.2.0
 
 > A Stardew Valley mod that automatically takes a screenshot of your entire farm at the start of each day.
 
@@ -49,7 +49,7 @@ For Android users, releases can be found at the following websites:
 
 ### The file structure
 
-You can add as many rules as you would like. The config file looks like:
+You can add as many rules as you would like. You can configure multiple different screenshots to be taken automatically. There is also a way to setup manual screenshots via keypress as shown in the example here. Example of what the config file looks like:
 
 ``` json
 {
@@ -121,49 +121,57 @@ Thank you so much to everyone who has contributed to this mod!
 
 <!-- readme: collaborators,contributors -start -->
 <table>
-<tr>
-    <td align="center">
-        <a href="https://github.com/CompSciLauren">
-            <img src="https://avatars.githubusercontent.com/u/25672237?v=4" width="100;" alt="CompSciLauren"/>
-            <br />
-            <sub><b>Lauren Vu</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/kins-dev">
-            <img src="https://avatars.githubusercontent.com/u/48720687?v=4" width="100;" alt="kins-dev"/>
-            <br />
-            <sub><b>Scott Atkins</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/dv297">
-            <img src="https://avatars.githubusercontent.com/u/5365325?v=4" width="100;" alt="dv297"/>
-            <br />
-            <sub><b>Daniel Vu</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/atravita-mods">
-            <img src="https://avatars.githubusercontent.com/u/94934860?v=4" width="100;" alt="atravita-mods"/>
-            <br />
-            <sub><b>Atravita-Mods</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/f3wer">
-            <img src="https://avatars.githubusercontent.com/u/49698802?v=4" width="100;" alt="f3wer"/>
-            <br />
-            <sub><b>F3wer</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/vahtos">
-            <img src="https://avatars.githubusercontent.com/u/30844190?v=4" width="100;" alt="vahtos"/>
-            <br />
-            <sub><b>Glen Adams</b></sub>
-        </a>
-    </td></tr>
+    <tr>
+        <td align="center">
+            <a href="https://github.com/CompSciLauren">
+                <img src="https://avatars.githubusercontent.com/u/25672237?v=4" width="100;" alt="CompSciLauren"/>
+                <br />
+                <sub><b>Lauren Vu</b></sub>
+            </a>
+        </td>
+        <td align="center">
+            <a href="https://github.com/kins-dev">
+                <img src="https://avatars.githubusercontent.com/u/48720687?v=4" width="100;" alt="kins-dev"/>
+                <br />
+                <sub><b>Scott Atkins</b></sub>
+            </a>
+        </td>
+        <td align="center">
+            <a href="https://github.com/dv297">
+                <img src="https://avatars.githubusercontent.com/u/5365325?v=4" width="100;" alt="dv297"/>
+                <br />
+                <sub><b>Daniel Vu</b></sub>
+            </a>
+        </td>
+        <td align="center">
+            <a href="https://github.com/atravita-mods">
+                <img src="https://avatars.githubusercontent.com/u/94934860?v=4" width="100;" alt="atravita-mods"/>
+                <br />
+                <sub><b>Atravita-Mods</b></sub>
+            </a>
+        </td>
+        <td align="center">
+            <a href="https://github.com/f3wer">
+                <img src="https://avatars.githubusercontent.com/u/49698802?v=4" width="100;" alt="f3wer"/>
+                <br />
+                <sub><b>F3wer</b></sub>
+            </a>
+        </td>
+        <td align="center">
+            <a href="https://github.com/vahtos">
+                <img src="https://avatars.githubusercontent.com/u/30844190?v=4" width="100;" alt="vahtos"/>
+                <br />
+                <sub><b>Glen Adams</b></sub>
+            </a>
+        </td>
+        <td align="center">
+            <a href="https://github.com/FabLeKebab">
+                <img src="https://avatars.githubusercontent.com/u/109556581?v=4" width="100;" alt="vahtos"/>
+                <br />
+                <sub><b>Fabien</b></sub>
+            </a>
+        </td>
+    </tr>
 </table>
 <!-- readme: collaborators,contributors -end -->
 
