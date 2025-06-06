@@ -507,16 +507,16 @@ namespace DailyScreenshot
                     interval: 10
                 );
 
-                gmcmApi.AddPageLink(ModManifest, "FileName", () => "FileName");
+                gmcmApi.AddPageLink(ModManifest, "FileName", I18n.Config_FileName_Header1_Title);
 
-                gmcmApi.AddPageLink(ModManifest, "Days (Seasons and Weekdays)", () => "Days (Seasons and Weekdays)");
-
+                gmcmApi.AddPageLink(ModManifest, "Days (Seasons and Weekdays)", I18n.Config_Days_Header1_Title);
+                
                 // NOTE on Days of the Monthh Code: <-- Search for this text to see explanation on why this is commented out.
                 // gmcmApi.AddPageLink(ModManifest, "Days (Days of the Month)", () => "Days (Days of the Month)");
 
-                gmcmApi.AddPageLink(ModManifest, "Weather", () => "Weather");
+                gmcmApi.AddPageLink(ModManifest, "Weather", I18n.Config_Weather_Header_Title);
         
-                gmcmApi.AddPageLink(ModManifest, "Location", () => "Location");
+                gmcmApi.AddPageLink(ModManifest, "Location", I18n.Config_Location_Header_Title);
 
                 gmcmApi.AddPage(ModManifest, "FileName");
 

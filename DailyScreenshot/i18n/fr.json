@@ -27,6 +27,7 @@
     "Config.MainSettings.StartTime.tooltip": "L'heure la plus tôt à laquelle la capture d'écran peut être prise. Elle doit être inférieure à l'heure de fin. ASTUCE : Les valeurs numériques représentent les heures de l'horloge du jeu. Quelques exemples : 600 = 6:00 AM, 930 = 9:30 AM, 1200 = 12:00 PM, 1400 = 2:00 PM, etc.",
     "Config.MainSettings.EndTime.title": "Heure de fin",
     "Config.MainSettings.EndTime.tooltip": "L'heure la plus tardive à laquelle la capture d'écran peut être prise. Elle doit être supérieure à l'heure de début.",
+    "Config.FileName.Header1.title": "Nom de Fichier",
     "Config.FileNameParts.Header1.title": "Nom de fichier de la capture d'écran",
     "Config.FileNameParts.Header1.tooltip": "Détermine le nom de fichier de chaque capture d'écran.",
     "Config.FileNameParts.Default.title": "Par défaut",
