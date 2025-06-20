@@ -175,6 +175,20 @@ Thank you so much to everyone who has contributed to this mod!
                 <sub><b>Fabien</b></sub>
             </a>
         </td>
+        <td align="center">
+            <a href="https://next.nexusmods.com/profile/YoakeTsuki">
+                <img src="https://avatars.nexusmods.com/106433203/100" width="100;" alt="YoakeTsuki"/>
+                <br />
+                <sub><b>YoakeTsuki</b></sub>
+            </a>
+        </td>
+        <td align="center">
+            <a href="https://next.nexusmods.com/profile/Syuchinikurin">
+                <img src="https://avatars.nexusmods.com/65672841/100" width="100;" alt="Syuchinikurin"/>
+                <br />
+                <sub><b>Syuchinikurin</b></sub>
+            </a>
+        </td>
     </tr>
 </table>
 
