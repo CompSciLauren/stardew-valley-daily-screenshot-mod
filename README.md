@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD041 -->
 ![logo](./Images/FeatureImage.png)
 <!-- markdownlint-enable MD041 -->
-# Daily Screenshot v3.2.0
+# Daily Screenshot v3.3.0
 
 > A Stardew Valley mod that automatically takes a screenshot of your entire farm at the start of each day.
 
