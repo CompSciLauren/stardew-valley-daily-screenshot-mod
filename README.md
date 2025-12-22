@@ -196,6 +196,13 @@ Thank you so much to everyone who has contributed to this mod!
                 <sub><b>maatsuki</b></sub>
             </a>
         </td>
+        <td align="center">
+            <a href="https://next.nexusmods.com/profile/KimmJoja">
+                <img src="https://avatars.nexusmods.com/134911498/100" width="100;" alt="KimmJoja"/>
+                <br />
+                <sub><b>KimmJoja</b></sub>
+            </a>
+        </td>
     </tr>
 </table>
 
