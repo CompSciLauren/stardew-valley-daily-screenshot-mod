@@ -149,30 +149,6 @@ namespace DailyScreenshotTests
         }
 
         [Fact]
-        public void IsDateConditionAlreadySet_ValTrue_FlagPresent_ReturnsTrue()
-        {
-            Assert.True(ModConfigHelper.IsDateConditionAlreadySet(DateFlags.Spring, DateFlags.Spring, true));
-        }
-
-        [Fact]
-        public void IsDateConditionAlreadySet_ValTrue_FlagAbsent_ReturnsFalse()
-        {
-            Assert.False(ModConfigHelper.IsDateConditionAlreadySet(DateFlags.Spring, DateFlags.Summer, true));
-        }
-
-        [Fact]
-        public void IsDateConditionAlreadySet_ValFalse_FlagAbsent_ReturnsTrue()
-        {
-            Assert.True(ModConfigHelper.IsDateConditionAlreadySet(DateFlags.Spring, DateFlags.Summer, false));
-        }
-
-        [Fact]
-        public void IsDateConditionAlreadySet_ValFalse_FlagPresent_ReturnsFalse()
-        {
-            Assert.False(ModConfigHelper.IsDateConditionAlreadySet(DateFlags.Spring, DateFlags.Spring, false));
-        }
-
-        [Fact]
         public void UpdateDateCondition_ValTrue_AddsFlagWithoutRemovingOthers()
         {
             DateFlags result = ModConfigHelper.UpdateDateCondition(DateFlags.Spring, DateFlags.Summer, true);
@@ -189,6 +165,38 @@ namespace DailyScreenshotTests
             Assert.True(ModConfigHelper.IsDateConditionEnabled(result, DateFlags.Spring));
             Assert.True(ModConfigHelper.IsDateConditionEnabled(result, DateFlags.Summer));
             Assert.True(ModConfigHelper.IsDateConditionEnabled(result, DateFlags.Fall));
+        }
+
+        [Fact]
+        public void UpdateDateCondition_AppliedTwice_IsIdempotent()
+        {
+            // Regression test: GMCM re-invokes setValue for every option on each Save click,
+            // so applying the same update more than once (e.g. clicking Save twice) must not
+            // change the outcome.
+            DateFlags result = ModConfigHelper.UpdateDateCondition(DateFlags.Daily, DateFlags.Mondays, false);
+            result = ModConfigHelper.UpdateDateCondition(result, DateFlags.Mondays, false);
+
+            Assert.False(ModConfigHelper.IsDateConditionEnabled(result, DateFlags.Day_01));
+            Assert.True(ModConfigHelper.IsDateConditionEnabled(result, DateFlags.Day_02));
+        }
+
+        [Fact]
+        public void UpdateDateCondition_IndividualDayAndOverlappingWeekday_DoNotConflict()
+        {
+            // Enabling a single day of the month (Day_01) should not implicitly enable the
+            // other days that share its weekday (Day_08, Day_15, Day_22 are also Mondays).
+            DateFlags result = ModConfigHelper.UpdateDateCondition(DateFlags.Day_None, DateFlags.Day_01, true);
+
+            Assert.True(ModConfigHelper.IsDateConditionEnabled(result, DateFlags.Day_01));
+            Assert.False(ModConfigHelper.IsDateConditionEnabled(result, DateFlags.Day_08));
+            Assert.False(ModConfigHelper.IsDateConditionEnabled(result, DateFlags.Day_15));
+            Assert.False(ModConfigHelper.IsDateConditionEnabled(result, DateFlags.Day_22));
+
+            // Disabling the composite "Mondays" flag afterwards should clear Day_01 along with
+            // the rest of the days it represents.
+            result = ModConfigHelper.UpdateDateCondition(result, DateFlags.Mondays, false);
+
+            Assert.False(ModConfigHelper.IsDateConditionEnabled(result, DateFlags.Day_01));
         }
 
         [Fact]

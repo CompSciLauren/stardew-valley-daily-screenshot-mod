@@ -92,27 +92,6 @@ namespace DailyScreenshot
         }
 
         /// <summary>
-        /// Checks whether the new value for the date condition is actually a new value or if it's the same as what's already present in the config.
-        /// </summary>
-        /// <param name="date">DateFlags to check</param>
-        /// <param name="targetDate">The date condition to check for</param>
-        /// <param name="val">What the new value should be</param>
-        /// <returns>True if date condition is already set, otherwise false</returns>
-        public static bool IsDateConditionAlreadySet(ModTrigger.DateFlags date, ModTrigger.DateFlags targetDate, bool val)
-        {
-            if (val)
-            {
-                // If trying to set the date to true, check if it's already true
-                return (date & targetDate) != 0;
-            }
-            else
-            {
-                // If trying to set the date to false, check if it's already false
-                return (date & targetDate) == 0;
-            }
-        }
-
-        /// <summary>
         /// Updates date with the new value for targetDate.
         /// </summary>
         /// <param name="date">DateFlags to check</param>
