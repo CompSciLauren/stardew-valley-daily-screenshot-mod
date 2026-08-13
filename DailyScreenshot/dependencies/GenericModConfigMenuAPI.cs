@@ -96,5 +96,19 @@ namespace DailyScreenshot
         /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
         /// <param name="fieldId">The unique field ID for use with <see cref="OnFieldChanged"/>, or <c>null</c> to auto-generate a randomized ID.</param>
         void AddKeybind(IManifest mod, Func<SButton> getValue, Action<SButton> setValue, Func<string> name, Func<string> tooltip = null, string fieldId = null);
+
+        /// <summary>Remove a mod's config UI so it can be rebuilt via <see cref="Register"/> (e.g. to change which pages/options are registered).</summary>
+        /// <param name="mod">The mod's manifest.</param>
+        void Unregister(IManifest mod);
+
+        /// <summary>Open a mod's config UI as a standalone menu, replacing whatever menu is currently open.</summary>
+        /// <param name="mod">The mod's manifest.</param>
+        void OpenModMenu(IManifest mod);
+
+        /// <summary>Get the mod and page currently being shown in GMCM's UI, if any.</summary>
+        /// <param name="mod">The manifest of the mod whose config UI is open, or <c>null</c> if none.</param>
+        /// <param name="page">The current page ID, or <c>null</c> for the mod's root page.</param>
+        /// <returns>Whether a mod config UI is currently open.</returns>
+        bool TryGetCurrentMenu(out IManifest mod, out string page);
     }
 }
