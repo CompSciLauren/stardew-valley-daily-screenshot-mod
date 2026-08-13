@@ -426,6 +426,14 @@ namespace DailyScreenshot
 
                 gmcmApi.AddBoolOption(
                     mod: ModManifest,
+                    getValue: () => m_config.ScreenshotsEnabled,
+                    setValue: (bool val) => m_config.ScreenshotsEnabled = val,
+                    name: I18n.Config_Effects_ScreenshotsEnabled_Title,
+                    tooltip: I18n.Config_Effects_ScreenshotsEnabled_Tooltip
+                );
+
+                gmcmApi.AddBoolOption(
+                    mod: ModManifest,
                     getValue: () => m_config.AuditoryEffects,
                     setValue: (bool val) => m_config.AuditoryEffects = val,
                     name: I18n.Config_Effects_Auditory_Title,
@@ -665,7 +673,7 @@ namespace DailyScreenshot
         /// <param name="key"></param>
         private void RunTriggers(List<ModRule> rules, SButton key = SButton.None)
         {
-            if (!m_shouldProcessRules) {
+            if (!m_shouldProcessRules || !m_config.ScreenshotsEnabled) {
                 return;
             }
             foreach (ModRule rule in rules)
