@@ -56,8 +56,6 @@ namespace DailyScreenshot
         /// </summary>
         private ModConfig m_config;
 
-        private DateFlags staleDays;
-
         /// <summary>
         /// Screenshot countdown ticks (make sure the world is rendered)
         /// </summary>
@@ -518,9 +516,8 @@ namespace DailyScreenshot
                 gmcmApi.AddPageLink(ModManifest, "FileName", I18n.Config_FileName_Header1_Title);
 
                 gmcmApi.AddPageLink(ModManifest, "Days (Seasons and Weekdays)", I18n.Config_Days_Header1_Title);
-                
-                // NOTE on Days of the Monthh Code: <-- Search for this text to see explanation on why this is commented out.
-                // gmcmApi.AddPageLink(ModManifest, "Days (Days of the Month)", () => "Days (Days of the Month)");
+
+                gmcmApi.AddPageLink(ModManifest, "Days (Days of the Month)", I18n.Config_Days_Header2_Title);
 
                 gmcmApi.AddPageLink(ModManifest, "Weather", I18n.Config_Weather_Header_Title);
         
@@ -557,43 +554,38 @@ namespace DailyScreenshot
                 AddDateConditionOption(gmcmApi, DateFlags.Saturdays);
                 AddDateConditionOption(gmcmApi, DateFlags.Sundays);
 
-                // NOTE on Days of the Monthh Code: This code is commented out but not removed because it may or may not
-                // be added soon. It is left out for now due to a bug with updating weekdays
-                // and then clicking more than one time on any save button on the UI.
-                // If users want to modify the config down to the specific days, they will need
-                // to do so from the config.json file directly for now.
-                // gmcmApi.AddPage(ModManifest, "Days (Days of the Month)");
+                gmcmApi.AddPage(ModManifest, "Days (Days of the Month)");
 
-                // gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Days_Header2_Title, I18n.Config_Days_Header2_Tooltip);
+                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Days_Header2_Title, I18n.Config_Days_Header2_Tooltip);
 
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_01);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_02);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_03);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_04);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_05);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_06);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_07);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_08);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_09);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_10);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_11);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_12);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_13);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_14);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_15);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_16);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_17);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_18);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_19);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_20);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_21);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_22);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_23);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_24);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_25);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_26);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_27);
-                // AddDateConditionOption(gmcmApi, DateFlags.Day_28);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_01);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_02);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_03);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_04);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_05);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_06);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_07);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_08);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_09);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_10);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_11);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_12);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_13);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_14);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_15);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_16);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_17);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_18);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_19);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_20);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_21);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_22);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_23);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_24);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_25);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_26);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_27);
+                AddDateConditionOption(gmcmApi, DateFlags.Day_28);
 
                 gmcmApi.AddPage(ModManifest, "Weather");
 
@@ -991,27 +983,6 @@ namespace DailyScreenshot
         }
 
         /// <summary>
-        /// This retrieves the value of the Days triggers in the config *before* it has changed due to UI Config updating.
-        /// If we were to directly check the m_config Days value each time, it would cause undesired behavior
-        /// with which values actually get updated and it will not work as the user intended based on the settings they updated.
-        /// Note: This isn't a great solution and could use refactoring, but it seems to work well enough as a solution for now.
-        /// </summary>
-        /// <param name="currentDateFlag">The current date flag potentially being updated</param>
-        /// <returns></returns>
-        DateFlags getCurrentDaysPriorToUpdate(DateFlags currentDateFlag)
-        {
-            // the first date flag that gets updated each time
-            if (currentDateFlag == DateFlags.Spring)
-            {
-                staleDays = m_config.SnapshotRules[0].Trigger.Days;
-                return staleDays;
-            }
-
-            // otherwise must be one of the DateFlags in-between first and last
-            return staleDays;
-        }
-
-        /// <summary>
         /// Adds a Date condition to the Config.
         /// </summary>
         /// <param name="api">The GenericModConfigMenu API</param>
@@ -1021,12 +992,7 @@ namespace DailyScreenshot
             api.AddBoolOption(
                 mod: ModManifest,
                 getValue: () => ModConfigHelper.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, dateFlag),
-                setValue: (bool val) => {
-                    if (!ModConfigHelper.IsDateConditionAlreadySet(getCurrentDaysPriorToUpdate(dateFlag), dateFlag, val))
-                    {
-                       m_config.SnapshotRules[0].Trigger.Days = ModConfigHelper.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, dateFlag, val);
-                    }
-                },
+                setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigHelper.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, dateFlag, val),
                 name: () => Helper.Translation.Get($"Config.Days.{dateFlag}.Title"),
                 tooltip: () => Helper.Translation.Get($"Config.Days.{dateFlag}.Tooltip")
             );
