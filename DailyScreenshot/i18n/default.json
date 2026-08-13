@@ -7,6 +7,8 @@
   "Config.About.Description_3": "To configure more than 1 set of snapshot rules, you must edit the config.json file located in your Mods folder.",
   "Config.Effects.Header.title": "Global Settings",
   "Config.Effects.Header.tooltip": "Settings that apply to all sets of snapshot rules.",
+  "Config.Effects.ScreenshotsEnabled.title": "Enable Screenshots",
+  "Config.Effects.ScreenshotsEnabled.tooltip": "Toggles whether DailyScreenshot takes any screenshots at all. When turned off, no screenshots will be taken by this mod regardless of what the SnapshotRules are set to do. Does not affect the vanilla in-game screenshot button.",
   "Config.Effects.Auditory.title": "Auditory Effects",
   "Config.Effects.Auditory.tooltip": "Toggles if a camera sound plays whenever a screenshot is taken.",
   "Config.Effects.Visual.title": "Visual Effects",

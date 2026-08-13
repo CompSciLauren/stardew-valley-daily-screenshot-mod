@@ -65,6 +65,13 @@ namespace DailyScreenshot
         public const int DEFAULT_END_TIME = 2600;
 
         /// <summary>
+        /// Configurable toggle to disable all screenshots taken by the mod,
+        /// regardless of what the SnapshotRules are set to do.
+        /// Does not affect the vanilla in-game screenshot button.
+        /// </summary>
+        public bool ScreenshotsEnabled = true;
+
+        /// <summary>
         /// Configurable toggle for auditory effects when taking screenshot.
         /// </summary>
         public bool AuditoryEffects = true;
@@ -136,6 +143,7 @@ namespace DailyScreenshot
         public void Reset()
         {
             // global settings
+            ScreenshotsEnabled = true;
             AuditoryEffects = true;
             VisualEffects = true;
             ScreenshotNotifications = true;

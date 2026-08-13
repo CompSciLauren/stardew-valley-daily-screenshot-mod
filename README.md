@@ -53,6 +53,7 @@ You can add as many rules as you would like. You can configure multiple differen
 
 ``` json
 {
+  "ScreenshotsEnabled": true,
   "AuditoryEffects": true,
   "VisualEffects": true,
   "ScreenshotNotifications": true,
@@ -100,6 +101,7 @@ Triggers are things that must happen for a screenshot to take place. All of the 
 <!-- markdownlint-disable MD033 -->
 | Setting | Description | Type | Default Setting |
 | --------|------- | -------- | -------- |
+| ScreenshotsEnabled | Global setting (applies to all screenshots). Whether DailyScreenshot takes any screenshots at all. When set to false, no screenshots will be taken regardless of what the SnapshotRules are set to do. Does not affect the vanilla in-game screenshot button. | bool | true |
 | AuditoryEffects | Global setting (applies to all screenshots). Whether a camera sound plays whenever a screenshot is taken. | bool | true |
 | VisualEffects |  Global setting (applies to all screenshots). Whether the screen flashes whenever a screenshot is taken. | bool | true |
 | ScreenshotNotifications | Global setting (applies to all screenshots). Whether a notification is displayed whenever a screenshot is taken. | bool | true |
