@@ -268,44 +268,11 @@ namespace DailyScreenshot
         /// <returns>True if the filenames can overlap</returns>
         internal bool FileNamesCanOverlap(ModRule other)
         {
-            if (FileNameFlags.None != (this.FileName & FileNameFlags.UniqueID))
-                return false;
-            if (FileNameFlags.None != (other.FileName & FileNameFlags.UniqueID))
-                return false;
-            if (this.FileName != other.FileName)
-                return false;
-            if (Path.GetFullPath(this.Directory) != Path.GetFullPath(other.Directory))
-                return false;
-            if (FileNameFlags.None != (FileNameFlags.Weather & FileName))
-            {
-                if (ModTrigger.WeatherFlags.Weather_None == (
-                    this.Trigger.Weather & other.Trigger.Weather))
-                    return false;
-            }
-            if (FileNameFlags.None != (FileNameFlags.Location & FileName))
-            {
-                if (ModTrigger.LocationFlags.Location_None == (
-                    this.Trigger.Location & other.Trigger.Location))
-                    return false;
-            }
-            if (FileNameFlags.None != (FileNameFlags.Time & FileName))
-            {
-                if (!this.Trigger.CheckTime(other.Trigger.StartTime) &&
-                    !this.Trigger.CheckTime(other.Trigger.EndTime) &&
-                    !other.Trigger.CheckTime(this.Trigger.StartTime) &&
-                    !other.Trigger.CheckTime(this.Trigger.EndTime))
-                    return false;
-            }
-            if (FileNameFlags.None != (FileNameFlags.Date & FileName))
-            {
-                if (ModTrigger.DateFlags.Day_None == (ModTrigger.DateFlags.AnyDay &
-                        (this.Trigger.Days & other.Trigger.Days)))
-                    return false;
-                if (ModTrigger.DateFlags.Day_None == (ModTrigger.DateFlags.AnySeason &
-                        (this.Trigger.Days & other.Trigger.Days)))
-                    return false;
-            }
-            return true;
+            return ModConfigHelper.FileNamesCanOverlap(
+                new ModConfigHelper.FileNameOverlapInfo(
+                    FileName, Directory, Trigger.Weather, Trigger.Location, Trigger.StartTime, Trigger.EndTime, Trigger.Days),
+                new ModConfigHelper.FileNameOverlapInfo(
+                    other.FileName, other.Directory, other.Trigger.Weather, other.Trigger.Location, other.Trigger.StartTime, other.Trigger.EndTime, other.Trigger.Days));
         }
 
         /// <summary>
@@ -314,9 +281,7 @@ namespace DailyScreenshot
         /// <returns>true if files cannot collide</returns>
         internal bool IsEachShotUnique()
         {
-            if (FileNameFlags.UniqueID == (FileName & FileNameFlags.UniqueID))
-                return true;
-            return FileNameFlags.None == FileName;
+            return ModConfigHelper.IsEachShotUnique(FileName);
         }
 
         // Add sort order so rules that move files go first
@@ -332,17 +297,7 @@ namespace DailyScreenshot
             if (obj == null) return 1;
 
             if (obj is ModRule otherRule)
-            {
-                if (ModConfig.DEFAULT_STRING != Directory)
-                {
-                    if (ModConfig.DEFAULT_STRING != otherRule.Directory)
-                        return 0;
-                    return -1;
-                }
-                if (ModConfig.DEFAULT_STRING != otherRule.Directory)
-                    return 1;
-                return 0;
-            }
+                return ModConfigHelper.CompareRuleDirectory(Directory, otherRule.Directory, ModConfig.DEFAULT_STRING);
             else
                 throw new ArgumentException("Object is not a ModRule");
         }

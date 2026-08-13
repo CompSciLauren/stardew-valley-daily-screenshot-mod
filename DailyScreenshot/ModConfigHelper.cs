@@ -1,3 +1,4 @@
+using System.IO;
 using static DailyScreenshot.ModTrigger;
 
 namespace DailyScreenshot
@@ -168,6 +169,133 @@ namespace DailyScreenshot
             }
 
             return fileName;
+        }
+
+        /// <summary>
+        /// Says whether a rule with the given directory should sort before,
+        /// after, or the same as another rule based on the "moves files"
+        /// heuristic: rules with a non-default directory go first so their
+        /// files exist before a same-named default-directory rule runs.
+        /// </summary>
+        /// <param name="directory">Directory of the rule being placed</param>
+        /// <param name="otherDirectory">Directory of the rule being compared against</param>
+        /// <param name="defaultDirectory">Sentinel value meaning "use the default directory" (ModConfig.DEFAULT_STRING)</param>
+        /// <returns>-1, 0 or 1, following the IComparable convention</returns>
+        public static int CompareRuleDirectory(string directory, string otherDirectory, string defaultDirectory)
+        {
+            if (defaultDirectory != directory)
+            {
+                if (defaultDirectory != otherDirectory)
+                    return 0;
+                return -1;
+            }
+            if (defaultDirectory != otherDirectory)
+                return 1;
+            return 0;
+        }
+
+        /// <summary>
+        /// Checks if every screenshot taken under this FileName configuration
+        /// is guaranteed to have a unique name.
+        /// </summary>
+        /// <param name="fileName">FileNameFlags to check</param>
+        /// <returns>true if files cannot collide</returns>
+        public static bool IsEachShotUnique(ModRule.FileNameFlags fileName)
+        {
+            if (ModRule.FileNameFlags.UniqueID == (fileName & ModRule.FileNameFlags.UniqueID))
+                return true;
+            return ModRule.FileNameFlags.None == fileName;
+        }
+
+        /// <summary>
+        /// Checks whether a time of day falls within the inclusive range
+        /// [startTime, endTime].
+        /// </summary>
+        /// <param name="startTime">Start of the range</param>
+        /// <param name="endTime">End of the range</param>
+        /// <param name="time">Time to check</param>
+        /// <returns>true if time is contained by the range</returns>
+        public static bool CheckTime(int startTime, int endTime, int time)
+        {
+            return time >= startTime && time <= endTime;
+        }
+
+        /// <summary>
+        /// Info about a rule's filename-affecting settings, used to check for
+        /// overlapping filenames between two rules without needing a live
+        /// ModRule/ModTrigger instance.
+        /// </summary>
+        public readonly struct FileNameOverlapInfo
+        {
+            public ModRule.FileNameFlags FileName { get; }
+            public string Directory { get; }
+            public WeatherFlags Weather { get; }
+            public LocationFlags Location { get; }
+            public int StartTime { get; }
+            public int EndTime { get; }
+            public DateFlags Days { get; }
+
+            public FileNameOverlapInfo(
+                ModRule.FileNameFlags fileName,
+                string directory,
+                WeatherFlags weather,
+                LocationFlags location,
+                int startTime,
+                int endTime,
+                DateFlags days)
+            {
+                FileName = fileName;
+                Directory = directory;
+                Weather = weather;
+                Location = location;
+                StartTime = startTime;
+                EndTime = endTime;
+                Days = days;
+            }
+        }
+
+        /// <summary>
+        /// Returns true if two rules can have overlapping filenames.
+        /// </summary>
+        /// <param name="rule">Info for the first rule</param>
+        /// <param name="other">Info for the rule to compare against</param>
+        /// <returns>True if the filenames can overlap</returns>
+        public static bool FileNamesCanOverlap(FileNameOverlapInfo rule, FileNameOverlapInfo other)
+        {
+            if (ModRule.FileNameFlags.None != (rule.FileName & ModRule.FileNameFlags.UniqueID))
+                return false;
+            if (ModRule.FileNameFlags.None != (other.FileName & ModRule.FileNameFlags.UniqueID))
+                return false;
+            if (rule.FileName != other.FileName)
+                return false;
+            if (Path.GetFullPath(rule.Directory) != Path.GetFullPath(other.Directory))
+                return false;
+            if (ModRule.FileNameFlags.None != (ModRule.FileNameFlags.Weather & rule.FileName))
+            {
+                if (WeatherFlags.Weather_None == (rule.Weather & other.Weather))
+                    return false;
+            }
+            if (ModRule.FileNameFlags.None != (ModRule.FileNameFlags.Location & rule.FileName))
+            {
+                if (LocationFlags.Location_None == (rule.Location & other.Location))
+                    return false;
+            }
+            if (ModRule.FileNameFlags.None != (ModRule.FileNameFlags.Time & rule.FileName))
+            {
+                if (!CheckTime(rule.StartTime, rule.EndTime, other.StartTime) &&
+                    !CheckTime(rule.StartTime, rule.EndTime, other.EndTime) &&
+                    !CheckTime(other.StartTime, other.EndTime, rule.StartTime) &&
+                    !CheckTime(other.StartTime, other.EndTime, rule.EndTime))
+                    return false;
+            }
+            if (ModRule.FileNameFlags.None != (ModRule.FileNameFlags.Date & rule.FileName))
+            {
+                if (DateFlags.Day_None == (DateFlags.AnyDay & (rule.Days & other.Days)))
+                    return false;
+                if (DateFlags.Day_None == (DateFlags.AnySeason & (rule.Days & other.Days)))
+                    return false;
+            }
+            return true;
         }
     }
 
