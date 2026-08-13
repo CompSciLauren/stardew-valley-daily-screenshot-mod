@@ -347,7 +347,7 @@ namespace DailyScreenshot
         internal bool CheckTime(int time)
         {
             //MTrace($"Is {time} <= {EndTime} and {time} >= {StartTime} ");
-            return time >= StartTime && time <= EndTime;
+            return ModConfigHelper.CheckTime(StartTime, EndTime, time);
         }
 
         /// <summary>
