@@ -10,7 +10,13 @@ See the [how_to_test.md](./warning_test_files/how_to_test.md) guide for how to u
 
 ## Unit Tests
 
-It would be nice to have unit tests and these will hopefully be added in the future, but this is not available yet.
+The `DailyScreenshotTest` project has unit tests for the pure logic in `ModConfigHelper` (flag checks/updates, rule directory ordering, filename-overlap detection, time-range checks). Run them from the repo root with:
+
+``` bash
+dotnet test DailyScreenshotTest/DailyScreenshotTest.csproj
+```
+
+Note: these tests are limited to logic that doesn't touch `Game1` or the mod's logger, since those require a running game/SMAPI instance. Anything that does (triggers, warnings, in-game behavior) still needs the manual testing below.
 
 ## Manual In-Game Testing
 
