@@ -57,6 +57,22 @@ namespace DailyScreenshot
         private ModConfig m_config;
 
         /// <summary>
+        /// The Generic Mod Config Menu API, kept so the config menu can be
+        /// rebuilt after a snapshot rule is added or removed.
+        /// </summary>
+        private GenericModConfigMenuAPI m_gmcmApi;
+
+        /// <summary>
+        /// Changes to <see cref="ModConfig.SnapshotRules"/> requested via the
+        /// Add/Remove Rule config buttons, queued up to run after the current
+        /// tick instead of immediately. GMCM's Save button flushes every
+        /// registered option's setValue callback in one pass, so mutating the
+        /// rule list from inside one of those callbacks would shift the
+        /// indices other, not-yet-run callbacks in that same pass still expect.
+        /// </summary>
+        private readonly List<Action> m_pendingConfigMenuChanges = new();
+
+        /// <summary>
         /// Screenshot countdown ticks (make sure the world is rendered)
         /// </summary>
         int m_ssCntDwnTicks = 0;
@@ -402,227 +418,381 @@ namespace DailyScreenshot
                 return;
             }
 
-            var gmcmApi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
-            if (gmcmApi != null)
+            m_gmcmApi = Helper.ModRegistry.GetApi<GenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            if (m_gmcmApi != null)
             {
                 if (m_config.SnapshotRules.Count == 0)
                 {
                     m_config.Reset();
                 }
 
-                gmcmApi.Register(ModManifest, m_config.Reset, () => Helper.WriteConfig(m_config));
-
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_About_Header_Title);
-
-                gmcmApi.AddParagraph(ModManifest, I18n.Config_About_Description1);
-
-                gmcmApi.AddParagraph(ModManifest, I18n.Config_About_Description2);
-
-                gmcmApi.AddParagraph(ModManifest, I18n.Config_About_Description3);
-
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Effects_Header_Title, I18n.Config_Effects_Header_Tooltip);
-
-                gmcmApi.AddBoolOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.ScreenshotsEnabled,
-                    setValue: (bool val) => m_config.ScreenshotsEnabled = val,
-                    name: I18n.Config_Effects_ScreenshotsEnabled_Title,
-                    tooltip: I18n.Config_Effects_ScreenshotsEnabled_Tooltip
-                );
-
-                gmcmApi.AddBoolOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.AuditoryEffects,
-                    setValue: (bool val) => m_config.AuditoryEffects = val,
-                    name: I18n.Config_Effects_Auditory_Title,
-                    tooltip: I18n.Config_Effects_Auditory_Tooltip
-                );
-
-                gmcmApi.AddBoolOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.VisualEffects,
-                    setValue: (bool val) => m_config.VisualEffects = val,
-                    name: I18n.Config_Effects_Visual_Title,
-                    tooltip: I18n.Config_Effects_Visual_Tooltip
-                );
-
-                gmcmApi.AddBoolOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.ScreenshotNotifications,
-                    setValue: (bool val) => m_config.ScreenshotNotifications = val,
-                    name: I18n.Config_Effects_Notification_Title,
-                    tooltip: I18n.Config_Effects_Notification_Tooltip
-                );
-
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_MainSettings_Header_Title, I18n.Config_MainSettings_Header_Tooltip);
-
-                gmcmApi.AddTextOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.SnapshotRules[0].Name,
-                    setValue: (string val) => m_config.SnapshotRules[0].Name = val,
-                    name: I18n.Config_MainSettings_SnapshotRuleName_Title,
-                    tooltip: I18n.Config_MainSettings_SnapshotRuleName_Tooltip
-                );
-
-                gmcmApi.AddNumberOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.SnapshotRules[0].ZoomLevel,
-                    setValue: (float val) => m_config.SnapshotRules[0].ZoomLevel = val,
-                    name: I18n.Config_MainSettings_ZoomLevel_Title,
-                    tooltip: I18n.Config_MainSettings_ZoomLevel_Tooltip,
-                    min: 0.01f,
-                    max: 1,
-                    interval: 0.01f
-                );
-
-                gmcmApi.AddTextOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.SnapshotRules[0].Directory,
-                    setValue: (string val) => m_config.SnapshotRules[0].Directory = val,
-                    name: I18n.Config_MainSettings_SnapshotDirectory_Title,
-                    tooltip: I18n.Config_MainSettings_SnapshotDirectory_Tooltip
-                );
-
-                gmcmApi.AddKeybind(
-                    ModManifest,
-                    getValue: () => m_config.SnapshotRules[0].Trigger.Key,
-                    setValue: (SButton val) => m_config.SnapshotRules[0].Trigger.Key = val,
-                    name: I18n.Config_MainSettings_ShortcutKey_Title,
-                    tooltip: I18n.Config_MainSettings_ShortcutKey_Tooltip
-                );
-
-                gmcmApi.AddNumberOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.SnapshotRules[0].Trigger.StartTime,
-                    setValue: (int val) => m_config.SnapshotRules[0].Trigger.StartTime = val,
-                    name: I18n.Config_MainSettings_StartTime_Title,
-                    tooltip: I18n.Config_MainSettings_StartTime_Tooltip,
-                    min: 600,
-                    max: 2590,
-                    interval: 10
-                );
-
-                gmcmApi.AddNumberOption(
-                    mod: ModManifest,
-                    getValue: () => m_config.SnapshotRules[0].Trigger.EndTime,
-                    setValue: (int val) => m_config.SnapshotRules[0].Trigger.EndTime = val,
-                    name: I18n.Config_MainSettings_EndTime_Title,
-                    tooltip: I18n.Config_MainSettings_EndTime_Tooltip,
-                    min: 610,
-                    max: 2600,
-                    interval: 10
-                );
-
-                gmcmApi.AddPageLink(ModManifest, "FileName", I18n.Config_FileName_Header1_Title);
-
-                gmcmApi.AddPageLink(ModManifest, "Days (Seasons and Weekdays)", I18n.Config_Days_Header1_Title);
-
-                gmcmApi.AddPageLink(ModManifest, "Days (Days of the Month)", I18n.Config_Days_Header2_Title);
-
-                gmcmApi.AddPageLink(ModManifest, "Weather", I18n.Config_Weather_Header_Title);
-        
-                gmcmApi.AddPageLink(ModManifest, "Location", I18n.Config_Location_Header_Title);
-
-                gmcmApi.AddPage(ModManifest, "FileName");
-
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_FileNameParts_Header1_Title, I18n.Config_FileNameParts_Header1_Tooltip);
-
-                AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.Date);
-                AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.FarmName);
-                AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.GameID);
-                AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.Location);
-                AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.Weather);
-                AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.PlayerName);
-                AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.Time);
-                AddNameConditionOption(gmcmApi, ModRule.FileNameFlags.UniqueID);
-
-                gmcmApi.AddPage(ModManifest, "Days (Seasons and Weekdays)");
-
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Days_Header1_Title, I18n.Config_Days_Header1_Tooltip);
-
-                gmcmApi.AddParagraph(ModManifest, I18n.Config_Days_Header1_Description);
-
-                AddDateConditionOption(gmcmApi, DateFlags.Spring);
-                AddDateConditionOption(gmcmApi, DateFlags.Summer);
-                AddDateConditionOption(gmcmApi, DateFlags.Fall);
-                AddDateConditionOption(gmcmApi, DateFlags.Winter);
-                AddDateConditionOption(gmcmApi, DateFlags.Mondays);
-                AddDateConditionOption(gmcmApi, DateFlags.Tuesdays);
-                AddDateConditionOption(gmcmApi, DateFlags.Wednesdays);
-                AddDateConditionOption(gmcmApi, DateFlags.Thursdays);
-                AddDateConditionOption(gmcmApi, DateFlags.Fridays);
-                AddDateConditionOption(gmcmApi, DateFlags.Saturdays);
-                AddDateConditionOption(gmcmApi, DateFlags.Sundays);
-
-                gmcmApi.AddPage(ModManifest, "Days (Days of the Month)");
-
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Days_Header2_Title, I18n.Config_Days_Header2_Tooltip);
-
-                AddDateConditionOption(gmcmApi, DateFlags.Day_01);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_02);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_03);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_04);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_05);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_06);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_07);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_08);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_09);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_10);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_11);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_12);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_13);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_14);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_15);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_16);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_17);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_18);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_19);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_20);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_21);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_22);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_23);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_24);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_25);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_26);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_27);
-                AddDateConditionOption(gmcmApi, DateFlags.Day_28);
-
-                gmcmApi.AddPage(ModManifest, "Weather");
-
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Weather_Header_Title, I18n.Config_Weather_Header_Tooltip);
-
-                AddWeatherConditionOption(gmcmApi, WeatherFlags.Sunny);
-                AddWeatherConditionOption(gmcmApi, WeatherFlags.Rainy);
-                AddWeatherConditionOption(gmcmApi, WeatherFlags.Windy);
-                AddWeatherConditionOption(gmcmApi, WeatherFlags.Stormy);
-                AddWeatherConditionOption(gmcmApi, WeatherFlags.Snowy);
-
-                gmcmApi.AddPage(ModManifest, "Location");
-
-                gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Location_Header_Title, I18n.Config_Location_Header_Tooltip);
-                gmcmApi.AddParagraph(ModManifest, I18n.Config_Location_Description);
-                gmcmApi.AddParagraph(ModManifest, I18n.Config_Location_Description2);
-                
-                AddLocationConditionOption(gmcmApi, LocationFlags.Farm);
-                AddLocationConditionOption(gmcmApi, LocationFlags.Farmhouse);
-                AddLocationConditionOption(gmcmApi, LocationFlags.GreenHouse);
-                AddLocationConditionOption(gmcmApi, LocationFlags.FarmCave);
-                AddLocationConditionOption(gmcmApi, LocationFlags.Cellar);
-                AddLocationConditionOption(gmcmApi, LocationFlags.Beach);
-                AddLocationConditionOption(gmcmApi, LocationFlags.Desert);
-                AddLocationConditionOption(gmcmApi, LocationFlags.Museum);
-                AddLocationConditionOption(gmcmApi, LocationFlags.CommunityCenter);
-                AddLocationConditionOption(gmcmApi, LocationFlags.Town);
-                AddLocationConditionOption(gmcmApi, LocationFlags.Mountain);
-                AddLocationConditionOption(gmcmApi, LocationFlags.Mine);
-                AddLocationConditionOption(gmcmApi, LocationFlags.MineShaft);
-                AddLocationConditionOption(gmcmApi, LocationFlags.IslandWest);
-                AddLocationConditionOption(gmcmApi, LocationFlags.IslandFarmhouse);
-                AddLocationConditionOption(gmcmApi, LocationFlags.IslandFieldOffice);
-                AddLocationConditionOption(gmcmApi, LocationFlags.Unknown);
+                BuildConfigMenu();
 
                 MInfo("Added \"DailyScreenshot\" config menu with \"Generic Mod Config Menu\".");
             }
+        }
+
+        /// <summary>
+        /// Builds the "DailyScreenshot" config menu using the Generic Mod Config
+        /// Menu API stored in <see cref="m_gmcmApi"/>. Adds a page for every rule
+        /// currently in <c>m_config.SnapshotRules</c>, plus a way to add new ones.
+        ///
+        /// Called once when the game launches, and again (via <see cref="RebuildConfigMenu"/>)
+        /// whenever a rule is added or removed, since the set of pages needs to change.
+        /// </summary>
+        private void BuildConfigMenu()
+        {
+            GenericModConfigMenuAPI gmcmApi = m_gmcmApi;
+
+            gmcmApi.Register(ModManifest, m_config.Reset, () => Helper.WriteConfig(m_config));
+
+            gmcmApi.AddSectionTitle(ModManifest, I18n.Config_About_Header_Title);
+
+            gmcmApi.AddParagraph(ModManifest, I18n.Config_About_Description1);
+
+            gmcmApi.AddParagraph(ModManifest, I18n.Config_About_Description2);
+
+            gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Effects_Header_Title, I18n.Config_Effects_Header_Tooltip);
+
+            gmcmApi.AddBoolOption(
+                mod: ModManifest,
+                getValue: () => m_config.ScreenshotsEnabled,
+                setValue: (bool val) => m_config.ScreenshotsEnabled = val,
+                name: I18n.Config_Effects_ScreenshotsEnabled_Title,
+                tooltip: I18n.Config_Effects_ScreenshotsEnabled_Tooltip
+            );
+
+            gmcmApi.AddBoolOption(
+                mod: ModManifest,
+                getValue: () => m_config.AuditoryEffects,
+                setValue: (bool val) => m_config.AuditoryEffects = val,
+                name: I18n.Config_Effects_Auditory_Title,
+                tooltip: I18n.Config_Effects_Auditory_Tooltip
+            );
+
+            gmcmApi.AddBoolOption(
+                mod: ModManifest,
+                getValue: () => m_config.VisualEffects,
+                setValue: (bool val) => m_config.VisualEffects = val,
+                name: I18n.Config_Effects_Visual_Title,
+                tooltip: I18n.Config_Effects_Visual_Tooltip
+            );
+
+            gmcmApi.AddBoolOption(
+                mod: ModManifest,
+                getValue: () => m_config.ScreenshotNotifications,
+                setValue: (bool val) => m_config.ScreenshotNotifications = val,
+                name: I18n.Config_Effects_Notification_Title,
+                tooltip: I18n.Config_Effects_Notification_Tooltip
+            );
+
+            gmcmApi.AddSectionTitle(ModManifest, I18n.Config_Rules_Header_Title, I18n.Config_Rules_Header_Tooltip);
+
+            gmcmApi.AddParagraph(ModManifest, I18n.Config_Rules_Header_Description);
+
+            for (int i = 0; i < m_config.SnapshotRules.Count; i++)
+            {
+                ModRule rule = m_config.SnapshotRules[i];
+                gmcmApi.AddPageLink(ModManifest, RulePageId(i), () => rule.Name);
+            }
+
+            gmcmApi.AddBoolOption(
+                mod: ModManifest,
+                getValue: () => false,
+                setValue: (bool val) =>
+                {
+                    if (val)
+                    {
+                        ScheduleConfigMenuChange(() =>
+                        {
+                            ModRule newRule = ModConfig.CreateDefaultSnapshotRule();
+                            newRule.Name = $"Unnamed Rule {m_config.SnapshotRules.Count + 1}";
+                            m_config.SnapshotRules.Add(newRule);
+                        });
+                    }
+                },
+                name: I18n.Config_Rules_AddRule_Title,
+                tooltip: I18n.Config_Rules_AddRule_Tooltip
+            );
+
+            for (int i = 0; i < m_config.SnapshotRules.Count; i++)
+            {
+                AddRulePages(gmcmApi, i);
+            }
+        }
+
+        /// <summary>
+        /// Unregisters and rebuilds the config menu. Needed after a snapshot
+        /// rule is added or removed, since GMCM's registered pages/options
+        /// can't be changed in place, only replaced wholesale.
+        /// </summary>
+        private void RebuildConfigMenu()
+        {
+            m_gmcmApi.Unregister(ModManifest);
+            BuildConfigMenu();
+        }
+
+        /// <summary>
+        /// Queues a change to <see cref="ModConfig.SnapshotRules"/> (adding or
+        /// removing a rule) to run on the next tick, then rebuilds the config
+        /// menu. See <see cref="m_pendingConfigMenuChanges"/> for why this
+        /// can't happen immediately.
+        /// </summary>
+        /// <param name="change">The change to make to <c>m_config.SnapshotRules</c>.</param>
+        private void ScheduleConfigMenuChange(Action change)
+        {
+            m_pendingConfigMenuChanges.Add(change);
+            if (m_pendingConfigMenuChanges.Count == 1)
+                Helper.Events.GameLoop.UpdateTicked += ApplyPendingConfigMenuChanges;
+        }
+
+        /// <summary>Applies queued rule list changes and rebuilds the config menu.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event data.</param>
+        private void ApplyPendingConfigMenuChanges(object sender, UpdateTickedEventArgs e)
+        {
+            Helper.Events.GameLoop.UpdateTicked -= ApplyPendingConfigMenuChanges;
+
+            foreach (Action change in m_pendingConfigMenuChanges)
+                change();
+            m_pendingConfigMenuChanges.Clear();
+
+            RebuildConfigMenu();
+
+            // GMCM already wrote m_config to disk during Save, before the change above
+            // was applied, so that write missed it. Save again so it isn't lost.
+            Helper.WriteConfig(m_config);
+
+            // If our config UI is still open (the player clicked Save, not Save & Close),
+            // replace it with a fresh menu bound to the rebuilt rule list so the
+            // added/removed rule shows up immediately instead of only after reopening.
+            if (m_gmcmApi.TryGetCurrentMenu(out IManifest currentMenuMod, out _) && currentMenuMod?.UniqueID == ModManifest.UniqueID)
+            {
+                m_gmcmApi.OpenModMenu(ModManifest);
+            }
+        }
+
+        /// <summary>GMCM page ID for a rule's main settings page.</summary>
+        private static string RulePageId(int ruleIndex) => $"Rule_{ruleIndex}";
+
+        /// <summary>GMCM page ID for a rule's FileName conditions page.</summary>
+        private static string FileNamePageId(int ruleIndex) => $"FileName_{ruleIndex}";
+
+        /// <summary>GMCM page ID for a rule's Days (Seasons and Weekdays) conditions page.</summary>
+        private static string Days1PageId(int ruleIndex) => $"Days1_{ruleIndex}";
+
+        /// <summary>GMCM page ID for a rule's Days (Days of the Month) conditions page.</summary>
+        private static string Days2PageId(int ruleIndex) => $"Days2_{ruleIndex}";
+
+        /// <summary>GMCM page ID for a rule's Weather conditions page.</summary>
+        private static string WeatherPageId(int ruleIndex) => $"Weather_{ruleIndex}";
+
+        /// <summary>GMCM page ID for a rule's Location conditions page.</summary>
+        private static string LocationPageId(int ruleIndex) => $"Location_{ruleIndex}";
+
+        /// <summary>
+        /// Adds the settings page for a single snapshot rule, along with its
+        /// FileName/Days/Weather/Location condition subpages.
+        /// </summary>
+        /// <param name="api">The GenericModConfigMenu API</param>
+        /// <param name="ruleIndex">Index of the rule in m_config.SnapshotRules</param>
+        private void AddRulePages(GenericModConfigMenuAPI api, int ruleIndex)
+        {
+            // Every closure below binds to this specific ModRule object rather than
+            // re-deriving it from m_config.SnapshotRules[ruleIndex] on each call. An
+            // already-open menu's widgets outlive RebuildConfigMenu(), so an index
+            // lookup here would silently start reading/writing a different rule once
+            // another rule is added or removed and the list shifts.
+            ModRule rule = m_config.SnapshotRules[ruleIndex];
+
+            api.AddPage(ModManifest, RulePageId(ruleIndex), () => rule.Name);
+
+            api.AddSectionTitle(ModManifest, I18n.Config_MainSettings_Header_Title, I18n.Config_MainSettings_Header_Tooltip);
+
+            api.AddTextOption(
+                mod: ModManifest,
+                getValue: () => rule.Name,
+                setValue: (string val) => rule.Name = val,
+                name: I18n.Config_MainSettings_SnapshotRuleName_Title,
+                tooltip: I18n.Config_MainSettings_SnapshotRuleName_Tooltip
+            );
+
+            api.AddNumberOption(
+                mod: ModManifest,
+                getValue: () => rule.ZoomLevel,
+                setValue: (float val) => rule.ZoomLevel = val,
+                name: I18n.Config_MainSettings_ZoomLevel_Title,
+                tooltip: I18n.Config_MainSettings_ZoomLevel_Tooltip,
+                min: 0.01f,
+                max: 1,
+                interval: 0.01f
+            );
+
+            api.AddTextOption(
+                mod: ModManifest,
+                getValue: () => rule.Directory,
+                setValue: (string val) => rule.Directory = val,
+                name: I18n.Config_MainSettings_SnapshotDirectory_Title,
+                tooltip: I18n.Config_MainSettings_SnapshotDirectory_Tooltip
+            );
+
+            api.AddKeybind(
+                ModManifest,
+                getValue: () => rule.Trigger.Key,
+                setValue: (SButton val) => rule.Trigger.Key = val,
+                name: I18n.Config_MainSettings_ShortcutKey_Title,
+                tooltip: I18n.Config_MainSettings_ShortcutKey_Tooltip
+            );
+
+            api.AddNumberOption(
+                mod: ModManifest,
+                getValue: () => rule.Trigger.StartTime,
+                setValue: (int val) => rule.Trigger.StartTime = val,
+                name: I18n.Config_MainSettings_StartTime_Title,
+                tooltip: I18n.Config_MainSettings_StartTime_Tooltip,
+                min: 600,
+                max: 2590,
+                interval: 10
+            );
+
+            api.AddNumberOption(
+                mod: ModManifest,
+                getValue: () => rule.Trigger.EndTime,
+                setValue: (int val) => rule.Trigger.EndTime = val,
+                name: I18n.Config_MainSettings_EndTime_Title,
+                tooltip: I18n.Config_MainSettings_EndTime_Tooltip,
+                min: 610,
+                max: 2600,
+                interval: 10
+            );
+
+            api.AddPageLink(ModManifest, FileNamePageId(ruleIndex), I18n.Config_FileName_Header1_Title);
+
+            api.AddPageLink(ModManifest, Days1PageId(ruleIndex), I18n.Config_Days_Header1_Title);
+
+            api.AddPageLink(ModManifest, Days2PageId(ruleIndex), I18n.Config_Days_Header2_Title);
+
+            api.AddPageLink(ModManifest, WeatherPageId(ruleIndex), I18n.Config_Weather_Header_Title);
+
+            api.AddPageLink(ModManifest, LocationPageId(ruleIndex), I18n.Config_Location_Header_Title);
+
+            api.AddBoolOption(
+                mod: ModManifest,
+                getValue: () => false,
+                setValue: (bool val) =>
+                {
+                    if (val)
+                    {
+                        ScheduleConfigMenuChange(() =>
+                        {
+                            if (m_config.SnapshotRules.Count > 1)
+                                m_config.SnapshotRules.Remove(rule);
+                        });
+                    }
+                },
+                name: I18n.Config_Rules_RemoveRule_Title,
+                tooltip: () => m_config.SnapshotRules.Count > 1
+                    ? I18n.Config_Rules_RemoveRule_Tooltip()
+                    : I18n.Config_Rules_RemoveRuleDisabled_Tooltip()
+            );
+
+            api.AddPage(ModManifest, FileNamePageId(ruleIndex));
+
+            api.AddSectionTitle(ModManifest, I18n.Config_FileNameParts_Header1_Title, I18n.Config_FileNameParts_Header1_Tooltip);
+
+            AddNameConditionOption(api, rule, ModRule.FileNameFlags.Date);
+            AddNameConditionOption(api, rule, ModRule.FileNameFlags.FarmName);
+            AddNameConditionOption(api, rule, ModRule.FileNameFlags.GameID);
+            AddNameConditionOption(api, rule, ModRule.FileNameFlags.Location);
+            AddNameConditionOption(api, rule, ModRule.FileNameFlags.Weather);
+            AddNameConditionOption(api, rule, ModRule.FileNameFlags.PlayerName);
+            AddNameConditionOption(api, rule, ModRule.FileNameFlags.Time);
+            AddNameConditionOption(api, rule, ModRule.FileNameFlags.UniqueID);
+
+            api.AddPage(ModManifest, Days1PageId(ruleIndex));
+
+            api.AddSectionTitle(ModManifest, I18n.Config_Days_Header1_Title, I18n.Config_Days_Header1_Tooltip);
+
+            api.AddParagraph(ModManifest, I18n.Config_Days_Header1_Description);
+
+            AddDateConditionOption(api, rule, DateFlags.Spring);
+            AddDateConditionOption(api, rule, DateFlags.Summer);
+            AddDateConditionOption(api, rule, DateFlags.Fall);
+            AddDateConditionOption(api, rule, DateFlags.Winter);
+            AddDateConditionOption(api, rule, DateFlags.Mondays);
+            AddDateConditionOption(api, rule, DateFlags.Tuesdays);
+            AddDateConditionOption(api, rule, DateFlags.Wednesdays);
+            AddDateConditionOption(api, rule, DateFlags.Thursdays);
+            AddDateConditionOption(api, rule, DateFlags.Fridays);
+            AddDateConditionOption(api, rule, DateFlags.Saturdays);
+            AddDateConditionOption(api, rule, DateFlags.Sundays);
+
+            api.AddPage(ModManifest, Days2PageId(ruleIndex));
+
+            api.AddSectionTitle(ModManifest, I18n.Config_Days_Header2_Title, I18n.Config_Days_Header2_Tooltip);
+
+            AddDateConditionOption(api, rule, DateFlags.Day_01);
+            AddDateConditionOption(api, rule, DateFlags.Day_02);
+            AddDateConditionOption(api, rule, DateFlags.Day_03);
+            AddDateConditionOption(api, rule, DateFlags.Day_04);
+            AddDateConditionOption(api, rule, DateFlags.Day_05);
+            AddDateConditionOption(api, rule, DateFlags.Day_06);
+            AddDateConditionOption(api, rule, DateFlags.Day_07);
+            AddDateConditionOption(api, rule, DateFlags.Day_08);
+            AddDateConditionOption(api, rule, DateFlags.Day_09);
+            AddDateConditionOption(api, rule, DateFlags.Day_10);
+            AddDateConditionOption(api, rule, DateFlags.Day_11);
+            AddDateConditionOption(api, rule, DateFlags.Day_12);
+            AddDateConditionOption(api, rule, DateFlags.Day_13);
+            AddDateConditionOption(api, rule, DateFlags.Day_14);
+            AddDateConditionOption(api, rule, DateFlags.Day_15);
+            AddDateConditionOption(api, rule, DateFlags.Day_16);
+            AddDateConditionOption(api, rule, DateFlags.Day_17);
+            AddDateConditionOption(api, rule, DateFlags.Day_18);
+            AddDateConditionOption(api, rule, DateFlags.Day_19);
+            AddDateConditionOption(api, rule, DateFlags.Day_20);
+            AddDateConditionOption(api, rule, DateFlags.Day_21);
+            AddDateConditionOption(api, rule, DateFlags.Day_22);
+            AddDateConditionOption(api, rule, DateFlags.Day_23);
+            AddDateConditionOption(api, rule, DateFlags.Day_24);
+            AddDateConditionOption(api, rule, DateFlags.Day_25);
+            AddDateConditionOption(api, rule, DateFlags.Day_26);
+            AddDateConditionOption(api, rule, DateFlags.Day_27);
+            AddDateConditionOption(api, rule, DateFlags.Day_28);
+
+            api.AddPage(ModManifest, WeatherPageId(ruleIndex));
+
+            api.AddSectionTitle(ModManifest, I18n.Config_Weather_Header_Title, I18n.Config_Weather_Header_Tooltip);
+
+            AddWeatherConditionOption(api, rule, WeatherFlags.Sunny);
+            AddWeatherConditionOption(api, rule, WeatherFlags.Rainy);
+            AddWeatherConditionOption(api, rule, WeatherFlags.Windy);
+            AddWeatherConditionOption(api, rule, WeatherFlags.Stormy);
+            AddWeatherConditionOption(api, rule, WeatherFlags.Snowy);
+
+            api.AddPage(ModManifest, LocationPageId(ruleIndex));
+
+            api.AddSectionTitle(ModManifest, I18n.Config_Location_Header_Title, I18n.Config_Location_Header_Tooltip);
+            api.AddParagraph(ModManifest, I18n.Config_Location_Description);
+            api.AddParagraph(ModManifest, I18n.Config_Location_Description2);
+
+            AddLocationConditionOption(api, rule, LocationFlags.Farm);
+            AddLocationConditionOption(api, rule, LocationFlags.Farmhouse);
+            AddLocationConditionOption(api, rule, LocationFlags.GreenHouse);
+            AddLocationConditionOption(api, rule, LocationFlags.FarmCave);
+            AddLocationConditionOption(api, rule, LocationFlags.Cellar);
+            AddLocationConditionOption(api, rule, LocationFlags.Beach);
+            AddLocationConditionOption(api, rule, LocationFlags.Desert);
+            AddLocationConditionOption(api, rule, LocationFlags.Museum);
+            AddLocationConditionOption(api, rule, LocationFlags.CommunityCenter);
+            AddLocationConditionOption(api, rule, LocationFlags.Town);
+            AddLocationConditionOption(api, rule, LocationFlags.Mountain);
+            AddLocationConditionOption(api, rule, LocationFlags.Mine);
+            AddLocationConditionOption(api, rule, LocationFlags.MineShaft);
+            AddLocationConditionOption(api, rule, LocationFlags.IslandWest);
+            AddLocationConditionOption(api, rule, LocationFlags.IslandFarmhouse);
+            AddLocationConditionOption(api, rule, LocationFlags.IslandFieldOffice);
+            AddLocationConditionOption(api, rule, LocationFlags.Unknown);
         }
 
         /// <summary>
@@ -954,13 +1124,14 @@ namespace DailyScreenshot
         /// Adds a Weather condition to the Config.
         /// </summary>
         /// <param name="api">The GenericModConfigMenu API</param>
+        /// <param name="rule">The rule to add the condition to</param>
         /// <param name="weatherFlag">The Weather type to add to the Config.</param>
-        void AddWeatherConditionOption(GenericModConfigMenuAPI api, WeatherFlags weatherFlag)
+        void AddWeatherConditionOption(GenericModConfigMenuAPI api, ModRule rule, WeatherFlags weatherFlag)
         {
             api.AddBoolOption(
                 mod: ModManifest,
-                getValue: () => ModConfigHelper.IsWeatherConditionEnabled(m_config.SnapshotRules[0].Trigger.Weather, weatherFlag),
-                setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Weather = ModConfigHelper.UpdateWeatherCondition(m_config.SnapshotRules[0].Trigger.Weather, weatherFlag, val),
+                getValue: () => ModConfigHelper.IsWeatherConditionEnabled(rule.Trigger.Weather, weatherFlag),
+                setValue: (bool val) => rule.Trigger.Weather = ModConfigHelper.UpdateWeatherCondition(rule.Trigger.Weather, weatherFlag, val),
                 name: () => Helper.Translation.Get($"Config.Weather.{weatherFlag}.Title"),
                 tooltip: () => Helper.Translation.Get($"Config.Weather.{weatherFlag}.Tooltip")
             );
@@ -970,13 +1141,14 @@ namespace DailyScreenshot
         /// Adds a Location condition to the Config.
         /// </summary>
         /// <param name="api">The GenericModConfigMenu API</param>
+        /// <param name="rule">The rule to add the condition to</param>
         /// <param name="locationFlag">The Location type to add to the Config.</param>
-        void AddLocationConditionOption(GenericModConfigMenuAPI api, LocationFlags locationFlag)
+        void AddLocationConditionOption(GenericModConfigMenuAPI api, ModRule rule, LocationFlags locationFlag)
         {
             api.AddBoolOption(
                 mod: ModManifest,
-                getValue: () => ModConfigHelper.IsLocationConditionEnabled(m_config.SnapshotRules[0].Trigger.Location, locationFlag),
-                setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Location = ModConfigHelper.UpdateLocationCondition(m_config.SnapshotRules[0].Trigger.Location, locationFlag, val),
+                getValue: () => ModConfigHelper.IsLocationConditionEnabled(rule.Trigger.Location, locationFlag),
+                setValue: (bool val) => rule.Trigger.Location = ModConfigHelper.UpdateLocationCondition(rule.Trigger.Location, locationFlag, val),
                 name: () => Helper.Translation.Get($"Config.Location.{locationFlag}.Title"),
                 tooltip: () => Helper.Translation.Get($"Config.Location.{locationFlag}.Tooltip")
             );
@@ -986,13 +1158,14 @@ namespace DailyScreenshot
         /// Adds a Date condition to the Config.
         /// </summary>
         /// <param name="api">The GenericModConfigMenu API</param>
+        /// <param name="rule">The rule to add the condition to</param>
         /// <param name="dateFlag">The Date type to add to the Config.</param>
-        void AddDateConditionOption(GenericModConfigMenuAPI api, DateFlags dateFlag)
+        void AddDateConditionOption(GenericModConfigMenuAPI api, ModRule rule, DateFlags dateFlag)
         {
             api.AddBoolOption(
                 mod: ModManifest,
-                getValue: () => ModConfigHelper.IsDateConditionEnabled(m_config.SnapshotRules[0].Trigger.Days, dateFlag),
-                setValue: (bool val) => m_config.SnapshotRules[0].Trigger.Days = ModConfigHelper.UpdateDateCondition(m_config.SnapshotRules[0].Trigger.Days, dateFlag, val),
+                getValue: () => ModConfigHelper.IsDateConditionEnabled(rule.Trigger.Days, dateFlag),
+                setValue: (bool val) => rule.Trigger.Days = ModConfigHelper.UpdateDateCondition(rule.Trigger.Days, dateFlag, val),
                 name: () => Helper.Translation.Get($"Config.Days.{dateFlag}.Title"),
                 tooltip: () => Helper.Translation.Get($"Config.Days.{dateFlag}.Tooltip")
             );
@@ -1002,13 +1175,14 @@ namespace DailyScreenshot
         /// Adds a Name condition to the Config.
         /// </summary>
         /// <param name="api">The GenericModConfigMenu API</param>
+        /// <param name="rule">The rule to add the condition to</param>
         /// <param name="fileNameFlag">The Name type to add to the Config.</param>
-        void AddNameConditionOption(GenericModConfigMenuAPI api, ModRule.FileNameFlags fileNameFlag)
+        void AddNameConditionOption(GenericModConfigMenuAPI api, ModRule rule, ModRule.FileNameFlags fileNameFlag)
         {
             api.AddBoolOption(
                 mod: ModManifest,
-                getValue: () => ModConfigHelper.IsFileNameConditionEnabled(m_config.SnapshotRules[0].FileName, fileNameFlag),
-                setValue: (bool val) => m_config.SnapshotRules[0].FileName = ModConfigHelper.UpdateFileNameCondition(m_config.SnapshotRules[0].FileName, fileNameFlag, val),
+                getValue: () => ModConfigHelper.IsFileNameConditionEnabled(rule.FileName, fileNameFlag),
+                setValue: (bool val) => rule.FileName = ModConfigHelper.UpdateFileNameCondition(rule.FileName, fileNameFlag, val),
                 name: () => Helper.Translation.Get($"Config.FileNameParts.{fileNameFlag}.Title"),
                 tooltip: () => Helper.Translation.Get($"Config.FileNameParts.{fileNameFlag}.Tooltip")
             );
