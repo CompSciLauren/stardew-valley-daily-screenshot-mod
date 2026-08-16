@@ -1,20 +1,23 @@
-﻿using StardewModdingAPI;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace DailyScreenshot
 {
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod
     {
-        private string stardewValleyYear, stardewValleySeason, stardewValleyDayOfMonth;
-        private bool screenshotTakenToday = false;
-        private string displayScreenshotFileName = "null";
-        private int countdownInSeconds = 60;
+        /// <summary>Number of update ticks to wait after warping onto the farm before taking the screenshot, so the world has time to finish rendering.</summary>
+        private const int ScreenshotDelayTicks = 60;
+
+        /// <summary>The zoom level used for the daily screenshot.</summary>
+        private const float ScreenshotZoomLevel = 0.25f;
+
+        private string screenshotFileName;
+        private bool screenshotTakenToday;
+        private int countdownTicks;
         private ulong saveFileCode;
 
         /// <summary>
@@ -24,9 +27,9 @@ namespace DailyScreenshot
         public DirectoryInfo DefaultScreenshotDirectory { get; private set; }
 
         /// <summary>
-        /// Default screenshot directory set in the entry
+        /// Per-save screenshot subdirectory, created once the save is loaded
         /// </summary>
-        /// <value>Path to the screenshot directory for this platform</value>
+        /// <value>Path to this save's screenshot subdirectory</value>
         public DirectoryInfo DefaultScreenshotSubdirectory { get; private set; }
 
         /// <summary>
@@ -46,12 +49,10 @@ namespace DailyScreenshot
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            var stardewValleyRootDirectory = new DirectoryInfo(Constants.ExecutionPath);
-            DefaultScreenshotDirectory = stardewValleyRootDirectory.EnumerateDirectories("MapExport").FirstOrDefault();
-            if (DefaultScreenshotDirectory == null)
-            {
-                DefaultScreenshotDirectory = stardewValleyRootDirectory.CreateSubdirectory("MapExport");
-            }
+            // matches the desktop mod's cross-platform "StardewValley/Screenshots" folder convention
+            int specialFolderId = Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28;
+            string path = Environment.GetFolderPath((Environment.SpecialFolder)specialFolderId);
+            DefaultScreenshotDirectory = new DirectoryInfo(Path.Combine(path, "StardewValley", "Screenshots"));
 
             Helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
         }
@@ -62,7 +63,7 @@ namespace DailyScreenshot
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             saveFileCode = Game1.uniqueIDForThisGame;
-            var directoryName = Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode;
+            string directoryName = $"{Game1.player.farmName.Value}-Farm-Screenshots-{saveFileCode}";
             DefaultScreenshotSubdirectory = DefaultScreenshotDirectory.CreateSubdirectory(directoryName);
 
             Helper.Events.Player.Warped += OnWarped;
@@ -75,16 +76,8 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
-            ConvertInGameDateToNumericFormat();
-            displayScreenshotFileName = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}.png";
-
-            Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
+            screenshotFileName = FormatScreenshotFileName();
             screenshotTakenToday = false;
-            countdownInSeconds = 60;
-
-            EnqueueAction(() => {
-                TakeScreenshot();
-            });
         }
 
         /// <summary>Raised after the player enters a new location.</summary>
@@ -94,6 +87,7 @@ namespace DailyScreenshot
         {
             if (e.NewLocation is Farm && !screenshotTakenToday)
             {
+                countdownTicks = ScreenshotDelayTicks;
                 Helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             }
         }
@@ -103,106 +97,41 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            countdownInSeconds--;
+            countdownTicks--;
+            if (countdownTicks > 0)
+                return;
 
-            if (countdownInSeconds == 0)
-            {
-                while (_actions.Count > 0)
-                    _actions.Dequeue().Invoke();
-            }
-            if (countdownInSeconds == -1)
-            {
-                string mapScreenshotPath = "Farm.png"; // screenshot name
-                FileInfo mapScreenshot = new FileInfo(Path.Combine(DefaultScreenshotDirectory.FullName, mapScreenshotPath));
-                string newScreenshotNameWithExtension = $"{stardewValleyYear}-{stardewValleySeason}-{stardewValleyDayOfMonth}.png";
-                MoveScreenshotToCorrectFolder(mapScreenshot, new FileInfo(Path.Combine("//storage//emulated//0//StardewValley//smapi-internal//MapExport//", Game1.player.farmName + "-Farm-Screenshots-" + saveFileCode, newScreenshotNameWithExtension)));
-                // was: Path.Combine(DefaultScreenshotDirectory.FullName, DefaultScreenshotSubdirectory.FullName, newScreenshotNameWithExtension))
-                Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
-            }
+            Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
+            TakeScreenshot();
         }
 
-        /// <summary>Takes a screenshot of the entire farm.</summary>
+        /// <summary>Takes a screenshot of the entire farm using the game's built-in screenshot support.</summary>
         private void TakeScreenshot()
         {
-            Helper.ConsoleCommands.Trigger("export", new[] { "Farm", "all" });
-            Game1.addHUDMessage(new HUDMessage(displayScreenshotFileName, 6));
-            Game1.playSound("cameraNoise");
-            screenshotTakenToday = true;
-        }
-
-        private Queue<Action> _actions = new Queue<Action>();
-
-        /// <summary>Allows ability to enqueue actions to the queue.</summary>
-        /// <param name="action">The action.</param>
-        public void EnqueueAction(Action action)
-        {
-            if (action == null) return;
-            _actions.Enqueue(action);
-        }
-
-        /// <summary>Fixes the screenshot name to be in the proper format.</summary>
-        private void ConvertInGameDateToNumericFormat()
-        {
-            stardewValleyYear = Game1.Date.Year.ToString();
-            stardewValleySeason = Game1.Date.Season.ToString();
-            stardewValleyDayOfMonth = Game1.Date.DayOfMonth.ToString();
-
-            // fix year and month to be in numeric format
-            if (int.Parse(stardewValleyYear) < 10)
-            {
-                stardewValleyYear = "0" + stardewValleyYear;
-            }
-            if (int.Parse(stardewValleyDayOfMonth) < 10)
-            {
-                stardewValleyDayOfMonth = "0" + stardewValleyDayOfMonth;
-            }
-
-            // fix season to be in numeric format
-            switch (Game1.Date.Season)
-            {
-                case "spring":
-                    stardewValleySeason = "01";
-                    break;
-                case "summer":
-                    stardewValleySeason = "02";
-                    break;
-                case "fall":
-                    stardewValleySeason = "03";
-                    break;
-                case "winter":
-                    stardewValleySeason = "04";
-                    break;
-            }
-        }
-
-        /// <summary>Moves screenshot into StardewValley/Screenshots directory, in the save file folder.</summary>
-        /// <param name="sourceFile">File to move</param>
-        /// <param name="destinationFile">Where to move the file</param>
-        private void MoveScreenshotToCorrectFolder(FileInfo sourceFile, FileInfo destinationFile)
-        {
-            sourceFile = new FileInfo("/storage/emulated/0/StardewValley/smapi-internal/MapExport/Farm.png");
-            MTrace($"Snapshot moving from {sourceFile} to {destinationFile}");
-
-            // create save directory if it doesn't already exist
-            if (!Directory.Exists(destinationFile.DirectoryName))
-            {
-                Directory.CreateDirectory(destinationFile.DirectoryName);
-            }
-
-            // delete old version of screenshot if one exists
-            if (destinationFile.Exists)
-            {
-                destinationFile.Delete();
-            }
-
             try
             {
-                sourceFile.MoveTo(destinationFile.FullName);
+                Directory.CreateDirectory(DefaultScreenshotSubdirectory.FullName);
+                string relativePath = Path.Combine(DefaultScreenshotSubdirectory.Name, screenshotFileName);
+
+                Game1.game1.takeMapScreenshot(ScreenshotZoomLevel, relativePath, () => {
+                    // no post-screenshot action needed
+                });
+
+                Game1.addHUDMessage(new HUDMessage(screenshotFileName, HUDMessage.screenshot_type));
+                Game1.playSound("cameraNoise");
+                screenshotTakenToday = true;
             }
             catch (Exception ex)
             {
-                MError($"Error moving file '{sourceFile.FullName}' to {destinationFile.FullName}. Technical details:\n{ex}");
+                MError($"Failed to take daily screenshot. Technical details:\n{ex}");
             }
+        }
+
+        /// <summary>Formats today's in-game date as a "year-season-day" filename, e.g. "01-02-03.png".</summary>
+        private string FormatScreenshotFileName()
+        {
+            int seasonNumber = Game1.Date.SeasonIndex + 1;
+            return $"{Game1.Date.Year:D2}-{seasonNumber:D2}-{Game1.Date.DayOfMonth:D2}.png";
         }
 
         /// <summary>Raised after the player returns to the title screen.</summary>
@@ -210,8 +139,11 @@ namespace DailyScreenshot
         /// <param name="e">The event data.</param>
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
+            Helper.Events.Player.Warped -= OnWarped;
+            Helper.Events.GameLoop.DayStarted -= OnDayStarted;
+            Helper.Events.GameLoop.ReturnedToTitle -= OnReturnedToTitle;
+            Helper.Events.GameLoop.UpdateTicked -= OnUpdateTicked;
             screenshotTakenToday = false;
-            countdownInSeconds = 60;
         }
     }
 }
