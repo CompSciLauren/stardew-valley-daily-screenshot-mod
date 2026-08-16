@@ -21,16 +21,14 @@ namespace DailyScreenshot
         private ulong saveFileCode;
 
         /// <summary>
-        /// Default screenshot directory set in the entry
+        /// Per-save screenshot subdirectory name, created once the save is loaded.
+        /// Relative to <see cref="Game1.GetScreenshotFolder"/> — the game's own
+        /// screenshot folder, not a path this mod guesses at, since
+        /// <see cref="Game1.takeMapScreenshot(float, string, Action)"/> always
+        /// resolves the given name against that folder.
         /// </summary>
-        /// <value>Path to the screenshot directory for this platform</value>
-        public DirectoryInfo DefaultScreenshotDirectory { get; private set; }
-
-        /// <summary>
-        /// Per-save screenshot subdirectory, created once the save is loaded
-        /// </summary>
-        /// <value>Path to this save's screenshot subdirectory</value>
-        public DirectoryInfo DefaultScreenshotSubdirectory { get; private set; }
+        /// <value>Name of this save's screenshot subdirectory</value>
+        public string ScreenshotSubdirectoryName { get; private set; }
 
         /// <summary>
         /// Helper function for sending trace messages
@@ -49,11 +47,6 @@ namespace DailyScreenshot
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            // matches the desktop mod's cross-platform "StardewValley/Screenshots" folder convention
-            int specialFolderId = Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28;
-            string path = Environment.GetFolderPath((Environment.SpecialFolder)specialFolderId);
-            DefaultScreenshotDirectory = new DirectoryInfo(Path.Combine(path, "StardewValley", "Screenshots"));
-
             Helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
         }
 
@@ -63,8 +56,7 @@ namespace DailyScreenshot
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             saveFileCode = Game1.uniqueIDForThisGame;
-            string directoryName = $"{Game1.player.farmName.Value}-Farm-Screenshots-{saveFileCode}";
-            DefaultScreenshotSubdirectory = DefaultScreenshotDirectory.CreateSubdirectory(directoryName);
+            ScreenshotSubdirectoryName = $"{Game1.player.farmName.Value}-Farm-Screenshots-{saveFileCode}";
 
             Helper.Events.Player.Warped += OnWarped;
             Helper.Events.GameLoop.DayStarted += OnDayStarted;
@@ -110,14 +102,18 @@ namespace DailyScreenshot
         {
             try
             {
-                Directory.CreateDirectory(DefaultScreenshotSubdirectory.FullName);
-                string relativePath = Path.Combine(DefaultScreenshotSubdirectory.Name, screenshotFileName);
+                // takeMapScreenshot() resolves its "screenshot_name" argument against this
+                // folder itself (and appends ".png" to it), so the subdirectory we create
+                // has to live under here rather than under a path this mod guesses at.
+                string screenshotsFolder = Game1.game1.GetScreenshotFolder();
+                Directory.CreateDirectory(Path.Combine(screenshotsFolder, ScreenshotSubdirectoryName));
+                string relativePath = Path.Combine(ScreenshotSubdirectoryName, screenshotFileName);
 
                 Game1.game1.takeMapScreenshot(ScreenshotZoomLevel, relativePath, () => {
                     // no post-screenshot action needed
                 });
 
-                Game1.addHUDMessage(new HUDMessage(screenshotFileName, HUDMessage.screenshot_type));
+                Game1.addHUDMessage(new HUDMessage($"{screenshotFileName}.png", HUDMessage.screenshot_type));
                 Game1.playSound("cameraNoise");
                 screenshotTakenToday = true;
             }
@@ -127,11 +123,11 @@ namespace DailyScreenshot
             }
         }
 
-        /// <summary>Formats today's in-game date as a "year-season-day" filename, e.g. "01-02-03.png".</summary>
+        /// <summary>Formats today's in-game date as a "year-season-day" filename, e.g. "01-02-03", with no extension since takeMapScreenshot() appends ".png" itself.</summary>
         private string FormatScreenshotFileName()
         {
             int seasonNumber = Game1.Date.SeasonIndex + 1;
-            return $"{Game1.Date.Year:D2}-{seasonNumber:D2}-{Game1.Date.DayOfMonth:D2}.png";
+            return $"{Game1.Date.Year:D2}-{seasonNumber:D2}-{Game1.Date.DayOfMonth:D2}";
         }
 
         /// <summary>Raised after the player returns to the title screen.</summary>
