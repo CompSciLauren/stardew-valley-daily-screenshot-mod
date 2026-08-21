@@ -1,7 +1,7 @@
 ﻿{
   "Name": "Daily Screenshot",
   "Author": "CompSciLauren",
-  "Version": "3.4.0",
+  "Version": "3.4.1",
   "Description": "Automatically takes a daily screenshot of your entire farm.",
   "UniqueID": "CompSciLauren.DailyScreenshot",
   "EntryDll": "DailyScreenshot.dll",
