@@ -64,9 +64,9 @@ Here are any resources that you might find particularly useful for working on th
 
 ## DailyScreenshot - Android
 
-There is an Android version of this mod, but it is most likely currently broken.
+There is an Android version of this mod in the [DailyScreenshotAndroid](./DailyScreenshotAndroid) folder.
 
-Once this starts getting worked on again, this documentation will be updated to explain how to contribute specifically to the Android version.
+Setup follows the same steps as the [Project Setup Guide](#project-setup-guide) above, except open `DailyScreenshotAndroid.sln` instead of `DailyScreenshot.sln`. To test your changes, you'll need SMAPI for Android installed on an Android device or emulator.
 
 ## Code of Conduct
 
