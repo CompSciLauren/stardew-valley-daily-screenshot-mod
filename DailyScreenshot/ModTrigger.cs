@@ -294,6 +294,10 @@ namespace DailyScreenshot
         public static LocationFlags GetLocation()
         {
             GameLocation location = Game1.currentLocation;
+            if (location == null)
+            {
+                return LocationFlags.Unknown;
+            }
             return location switch
             {
                 Farm => LocationFlags.Farm,
