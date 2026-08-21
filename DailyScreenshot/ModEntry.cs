@@ -233,6 +233,15 @@ namespace DailyScreenshot
             int num11 = (Environment.OSVersion.Platform != PlatformID.Unix ? 26 : 28);
             var path = Environment.GetFolderPath((Environment.SpecialFolder)num11);
 
+            // On some platforms (observed on macOS), GetFolderPath can return an empty
+            // string here. If left unhandled, DefaultSSdirectory below resolves relative
+            // to the game's current working directory (e.g. Contents/MacOS on Mac),
+            // colliding with the game executable itself and crashing when we try to
+            // create the screenshot directory. Fall back to the user's home directory,
+            // which is reliably populated across platforms.
+            if (string.IsNullOrEmpty(path))
+                path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
             // path is combined with StardewValley and then Screenshots
             DefaultSSdirectory = new DirectoryInfo(Path.Combine(path, "StardewValley", "Screenshots"));
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
