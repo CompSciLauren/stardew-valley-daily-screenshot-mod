@@ -35,12 +35,10 @@ Here are the steps for the release. Note the file used for the release is found 
 - [x] All code changes intended to be released are merged to `main` branch
     - [x] Includes correct version in [manifest.json](./DailyScreenshot/manifest.json) file. (Follows [semver](https://semver.org/) versioning standard)
 - [x] GitHub Issues that are addressed by PRs merged to `main` are closed.
-- [x] Draft a new Nexus Article with release notes
-- [x] [Publish a New GitHub Release](https://github.com/CompSciLauren/stardew-valley-daily-screenshot-mod/releases/new)
 - [x] Publish new version on Nexus
     - [x] Include updating changelog
     - [x] Note on file upload: Replace existing file and do NOT select "Remove the previous version after this file has been successfully uploaded", that way the file being replaced will show up under the "Old versions" section.
-- [x] Publish Nexus Article with release notes
+- [x] [Publish a New GitHub Release](https://github.com/CompSciLauren/stardew-valley-daily-screenshot-mod/releases/new)
 - [x] Publish new version on the other mod sites (including changelog)
     - [x] [Chucklefish](https://community.playstarbound.com/resources/daily-screenshot.5907/)
     - [x] [CurseForge](https://www.curseforge.com/stardewvalley/mods/daily-screenshot)
