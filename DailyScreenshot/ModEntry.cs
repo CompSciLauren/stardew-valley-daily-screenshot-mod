@@ -235,6 +235,7 @@ namespace DailyScreenshot
 
             // path is combined with StardewValley and then Screenshots
             DefaultSSdirectory = new DirectoryInfo(Path.Combine(path, "StardewValley", "Screenshots"));
+            MInfo($"Default screenshot directory: {DefaultSSdirectory.FullName}");
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             Helper.Events.Display.MenuChanged += OnMenuChanged;
         }
@@ -253,6 +254,22 @@ namespace DailyScreenshot
                                  Process.Start(new ProcessStartInfo
                                  {
                                      FileName = Path.Combine("Mods", "DailyScreenshot"),
+                                     UseShellExecute = true,
+                                     Verb = "open"
+                                 });
+                             }
+                             catch (Exception)
+                             {
+                             }
+                         }));
+                    oPage.options.Add(new OptionsButton("Open Destination Folder", delegate
+                         {
+                             try
+                             {
+                                 Directory.CreateDirectory(DefaultSSdirectory.FullName);
+                                 Process.Start(new ProcessStartInfo
+                                 {
+                                     FileName = DefaultSSdirectory.FullName,
                                      UseShellExecute = true,
                                      Verb = "open"
                                  });
